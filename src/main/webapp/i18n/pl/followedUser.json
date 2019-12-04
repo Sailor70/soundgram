@@ -1,0 +1,25 @@
+{
+  "soundgramApp": {
+    "followedUser": {
+      "home": {
+        "title": "Followed User",
+        "createLabel": "Dodaj Followed User",
+        "createOrEditLabel": "Dodaj lub edytuj: Followed User",
+        "search": "Szukaj Followed User",
+        "notFound": "No Followed Users found"
+      },
+      "created": "Utworzono nowy obiekt typu Followed User z identyfikatorem {{ param }}",
+      "updated": "Uaktualniono obiekt typu Followed User z identyfikatorem {{ param }}",
+      "deleted": "Usunięto obiekt typu Followed User z identyfikatorem {{ param }}",
+      "delete": {
+        "question": "Czy na pewno chcesz usunąć Followed User {{ id }}?"
+      },
+      "detail": {
+        "title": "Followed User"
+      },
+      "followedUserId": "Followed User Id",
+      "dateFollowed": "Date Followed",
+      "user": "User"
+    }
+  }
+}

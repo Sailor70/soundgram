@@ -1,0 +1,35 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="followedUser">
+            <h2><span jhiTranslate="soundgramApp.followedUser.detail.title">Followed User</span> {{followedUser.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="soundgramApp.followedUser.followedUserId">Followed User Id</span></dt>
+                <dd>
+                    <span>{{followedUser.followedUserId}}</span>
+                </dd>
+                <dt><span jhiTranslate="soundgramApp.followedUser.dateFollowed">Date Followed</span></dt>
+                <dd>
+                    <span>{{followedUser.dateFollowed}}</span>
+                </dd>
+                <dt><span jhiTranslate="soundgramApp.followedUser.user">User</span></dt>
+                <dd>
+                    {{followedUser.user?.login}}
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/followed-user', followedUser.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

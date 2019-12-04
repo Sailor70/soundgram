@@ -1,0 +1,25 @@
+{
+  "soundgramApp": {
+    "userExtra": {
+      "home": {
+        "title": "User Extra",
+        "createLabel": "Dodaj User Extra",
+        "createOrEditLabel": "Dodaj lub edytuj: User Extra",
+        "search": "Szukaj User Extra",
+        "notFound": "No User Extras found"
+      },
+      "created": "Utworzono nowy obiekt typu User Extra z identyfikatorem {{ param }}",
+      "updated": "Uaktualniono obiekt typu User Extra z identyfikatorem {{ param }}",
+      "deleted": "Usunięto obiekt typu User Extra z identyfikatorem {{ param }}",
+      "delete": {
+        "question": "Czy na pewno chcesz usunąć User Extra {{ id }}?"
+      },
+      "detail": {
+        "title": "User Extra"
+      },
+      "userLocation": "User Location",
+      "bio": "Bio",
+      "user": "User"
+    }
+  }
+}
