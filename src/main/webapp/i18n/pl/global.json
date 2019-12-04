@@ -9,6 +9,7 @@
         "main": "Encje",
         "userExtra": "User Extra",
         "followedUser": "Followed User",
+        "tag": "Tag",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {
