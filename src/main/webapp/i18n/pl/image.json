@@ -1,0 +1,25 @@
+{
+  "soundgramApp": {
+    "image": {
+      "home": {
+        "title": "Image",
+        "createLabel": "Dodaj Image",
+        "createOrEditLabel": "Dodaj lub edytuj: Image",
+        "search": "Szukaj Image",
+        "notFound": "No Images found"
+      },
+      "created": "Utworzono nowy obiekt typu Image z identyfikatorem {{ param }}",
+      "updated": "Uaktualniono obiekt typu Image z identyfikatorem {{ param }}",
+      "deleted": "Usunięto obiekt typu Image z identyfikatorem {{ param }}",
+      "delete": {
+        "question": "Czy na pewno chcesz usunąć Image {{ id }}?"
+      },
+      "detail": {
+        "title": "Image"
+      },
+      "path": "Path",
+      "name": "Name",
+      "post": "Post"
+    }
+  }
+}

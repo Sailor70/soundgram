@@ -1,0 +1,37 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="image">
+            <h2><span jhiTranslate="soundgramApp.image.detail.title">Image</span> {{image.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="soundgramApp.image.path">Path</span></dt>
+                <dd>
+                    <span>{{image.path}}</span>
+                </dd>
+                <dt><span jhiTranslate="soundgramApp.image.name">Name</span></dt>
+                <dd>
+                    <span>{{image.name}}</span>
+                </dd>
+                <dt><span jhiTranslate="soundgramApp.image.post">Post</span></dt>
+                <dd>
+                    <div *ngIf="image.post">
+                        <a [routerLink]="['/post', image.post?.id, 'view']">{{image.post?.id}}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/image', image.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

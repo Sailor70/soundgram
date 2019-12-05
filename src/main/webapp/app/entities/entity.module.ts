@@ -23,6 +23,10 @@ import { RouterModule } from '@angular/router';
       {
         path: 'comment',
         loadChildren: () => import('./comment/comment.module').then(m => m.SoundgramCommentModule)
+      },
+      {
+        path: 'image',
+        loadChildren: () => import('./image/image.module').then(m => m.SoundgramImageModule)
       }
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ])
