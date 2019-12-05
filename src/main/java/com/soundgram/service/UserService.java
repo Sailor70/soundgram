@@ -3,7 +3,9 @@ package com.soundgram.service;
 import com.soundgram.config.Constants;
 import com.soundgram.domain.Authority;
 import com.soundgram.domain.User;
+import com.soundgram.domain.UserExtra;
 import com.soundgram.repository.AuthorityRepository;
+import com.soundgram.repository.UserExtraRepository;
 import com.soundgram.repository.UserRepository;
 import com.soundgram.repository.search.UserSearchRepository;
 import com.soundgram.security.AuthoritiesConstants;
@@ -45,12 +47,16 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserSearchRepository userSearchRepository, AuthorityRepository authorityRepository, CacheManager cacheManager) {
+    private final UserExtraRepository userExtraRepository;
+
+    // Spring automatycznie przekazuje wpisane w konstruktor klasy (tutaj UserExtraRepository)
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserSearchRepository userSearchRepository, AuthorityRepository authorityRepository, CacheManager cacheManager, UserExtraRepository userExtraRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.userSearchRepository = userSearchRepository;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
+        this.userExtraRepository = userExtraRepository;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -125,6 +131,13 @@ public class UserService {
         userSearchRepository.save(newUser);
         this.clearUserCaches(newUser);
         log.debug("Created Information for User: {}", newUser);
+
+        // Create new userExtra associated with User
+        UserExtra newUserExtra = new UserExtra();
+        newUserExtra.setUser(newUser);
+        userExtraRepository.save(newUserExtra);
+        log.debug("Created Information for UserExtra: {}", newUserExtra);
+
         return newUser;
     }
 
