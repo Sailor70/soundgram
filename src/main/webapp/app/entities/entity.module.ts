@@ -11,6 +11,14 @@ import { RouterModule } from '@angular/router';
       {
         path: 'followed-user',
         loadChildren: () => import('./followed-user/followed-user.module').then(m => m.SoundgramFollowedUserModule)
+      },
+      {
+        path: 'tag',
+        loadChildren: () => import('./tag/tag.module').then(m => m.SoundgramTagModule)
+      },
+      {
+        path: 'post',
+        loadChildren: () => import('./post/post.module').then(m => m.SoundgramPostModule)
       }
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ])

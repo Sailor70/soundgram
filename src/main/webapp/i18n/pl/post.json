@@ -1,0 +1,25 @@
+{
+  "soundgramApp": {
+    "post": {
+      "home": {
+        "title": "Post",
+        "createLabel": "Dodaj Post",
+        "createOrEditLabel": "Dodaj lub edytuj: Post",
+        "search": "Szukaj Post",
+        "notFound": "No Posts found"
+      },
+      "created": "Utworzono nowy obiekt typu Post z identyfikatorem {{ param }}",
+      "updated": "Uaktualniono obiekt typu Post z identyfikatorem {{ param }}",
+      "deleted": "Usunięto obiekt typu Post z identyfikatorem {{ param }}",
+      "delete": {
+        "question": "Czy na pewno chcesz usunąć Post {{ id }}?"
+      },
+      "detail": {
+        "title": "Post"
+      },
+      "postContent": "Post Content",
+      "date": "Date",
+      "tag": "Tag"
+    }
+  }
+}

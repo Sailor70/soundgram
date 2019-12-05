@@ -1,0 +1,32 @@
+{
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "relationships": [
+        {
+            "relationshipName": "tag",
+            "otherEntityName": "tag",
+            "relationshipType": "many-to-many",
+            "otherEntityField": "id",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "post"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "postContent",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "date",
+            "fieldType": "Instant"
+        }
+    ],
+    "changelogDate": "20191204190410",
+    "dto": "no",
+    "searchEngine": "elasticsearch",
+    "service": "no",
+    "entityTableName": "post",
+    "databaseType": "sql",
+    "jpaMetamodelFiltering": false,
+    "pagination": "infinite-scroll"
+}
