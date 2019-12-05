@@ -49,6 +49,7 @@ public class CacheConfiguration {
             createCache(cm, com.soundgram.domain.Tag.class.getName() + ".posts");
             createCache(cm, com.soundgram.domain.Post.class.getName());
             createCache(cm, com.soundgram.domain.Post.class.getName() + ".tags");
+            createCache(cm, com.soundgram.domain.Comment.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

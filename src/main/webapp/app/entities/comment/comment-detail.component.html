@@ -1,0 +1,41 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="comment">
+            <h2><span jhiTranslate="soundgramApp.comment.detail.title">Comment</span> {{comment.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="soundgramApp.comment.textContent">Text Content</span></dt>
+                <dd>
+                    <span>{{comment.textContent}}</span>
+                </dd>
+                <dt><span jhiTranslate="soundgramApp.comment.date">Date</span></dt>
+                <dd>
+                    <span>{{comment.date}}</span>
+                </dd>
+                <dt><span jhiTranslate="soundgramApp.comment.user">User</span></dt>
+                <dd>
+                    {{comment.user?.login}}
+                </dd>
+                <dt><span jhiTranslate="soundgramApp.comment.post">Post</span></dt>
+                <dd>
+                    <div *ngIf="comment.post">
+                        <a [routerLink]="['/post', comment.post?.id, 'view']">{{comment.post?.id}}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/comment', comment.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>
