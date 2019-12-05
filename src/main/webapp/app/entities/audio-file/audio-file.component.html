@@ -1,0 +1,86 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="soundgramApp.audioFile.home.title">Audio Files</span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-audio-file" [routerLink]="['/audio-file/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            <span class="hidden-sm-down"  jhiTranslate="soundgramApp.audioFile.home.createLabel">
+            Create a new Audio File
+            </span>
+        </button>
+    </h2>
+    <jhi-alert-error></jhi-alert-error>
+    <jhi-alert></jhi-alert>
+    <div class="row">
+        <div class="col-sm-12">
+            <form name="searchForm" class="form-inline">
+                <div class="input-group w-100 mt-3">
+                    <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'soundgramApp.audioFile.home.search' | translate }}">
+                    <button class="input-group-append btn btn-info" (click)="search(currentSearch)">
+                        <fa-icon [icon]="'search'"></fa-icon>
+                    </button>
+                    <button class="input-group-append btn btn-danger" (click)="clear()" *ngIf="currentSearch">
+                        <fa-icon [icon]="'trash-alt'"></fa-icon>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <br/>
+    <div class="alert alert-warning" *ngIf="audioFiles?.length === 0">
+        <span jhiTranslate="soundgramApp.audioFile.home.notFound">No audioFiles found</span>
+    </div>
+    <div class="table-responsive" *ngIf="audioFiles?.length > 0">
+        <table class="table table-striped" aria-describedby="page-heading">
+            <thead>
+            <tr>
+            <th scope="col" ><span jhiTranslate="global.field.id">ID</span></th>
+            <th scope="col" ><span jhiTranslate="soundgramApp.audioFile.audioPath">Audio Path</span></th>
+            <th scope="col" ><span jhiTranslate="soundgramApp.audioFile.title">Title</span></th>
+            <th scope="col" ><span jhiTranslate="soundgramApp.audioFile.iconPath">Icon Path</span></th>
+            <th scope="col" ><span jhiTranslate="soundgramApp.audioFile.post">Post</span></th>
+            <th scope="col" ><span jhiTranslate="soundgramApp.audioFile.user">User</span></th>
+            <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let audioFile of audioFiles ;trackBy: trackId">
+                <td><a [routerLink]="['/audio-file', audioFile.id, 'view' ]">{{audioFile.id}}</a></td>
+                <td>{{audioFile.audioPath}}</td>
+                <td>{{audioFile.title}}</td>
+                <td>{{audioFile.iconPath}}</td>
+                <td>
+                    <div *ngIf="audioFile.post">
+                        <a [routerLink]="['/post', audioFile.post?.id, 'view' ]" >{{audioFile.post?.id}}</a>
+                    </div>
+                </td>
+                <td>
+                    <span *ngFor="let user of audioFile.users; let last = last">
+                            {{user.login}}{{last ? '' : ', '}}
+                        </span>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group">
+                        <button type="submit"
+                                [routerLink]="['/audio-file', audioFile.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/audio-file', audioFile.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit" (click)="delete(audioFile)"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -27,6 +27,10 @@ import { RouterModule } from '@angular/router';
       {
         path: 'image',
         loadChildren: () => import('./image/image.module').then(m => m.SoundgramImageModule)
+      },
+      {
+        path: 'audio-file',
+        loadChildren: () => import('./audio-file/audio-file.module').then(m => m.SoundgramAudioFileModule)
       }
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ])

@@ -1,0 +1,47 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="audioFile">
+            <h2><span jhiTranslate="soundgramApp.audioFile.detail.title">Audio File</span> {{audioFile.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="soundgramApp.audioFile.audioPath">Audio Path</span></dt>
+                <dd>
+                    <span>{{audioFile.audioPath}}</span>
+                </dd>
+                <dt><span jhiTranslate="soundgramApp.audioFile.title">Title</span></dt>
+                <dd>
+                    <span>{{audioFile.title}}</span>
+                </dd>
+                <dt><span jhiTranslate="soundgramApp.audioFile.iconPath">Icon Path</span></dt>
+                <dd>
+                    <span>{{audioFile.iconPath}}</span>
+                </dd>
+                <dt><span jhiTranslate="soundgramApp.audioFile.post">Post</span></dt>
+                <dd>
+                    <div *ngIf="audioFile.post">
+                        <a [routerLink]="['/post', audioFile.post?.id, 'view']">{{audioFile.post?.id}}</a>
+                    </div>
+                </dd>
+                <dt><span jhiTranslate="soundgramApp.audioFile.user">User</span></dt>
+                <dd>
+                    <span *ngFor="let user of audioFile.users; let last = last">
+                        {{user.login}}{{last ? '' : ', '}}
+                    </span>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/audio-file', audioFile.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

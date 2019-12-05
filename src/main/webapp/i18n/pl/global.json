@@ -13,6 +13,7 @@
         "post": "Post",
         "comment": "Comment",
         "image": "Image",
+        "audioFile": "Audio File",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {

@@ -1,0 +1,27 @@
+{
+  "soundgramApp": {
+    "audioFile": {
+      "home": {
+        "title": "Audio File",
+        "createLabel": "Dodaj Audio File",
+        "createOrEditLabel": "Dodaj lub edytuj: Audio File",
+        "search": "Szukaj Audio File",
+        "notFound": "No Audio Files found"
+      },
+      "created": "Utworzono nowy obiekt typu Audio File z identyfikatorem {{ param }}",
+      "updated": "Uaktualniono obiekt typu Audio File z identyfikatorem {{ param }}",
+      "deleted": "Usunięto obiekt typu Audio File z identyfikatorem {{ param }}",
+      "delete": {
+        "question": "Czy na pewno chcesz usunąć Audio File {{ id }}?"
+      },
+      "detail": {
+        "title": "Audio File"
+      },
+      "audioPath": "Audio Path",
+      "title": "Title",
+      "iconPath": "Icon Path",
+      "post": "Post",
+      "user": "User"
+    }
+  }
+}

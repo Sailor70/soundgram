@@ -1,0 +1,27 @@
+{
+  "soundgramApp": {
+    "audioFile": {
+      "home": {
+        "title": "Audio Files",
+        "createLabel": "Create a new Audio File",
+        "createOrEditLabel": "Create or edit a Audio File",
+        "search": "Search for Audio File",
+        "notFound": "No Audio Files found"
+      },
+      "created": "A new Audio File is created with identifier {{ param }}",
+      "updated": "A Audio File is updated with identifier {{ param }}",
+      "deleted": "A Audio File is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Audio File {{ id }}?"
+      },
+      "detail": {
+        "title": "Audio File"
+      },
+      "audioPath": "Audio Path",
+      "title": "Title",
+      "iconPath": "Icon Path",
+      "post": "Post",
+      "user": "User"
+    }
+  }
+}
