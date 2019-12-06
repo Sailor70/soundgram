@@ -7,6 +7,9 @@ import { SoundgramCoreModule } from 'app/core/core.module';
 import { SoundgramAppRoutingModule } from './app-routing.module';
 import { SoundgramHomeModule } from './home/home.module';
 import { SoundgramEntityModule } from './entities/entity.module';
+import { SoundgramAppUsersModule } from './users/users.module';
+import { SoundgramAppProfileModule } from './profile/profile.module';
+import { SoundgramAppMusicModule } from './music/music.module';
 // jhipster-needle-angular-add-module-import JHipster will add new module here
 import { JhiMainComponent } from './layouts/main/main.component';
 import { NavbarComponent } from './layouts/navbar/navbar.component';
@@ -21,6 +24,9 @@ import { ErrorComponent } from './layouts/error/error.component';
     SoundgramSharedModule,
     SoundgramCoreModule,
     SoundgramHomeModule,
+    SoundgramAppUsersModule,
+    SoundgramAppProfileModule,
+    SoundgramAppMusicModule,
     // jhipster-needle-angular-add-module JHipster will add new module here
     SoundgramEntityModule,
     SoundgramAppRoutingModule
