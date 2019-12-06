@@ -5,7 +5,7 @@ import { UserRouteAccessService } from 'app/core/auth/user-route-access-service'
 import { UsersComponent } from './users.component';
 import { User } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
-//import { UsersDetailComponent } from 'app/users/users-detail/users-detail.component';
+import { UserDetailComponent } from 'app/users/user-detail/user-detail.component';
 
 @Injectable({ providedIn: 'root' })
 export class UsersResolve implements Resolve<any> {
@@ -29,13 +29,10 @@ export const USERS_ROUTE: Routes = [
       pageTitle: 'users.title'
     },
     canActivate: [UserRouteAccessService]
-  }
-
-  /*
-  uncomment when UsersDetail created
+  },
   {
     path: 'view',
-    component: UsersDetailComponent,
+    component: UserDetailComponent,
     resolve: {
       user: UsersResolve
     },
@@ -45,12 +42,12 @@ export const USERS_ROUTE: Routes = [
   },
   {
     path: ':login/view',
-    component: UsersDetailComponent,
+    component: UserDetailComponent,
     resolve: {
       user: UsersResolve
     },
     data: {
       pageTitle: 'search-users.title'
     }
-  }*/
+  }
 ];

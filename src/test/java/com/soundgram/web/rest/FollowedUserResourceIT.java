@@ -3,6 +3,7 @@ package com.soundgram.web.rest;
 import com.soundgram.SoundgramApp;
 import com.soundgram.domain.FollowedUser;
 import com.soundgram.repository.FollowedUserRepository;
+import com.soundgram.repository.UserRepository;
 import com.soundgram.repository.search.FollowedUserSearchRepository;
 import com.soundgram.web.rest.errors.ExceptionTranslator;
 
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.persistence.EntityManager;
 import java.time.Instant;
@@ -30,6 +32,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -57,6 +61,9 @@ public class FollowedUserResourceIT {
     private FollowedUserSearchRepository mockFollowedUserSearchRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -71,6 +78,9 @@ public class FollowedUserResourceIT {
     @Autowired
     private Validator validator;
 
+    @Autowired
+    private WebApplicationContext context;
+
     private MockMvc restFollowedUserMockMvc;
 
     private FollowedUser followedUser;
@@ -78,7 +88,7 @@ public class FollowedUserResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final FollowedUserResource followedUserResource = new FollowedUserResource(followedUserRepository, mockFollowedUserSearchRepository);
+        final FollowedUserResource followedUserResource = new FollowedUserResource(followedUserRepository, mockFollowedUserSearchRepository, userRepository);
         this.restFollowedUserMockMvc = MockMvcBuilders.standaloneSetup(followedUserResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -122,8 +132,15 @@ public class FollowedUserResourceIT {
     public void createFollowedUser() throws Exception {
         int databaseSizeBeforeCreate = followedUserRepository.findAll().size();
 
+        // Create security-aware mockMvc - Co tu nie działa?
+/*        restFollowedUserMockMvc = MockMvcBuilders
+            .webAppContextSetup(context)
+            .apply(springSecurity())
+            .build();*/
+
         // Create the FollowedUser
         restFollowedUserMockMvc.perform(post("/api/followed-users")
+            //.with(user("user"))
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(followedUser)))
             .andExpect(status().isCreated());
@@ -194,7 +211,7 @@ public class FollowedUserResourceIT {
             .andExpect(jsonPath("$.[*].followedUserId").value(hasItem(DEFAULT_FOLLOWED_USER_ID.intValue())))
             .andExpect(jsonPath("$.[*].dateFollowed").value(hasItem(DEFAULT_DATE_FOLLOWED.toString())));
     }
-    
+
     @Test
     @Transactional
     public void getFollowedUser() throws Exception {

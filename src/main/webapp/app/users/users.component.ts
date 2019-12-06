@@ -89,7 +89,7 @@ export class UsersComponent implements OnInit {
   }
 
   followUser(id: number) {
-    this.followedUserService.create(id).subscribe(
+    this.followedUserService.createWithId(id).subscribe(
       res => {
         // eventManager wyświetla alerty na zielono lub czerwono
         this.eventManager.broadcast({

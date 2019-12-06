@@ -2,7 +2,9 @@ package com.soundgram.web.rest;
 
 import com.soundgram.domain.FollowedUser;
 import com.soundgram.repository.FollowedUserRepository;
+import com.soundgram.repository.UserRepository;
 import com.soundgram.repository.search.FollowedUserSearchRepository;
+import com.soundgram.security.SecurityUtils;
 import com.soundgram.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -11,13 +13,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional; 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -44,18 +48,55 @@ public class FollowedUserResource {
 
     private final FollowedUserSearchRepository followedUserSearchRepository;
 
-    public FollowedUserResource(FollowedUserRepository followedUserRepository, FollowedUserSearchRepository followedUserSearchRepository) {
+    private final UserRepository userRepository;
+
+    public FollowedUserResource(FollowedUserRepository followedUserRepository, FollowedUserSearchRepository followedUserSearchRepository, UserRepository userRepository) {
         this.followedUserRepository = followedUserRepository;
         this.followedUserSearchRepository = followedUserSearchRepository;
+        this.userRepository = userRepository;
     }
 
-    /**
+    @PostMapping("/followed-users") // /{id}
+    public ResponseEntity<FollowedUser> createFollowedUser(@RequestBody Long followed_id) throws URISyntaxException {
+        FollowedUser followedUser = new FollowedUser();
+        log.debug("REST request to save FollowedUser : {}", followedUser);
+        if (followedUser.getId() != null) {
+            throw new BadRequestAlertException("A new followedUser cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+
+        // Jeśli już followujemy tego usera to nie dodawaj do followedUserRepository
+        if(!(followedUserRepository.findFollowedUserByFollowedUserIdAndUser(followed_id,
+            userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null)).isPresent())) {
+            // dodanie aktualnie zalogowanego usera do pola User w followed user
+//        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+//            log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin());
+            followedUser.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null));
+//        }
+
+            followedUser.setDateFollowed(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC));
+
+            followedUser.setFollowedUserId(followed_id);
+
+            FollowedUser result = followedUserRepository.save(followedUser);
+
+            return ResponseEntity.created(new URI("/api/followed-users/" + result.getId()))
+                .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+                .body(result);
+        }
+        else {
+            //throw new BadRequestAlertException("You have allready followed that user!", ENTITY_NAME, "idexists");
+            log.debug("You have allready followed that user with id : {}", followed_id);
+            return null;
+        }
+    }
+
+/*    *//**
      * {@code POST  /followed-users} : Create a new followedUser.
      *
      * @param followedUser the followedUser to create.
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new followedUser, or with status {@code 400 (Bad Request)} if the followedUser has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
+     *//*
     @PostMapping("/followed-users")
     public ResponseEntity<FollowedUser> createFollowedUser(@Valid @RequestBody FollowedUser followedUser) throws URISyntaxException {
         log.debug("REST request to save FollowedUser : {}", followedUser);
@@ -67,7 +108,7 @@ public class FollowedUserResource {
         return ResponseEntity.created(new URI("/api/followed-users/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
-    }
+    }*/
 
     /**
      * {@code PUT  /followed-users} : Updates an existing followedUser.
