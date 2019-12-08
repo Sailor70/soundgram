@@ -16,23 +16,28 @@
                     </span>
                 </a>
             </li>
-            
+
             <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
                 <a class="nav-link" routerLink="users" (click)="collapseNavbar()">
-                    <i class="fa fa-hand-spock-o" aria-hidden="true"></i>
-                    <span jhiTranslate="global.menu.users">Users</span>
+                    <span>
+                        <fa-icon [icon]="'users'"></fa-icon>
+<!--                        <i class="fa fa-hand-spock-o" aria-hidden="true"></i>-->
+                        <span jhiTranslate="global.menu.users">Users</span>
+                    </span>
                 </a>
             </li>
-            
+
             <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
                 <a class="nav-link" routerLink="profile" (click)="collapseNavbar()">
+                    <fa-icon [icon]="'id-badge'"></fa-icon>
                     <i class="fa fa-hand-spock-o" aria-hidden="true"></i>
                     <span jhiTranslate="global.menu.profile">Profile</span>
                 </a>
             </li>
-            
+
             <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
                 <a class="nav-link" routerLink="music" (click)="collapseNavbar()">
+                    <fa-icon [icon]="'music'"></fa-icon>
                     <i class="fa fa-hand-spock-o" aria-hidden="true"></i>
                     <span jhiTranslate="global.menu.music">Music</span>
                 </a>

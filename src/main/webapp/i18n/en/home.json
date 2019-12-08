@@ -1,7 +1,7 @@
 {
   "home": {
-    "title": "Welcome, Java Hipster!",
-    "subtitle": "This is your homepage",
+    "title": "Welcome to Soundgram!",
+    "subtitle": "Soundgram is a place to share sounds with your friends",
     "logged": {
       "message": "You are logged in as user \"{{username}}\"."
     },
