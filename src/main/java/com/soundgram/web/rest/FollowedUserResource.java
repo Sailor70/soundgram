@@ -56,8 +56,8 @@ public class FollowedUserResource {
         this.userRepository = userRepository;
     }
 
-    @PostMapping("/followed-users") // /{id}
-    public ResponseEntity<FollowedUser> createFollowedUser(@RequestBody Long followed_id) throws URISyntaxException {
+    @PostMapping("/followed-users_id") // /{id}
+    public ResponseEntity<FollowedUser> createFollowedUserId(@RequestBody Long followed_id) throws URISyntaxException {
         FollowedUser followedUser = new FollowedUser();
         log.debug("REST request to save FollowedUser : {}", followedUser);
         if (followedUser.getId() != null) {
@@ -90,13 +90,13 @@ public class FollowedUserResource {
         }
     }
 
-/*    *//**
+    /**
      * {@code POST  /followed-users} : Create a new followedUser.
      *
      * @param followedUser the followedUser to create.
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new followedUser, or with status {@code 400 (Bad Request)} if the followedUser has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
-     *//*
+     */
     @PostMapping("/followed-users")
     public ResponseEntity<FollowedUser> createFollowedUser(@Valid @RequestBody FollowedUser followedUser) throws URISyntaxException {
         log.debug("REST request to save FollowedUser : {}", followedUser);
@@ -108,7 +108,7 @@ public class FollowedUserResource {
         return ResponseEntity.created(new URI("/api/followed-users/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
-    }*/
+    }
 
     /**
      * {@code PUT  /followed-users} : Updates an existing followedUser.

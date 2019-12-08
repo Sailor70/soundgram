@@ -28,9 +28,9 @@ export class FollowedUserService {
   }
 
   createWithId(id: number): Observable<EntityResponseType> {
-    //const copy = this.convertDateFromClient(followedUser);
+    // const copy = this.convertDateFromClient(followedUser);
     return this.http
-      .post<IFollowedUser>(this.resourceUrl, id, { observe: 'response' })
+      .post<IFollowedUser>(this.resourceUrl + '_id', id, { observe: 'response' })
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
