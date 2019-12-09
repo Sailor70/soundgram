@@ -19,4 +19,6 @@ public interface FollowedUserRepository extends JpaRepository<FollowedUser, Long
 
     // @Query("select followedUser from FollowedUser followedUser where followedUser.followedUserId = ?#{principal.username}")
     Optional<FollowedUser> findFollowedUserByFollowedUserIdAndUser(Long followedUserId, User user); //FindOne
+
+    void deleteFollowedUserByFollowedUserIdAndUser(Long followedUserId, User user);
 }

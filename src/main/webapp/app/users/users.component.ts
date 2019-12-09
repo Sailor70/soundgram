@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -11,6 +11,7 @@ import { AccountService } from 'app/core/auth/account.service';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.model';
 import { FollowedUserService } from 'app/entities/followed-user/followed-user.service';
+import { FollowedUser } from 'app/shared/model/followed-user.model';
 
 @Component({
   selector: 'jhi-users',
@@ -20,6 +21,8 @@ import { FollowedUserService } from 'app/entities/followed-user/followed-user.se
 export class UsersComponent implements OnInit {
   currentAccount: any;
   users: User[];
+  usersCpy: User[];
+  followedUsers: FollowedUser[];
   error: any;
   success: any;
   userListSubscription: Subscription;
@@ -31,6 +34,8 @@ export class UsersComponent implements OnInit {
   predicate: any;
   previousPage: any;
   reverse: any;
+  allUsersDisplayed = true;
+  currentSearch: string;
 
   constructor(
     private userService: UserService,
@@ -44,12 +49,15 @@ export class UsersComponent implements OnInit {
     private followedUserService: FollowedUserService
   ) {
     this.itemsPerPage = ITEMS_PER_PAGE;
-    this.routeData = this.activatedRoute.data.subscribe(data => {
-      //this.page = data.pagingParams.page;
-      //this.previousPage = data.pagingParams.page;
-      //this.reverse = data.pagingParams.ascending;
-      //this.predicate = data.pagingParams.predicate;
-    });
+    this.routeData = this.activatedRoute.data
+      .subscribe
+      // data => {
+      // this.page = data.pagingParams.page;
+      // this.previousPage = data.pagingParams.page;
+      // this.reverse = data.pagingParams.ascending;
+      // this.predicate = data.pagingParams.predicate;
+      // }
+      ();
   }
 
   ngOnInit() {
@@ -72,6 +80,7 @@ export class UsersComponent implements OnInit {
   }
 
   loadPage(page: number) {
+    page;
     // if (page !== this.previousPage) {
     //   this.previousPage = page;
     //   this.transition();
@@ -79,6 +88,7 @@ export class UsersComponent implements OnInit {
   }
 
   loadAll() {
+    this.allUsersDisplayed = true;
     this.userService
       .query({
         // page: this.page - 1,
@@ -88,19 +98,53 @@ export class UsersComponent implements OnInit {
       .subscribe((res: HttpResponse<User[]>) => this.onSuccess(res.body, res.headers), (res: HttpResponse<any>) => this.onError(res.body));
   }
 
+  loadFollowed() {
+    this.followedUserService
+      .findFollowed()
+      .subscribe((res: HttpResponse<User[]>) => this.onLoadFollowedSuccess(res.body), (res: HttpResponse<any>) => this.onError(res.body));
+  }
+
+  onLoadFollowedSuccess(data) {
+    this.allUsersDisplayed = false;
+    this.followedUsers = data;
+    // console.error(this.followedUsers);
+    this.usersCpy = this.users;
+    this.users = [];
+    let i = 0;
+    for (const fu of this.followedUsers) {
+      for (const user of this.usersCpy) {
+        if (user.id === fu.followedUserId) {
+          this.users[i] = user;
+          i++;
+        }
+      }
+    }
+  }
+
   followUser(id: number) {
     this.followedUserService.createWithId(id).subscribe(
       res => {
         // eventManager wyświetla alerty na zielono lub czerwono
+        res; // tak dla sprawy nieużytego res
         this.eventManager.broadcast({
           name: 'followedUserListModification',
           content: 'Follow user with id '
         });
-        //this.activeModal.dismiss(true);
+        // this.activeModal.dismiss(true);
       },
       // jeśli zwraca null to powinien wyświetlić alert że nie można obserwować tego usera
       res => this.onError(res.body)
     );
+  }
+
+  unfollowUser(id: number) {
+    this.followedUserService.deleteFollowedId(id).subscribe(() => {
+      this.eventManager.broadcast({
+        name: 'followedUserListModification',
+        content: 'Deleted an followedUser'
+      });
+      // this.activeModal.dismiss(true);
+    });
   }
 
   sort() {
@@ -127,5 +171,19 @@ export class UsersComponent implements OnInit {
 
   trackIdentity(index, item: User) {
     return item.id;
+  }
+
+  search(query) {
+    query;
+    /*    if (!query) {
+      return this.clear();
+    }
+    this.currentSearch = query;
+    this.loadAll();*/
+  }
+
+  clear() {
+    this.currentSearch = '';
+    this.loadAll();
   }
 }

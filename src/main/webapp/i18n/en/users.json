@@ -1,6 +1,8 @@
 {
   "users": {
     "title": "Users",
-    "followedUsers": "My followed users"
+    "followedUsers": "My followed users",
+    "allUsers": "All users",
+    "search": "Search for user"
   }
 }

@@ -132,6 +132,12 @@ public class FollowedUserResource {
             .body(result);
     }
 
+    @GetMapping("/followed-users_get")
+    public List<FollowedUser> getFollowedUsers() {
+        log.debug("REST request to get current users FollowedUsers");
+        return followedUserRepository.findByUserIsCurrentUser();
+    }
+
     /**
      * {@code GET  /followed-users} : get all the followedUsers.
      *
@@ -155,6 +161,15 @@ public class FollowedUserResource {
         log.debug("REST request to get FollowedUser : {}", id);
         Optional<FollowedUser> followedUser = followedUserRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(followedUser);
+    }
+
+    //receives followedUserId
+    @DeleteMapping("/followed-users_id/{id}")
+    public ResponseEntity<Void> deleteFollowedUserId(@PathVariable Long id) {
+        log.debug("REST request to delete FollowedUser with followedUserId : {}", id);
+        followedUserRepository.deleteFollowedUserByFollowedUserIdAndUser(id, userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null));
+        followedUserSearchRepository.deleteFollowedUserByFollowedUserIdAndUser(id, userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null));
+        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 
     /**

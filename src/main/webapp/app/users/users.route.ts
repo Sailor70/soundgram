@@ -37,7 +37,7 @@ export const USERS_ROUTE: Routes = [
       user: UsersResolve
     },
     data: {
-      pageTitle: 'search-users.title'
+      pageTitle: 'users.title'
     }
   },
   {
@@ -47,7 +47,7 @@ export const USERS_ROUTE: Routes = [
       user: UsersResolve
     },
     data: {
-      pageTitle: 'search-users.title'
+      pageTitle: 'users.title'
     }
   }
 ];

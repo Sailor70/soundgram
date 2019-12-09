@@ -11,13 +11,34 @@
   <div class="col-md-1"></div>
 </div>-->
 
-<div>
-    <h2>
-        <span id="user-management-page-heading" jhiTranslate="userManagement.home.title">Users</span>
-        <button class="btn btn-primary float-right jh-create-entity" [routerLink]="['./new']">
+<div [ngSwitch]="allUsersDisplayed">
+    <h2 *ngSwitchCase="true">
+        <span id="users-page-heading" jhiTranslate="users.allUsers">Users</span>
+        <button class="btn btn-primary float-right" (click)="loadFollowed()">
             <fa-icon [icon]="'users'"></fa-icon> <span jhiTranslate="users.followedUsers">My followed users</span>
         </button>
     </h2>
+    <h2 *ngSwitchCase="false">
+        <span id="followed-users-page-heading" jhiTranslate="users.followedUsers">My followed users</span>
+        <button class="btn btn-primary float-right" (click)="loadAll()">
+            <fa-icon [icon]="'users'"></fa-icon> <span jhiTranslate="users.allUsers">All users</span>
+        </button>
+    </h2>
+    <div class="row">
+        <div class="col-sm-12">
+            <form name="searchForm" class="form-inline">
+                <div class="input-group w-100 mt-3">
+                    <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'users.search' | translate }}">
+                    <button class="input-group-append btn btn-info" (click)="search(currentSearch)">
+                        <fa-icon [icon]="'search'"></fa-icon>
+                    </button>
+                    <button class="input-group-append btn btn-danger" (click)="clear()" *ngIf="currentSearch">
+                        <fa-icon [icon]="'trash-alt'"></fa-icon>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
     <jhi-alert></jhi-alert>
     <div class="table-responsive" *ngIf="users">
         <table class="table table-striped" aria-describedby="user-management-page-heading">
@@ -44,28 +65,83 @@
                     <div class="btn-group">
                         <button type="submit"
                                 [routerLink]="['/', user.login, 'view']"
-                                class="btn btn-info btn-sm">
+                                class="btn btn-secondary btn-sm">
                             <fa-icon [icon]="'eye'"></fa-icon>
                             <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
                         </button>
-                        <!--                        dodać nową route na follow-->
-                        <button type="button" (click)="followUser(user.id)"
-                                class="btn btn-primary btn-sm" [disabled]="currentAccount.login === user.login">
-                            <fa-icon [icon]="'user-plus'"></fa-icon>
-                            <span class="d-none d-md-inline" jhiTranslate="entity.action.follow">Follow</span>
-                        </button>
+                        <div *ngSwitchCase="true">
+                            <button type="button" (click)="followUser(user.id)"
+                                    class="btn btn-primary btn-sm" [disabled]="currentAccount.login === user.login">
+                                <fa-icon [icon]="'user-plus'"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.follow">Follow</span>
+                            </button>
+                        </div>
+                        <div *ngSwitchCase="false">
+                            <!--(click)="unfollowUser(user.id)" - zakomentowano bo nie działa a error jest potężny-->
+                            <button type="button"
+                                    class="btn btn-primary btn-sm" [disabled]="currentAccount.login === user.login">
+                                <fa-icon [icon]="'user-minus'"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.unfollow">Follow</span>
+                            </button>
+                        </div>
                     </div>
                 </td>
             </tr>
             </tbody>
         </table>
     </div>
-    <div *ngIf="users">
+<!--    <div *ngIf="users">
         <div class="row justify-content-center">
             <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>
         </div>
         <div class="row justify-content-center">
             <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
         </div>
-    </div>
+    </div>-->
+<!--
+    <div class="table-responsive" *ngIf="followedUsers?.length > 0">
+        <table class="table table-striped" aria-describedby="page-heading">
+            <thead>
+            <tr>
+                <th scope="col" ><span jhiTranslate="global.field.id">ID</span></th>
+                <th scope="col" ><span jhiTranslate="soundgramApp.followedUser.followedUserId">Followed User Id</span></th>
+                <th scope="col" ><span jhiTranslate="soundgramApp.followedUser.dateFollowed">Date Followed</span></th>
+                <th scope="col" ><span jhiTranslate="soundgramApp.followedUser.user">User</span></th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let followedUser of followedUsers">
+                <td><a [routerLink]="['/followed-user', followedUser.id, 'view' ]">{{followedUser.id}}</a></td>
+                <td>{{followedUser.followedUserId}}</td>
+                <td>{{followedUser.dateFollowed | date:'medium'}}</td>
+                <td>
+                    {{followedUser.user?.login}}
+                </td>
+                <td class="text-right">
+                    <div class="btn-group">
+                        <button type="submit"
+                                [routerLink]="['/followed-user', followedUser.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/followed-user', followedUser.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit" (click)="unfollow(followedUser)"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>-->
+
 </div>

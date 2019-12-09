@@ -109,7 +109,8 @@
       "open": "Otwórz",
       "save": "Zapisz",
       "view": "Widok",
-      "follow": "Obserwuj"
+      "follow": "Obserwuj",
+      "unfollow": "Przestań obserwować"
     },
     "detail": {
       "field": "Pole",

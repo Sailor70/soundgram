@@ -1,6 +1,8 @@
 {
   "users": {
     "title": "[pl] Users",
-    "followedUsers": "Moi obserwowani użytkownicy"
+    "followedUsers": "Moi obserwowani użytkownicy",
+    "allUsers": "Wszyscy użytkownicy",
+    "search": "Wyszukaj użytkownika"
   }
 }
