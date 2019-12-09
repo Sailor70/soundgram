@@ -58,8 +58,8 @@
     "messages": {
       "info": {
         "authenticated": {
-          "prefix": "Jeśli chcesz się ",
-          "link": "zalogować",
+          "prefix": "Aby rozpocząć  ",
+          "link": "Zaloguj się",
           "suffix": ", możesz spróbować któregoś z domyślnych kont:<br/>- Administrator (login=\"admin\" i hasło=\"admin\") <br/>- Użytkownik (login=\"user\" i hasło=\"user\")."
         },
         "register": {

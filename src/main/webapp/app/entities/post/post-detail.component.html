@@ -16,7 +16,7 @@
                 <dt><span jhiTranslate="soundgramApp.post.tag">Tag</span></dt>
                 <dd>
                     <span *ngFor="let tag of post.tags; let last = last">
-                        <a [routerLink]="['/tag', tag?.id, 'view' ]">{{tag.id}}</a>{{last ? '' : ', '}}
+                        <a [routerLink]="['/tag', tag?.id, 'view' ]">{{tag.name}}</a>{{last ? '' : ', '}}
                     </span>
                 </dd>
             </dl>

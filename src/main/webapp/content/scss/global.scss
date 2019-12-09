@@ -7,11 +7,32 @@ Bootstrap tweaks
 ===============================================================*/
 
 body,
-h1,
-h2,
+//h1,
+//h2,
 h3,
 h4 {
   font-weight: 300;
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+.navbar {
+  font-family: 'Righteous';
+}
+
+h1,
+h2 {
+  font-family: 'Righteous';
+  font-weight: 300;
+}
+
+button {
+  /*  min-width: 100px;
+  height: 50px;
+  background-color: #FF7909;
+  color: #fff;
+  border: 1px solid #fff;
+  margin-top: 20px;*/
+  font-family: 'Bungee';
 }
 
 /* Increase contrast of links to get 100% on Lighthouse Accessability Audit. Override this color if you want to change the link color, or use a Bootswatch theme */

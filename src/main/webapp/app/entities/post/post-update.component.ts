@@ -96,8 +96,8 @@ export class PostUpdateComponent implements OnInit {
     this.jhiAlertService.error(errorMessage, null, null);
   }
 
-  trackTagById(index: number, item: ITag) {
-    return item.id;
+  trackTagByName(index: number, item: ITag) {
+    return item.name;
   }
 
   getSelected(selectedVals: any[], option: any) {

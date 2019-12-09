@@ -24,7 +24,7 @@
                 <div class="form-group">
                     <label jhiTranslate="soundgramApp.post.tag" for="field_tags">Tag</label>
                     <select class="form-control" id="field_tags" multiple name="tags" formControlName="tags">
-                        <option [ngValue]="getSelected(editForm.get('tags').value, tagOption)" *ngFor="let tagOption of tags; trackBy: trackTagById">{{tagOption.id}}</option>
+                        <option [ngValue]="getSelected(editForm.get('tags').value, tagOption)" *ngFor="let tagOption of tags; trackBy: trackTagByName">{{tagOption.name}}</option>
                     </select>
                 </div>
             </div>

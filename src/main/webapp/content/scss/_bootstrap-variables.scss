@@ -8,11 +8,12 @@
 // Colors:
 // Grayscale and brand colors for use across Bootstrap.
 
-$primary: #3e8acc;
-$success: #28a745;
-$info: #17a2b8;
-$warning: #ffc107;
-$danger: #dc3545;
+$primary: #522b72;
+$success: #b0ca65;
+$info: #9376ac;
+$warning: #d4be6a;
+$danger: #aa9239;
+$dark: #210439;
 
 // Options:
 // Quickly modify global styling by enabling or disabling optional features.
@@ -34,9 +35,17 @@ $border-radius-sm: 0.1rem;
 // Body:
 // Settings for the `<body>` element.
 
-$body-bg: #e4e5e6;
+$body-bg: #e4e5e6; // $body-bg: #e4e5e6;
 
 // Typography:
 // Font, line-height, and color for body text, headings, and more.
 
 $font-size-base: 1rem;
+
+$border-radius: 2px;
+$border-radius-sm: 1px;
+$font-family-sans-serif: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+$headings-font-weight: 1000;
+$link-color: $primary;
+$input-focus-border-color: lighten(blue, 25%);
+$input-focus-box-shadow: none;

@@ -1,4 +1,4 @@
-<nav class="navbar navbar-dark navbar-expand-md bg-dark">
+<nav class="navbar navbar-dark navbar-expand-md bg-primary">
     <a class="navbar-brand logo" routerLink="/" (click)="collapseNavbar()">
         <span class="logo-img"></span>
         <span jhiTranslate="global.title" class="navbar-title">Soundgram</span> <span class="navbar-version">{{version}}</span>
@@ -30,7 +30,7 @@
             <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
                 <a class="nav-link" routerLink="profile" (click)="collapseNavbar()">
                     <fa-icon [icon]="'id-badge'"></fa-icon>
-                    <i class="fa fa-hand-spock-o" aria-hidden="true"></i>
+                    <!--<i class="fa fa-hand-spock-o" aria-hidden="true"></i>-->
                     <span jhiTranslate="global.menu.profile">Profile</span>
                 </a>
             </li>
@@ -38,7 +38,7 @@
             <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
                 <a class="nav-link" routerLink="music" (click)="collapseNavbar()">
                     <fa-icon [icon]="'music'"></fa-icon>
-                    <i class="fa fa-hand-spock-o" aria-hidden="true"></i>
+                    <!--<i class="fa fa-hand-spock-o" aria-hidden="true"></i>-->
                     <span jhiTranslate="global.menu.music">Music</span>
                 </a>
             </li>
