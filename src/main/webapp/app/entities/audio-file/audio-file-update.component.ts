@@ -24,6 +24,10 @@ export class AudioFileUpdateComponent implements OnInit {
 
   users: IUser[];
 
+  selectedFiles: FileList;
+  currentFile: File;
+  msg: any;
+
   editForm = this.fb.group({
     id: [],
     audioPath: [null, [Validators.required]],
@@ -71,12 +75,13 @@ export class AudioFileUpdateComponent implements OnInit {
   }
 
   save() {
+    this.currentFile = this.selectedFiles.item(0);
     this.isSaving = true;
     const audioFile = this.createFromForm();
     if (audioFile.id !== undefined) {
-      this.subscribeToSaveResponse(this.audioFileService.update(audioFile));
+      this.subscribeToSaveResponse(this.audioFileService.update(audioFile, this.currentFile));
     } else {
-      this.subscribeToSaveResponse(this.audioFileService.create(audioFile));
+      this.subscribeToSaveResponse(this.audioFileService.create(this.currentFile));
     }
   }
 
@@ -93,10 +98,15 @@ export class AudioFileUpdateComponent implements OnInit {
   }
 
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IAudioFile>>) {
-    result.subscribe(() => this.onSaveSuccess(), () => this.onSaveError());
+    result.subscribe(() => this.onSaveSuccess(result), () => this.onSaveError());
   }
 
-  protected onSaveSuccess() {
+  protected onSaveSuccess(result: Observable<HttpResponse<IAudioFile>>) {
+    if (result instanceof HttpResponse) {
+      this.msg = result.body;
+      // console.log(result.body);
+    }
+    this.selectedFiles = null;
     this.isSaving = false;
     this.previousState();
   }
@@ -125,5 +135,9 @@ export class AudioFileUpdateComponent implements OnInit {
       }
     }
     return option;
+  }
+
+  selectFile(event) {
+    this.selectedFiles = event.target.files;
   }
 }

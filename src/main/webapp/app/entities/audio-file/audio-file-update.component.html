@@ -4,6 +4,15 @@
             <h2 id="jhi-audio-file-heading" jhiTranslate="soundgramApp.audioFile.home.createOrEditLabel">Create or edit a Audio File</h2>
             <div>
                 <jhi-alert-error></jhi-alert-error>
+
+                <div style="text-align:center">
+                    <div [innerHtml]='msg'></div>
+                    <label>
+                        <input type="file" (change)="selectFile($event)">
+                    </label>
+                    <!--<button [disabled]="!selectedFiles" (click)="upload()">Upload</button>-->
+                </div>
+
                 <div class="form-group" [hidden]="!editForm.get('id').value">
                     <label for="id" jhiTranslate="global.field.id">ID</label>
                     <input type="text" class="form-control" id="id" name="id" formControlName="id"

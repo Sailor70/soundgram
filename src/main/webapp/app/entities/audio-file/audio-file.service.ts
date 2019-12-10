@@ -16,12 +16,25 @@ export class AudioFileService {
 
   constructor(protected http: HttpClient) {}
 
-  create(audioFile: IAudioFile): Observable<EntityResponseType> {
-    return this.http.post<IAudioFile>(this.resourceUrl, audioFile, { observe: 'response' });
+  create(file: File): Observable<EntityResponseType> {
+    // audioFile: IAudioFile,
+    const formdata: FormData = new FormData();
+    formdata.append('file', file);
+    return this.http.post<IAudioFile>(this.resourceUrl, formdata, { observe: 'response' });
   }
 
-  update(audioFile: IAudioFile): Observable<EntityResponseType> {
+  /*  create(audioFile: IAudioFile): Observable<EntityResponseType> {
+    return this.http.post<IAudioFile>(this.resourceUrl, audioFile, { observe: 'response' });
+  }*/
+
+  /*  update(audioFile: IAudioFile): Observable<EntityResponseType> {
     return this.http.put<IAudioFile>(this.resourceUrl, audioFile, { observe: 'response' });
+  }*/
+
+  update(audioFile: IAudioFile, file: File): Observable<EntityResponseType> {
+    const formdata: FormData = new FormData();
+    formdata.append('file', file);
+    return this.http.put<IAudioFile>(this.resourceUrl, { audioFile, formdata }, { observe: 'response' });
   }
 
   find(id: number): Observable<EntityResponseType> {

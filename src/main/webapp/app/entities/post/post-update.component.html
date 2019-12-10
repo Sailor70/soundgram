@@ -14,12 +14,14 @@
                     <input type="text" class="form-control" name="postContent" id="field_postContent"
                            formControlName="postContent"/>
                 </div>
-                <div class="form-group">
+
+<!--                date przeba dodać aktualną automatycznie-->
+<!--                <div class="form-group">
                     <label class="form-control-label" jhiTranslate="soundgramApp.post.date" for="field_date">Date</label>
                     <div class="d-flex">
                         <input id="field_date" type="datetime-local" class="form-control" name="date" formControlName="date" placeholder="YYYY-MM-DD HH:mm"/>
                     </div>
-                </div>
+                </div>-->
 
                 <div class="form-group">
                     <label jhiTranslate="soundgramApp.post.tag" for="field_tags">Tag</label>
@@ -27,6 +29,23 @@
                         <option [ngValue]="getSelected(editForm.get('tags').value, tagOption)" *ngFor="let tagOption of tags; trackBy: trackTagByName">{{tagOption.name}}</option>
                     </select>
                 </div>
+
+                <button id="jh-create-audio" class="btn btn-primary jh-create-entity create-audio-file" [routerLink]="['/audio-file/new']">
+                    <fa-icon [icon]="'plus'"></fa-icon>
+                    <span class="hidden-sm-down" >
+                        Add audio file
+                    </span>
+                </button>
+
+                <button id="jh-create-image" class="btn btn-primary jh-create-entity create-image" [routerLink]="['/image/new']">
+                    <fa-icon [icon]="'plus'"></fa-icon>
+                    <span class="hidden-sm-down">
+                        Add Image
+                    </span>
+                </button>
+
+                <p></p>
+
             </div>
             <div>
                 <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">

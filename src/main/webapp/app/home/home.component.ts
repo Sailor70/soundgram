@@ -1,11 +1,17 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiEventManager } from 'ng-jhipster';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { JhiEventManager, JhiParseLinks } from 'ng-jhipster';
 
 import { LoginModalService } from 'app/core/login/login-modal.service';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
+import { IPost } from 'app/shared/model/post.model';
+import { PostService } from 'app/entities/post/post.service';
+import { ActivatedRoute } from '@angular/router';
+import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
+import { HttpHeaders, HttpResponse } from '@angular/common/http';
+import { PostDeleteDialogComponent } from 'app/entities/post/post-delete-dialog.component';
 
 @Component({
   selector: 'jhi-home',
@@ -17,17 +23,47 @@ export class HomeComponent implements OnInit, OnDestroy {
   authSubscription: Subscription;
   modalRef: NgbModalRef;
 
+  posts: IPost[];
+  eventSubscriber: Subscription;
+  itemsPerPage: number;
+  links: any;
+  page: any;
+  predicate: any;
+  reverse: any;
+  totalItems: number;
+  currentSearch: string;
+
   constructor(
     private accountService: AccountService,
     private loginModalService: LoginModalService,
-    private eventManager: JhiEventManager
-  ) {}
+    private eventManager: JhiEventManager,
+    protected postService: PostService,
+    protected modalService: NgbModal,
+    protected parseLinks: JhiParseLinks,
+    protected activatedRoute: ActivatedRoute
+  ) {
+    this.posts = [];
+    this.itemsPerPage = ITEMS_PER_PAGE;
+    this.page = 0;
+    this.links = {
+      last: 0
+    };
+    this.predicate = 'id';
+    this.reverse = true;
+    this.currentSearch =
+      this.activatedRoute.snapshot && this.activatedRoute.snapshot.queryParams['search']
+        ? this.activatedRoute.snapshot.queryParams['search']
+        : '';
+  }
 
   ngOnInit() {
     this.accountService.identity().subscribe((account: Account) => {
       this.account = account;
     });
     this.registerAuthenticationSuccess();
+
+    this.loadAll();
+    this.registerChangeInPosts();
   }
 
   registerAuthenticationSuccess() {
@@ -49,6 +85,94 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.authSubscription) {
       this.eventManager.destroy(this.authSubscription);
+    }
+    this.eventManager.destroy(this.eventSubscriber);
+  }
+
+  loadAll() {
+    if (this.currentSearch) {
+      this.postService
+        .search({
+          query: this.currentSearch,
+          page: this.page,
+          size: this.itemsPerPage,
+          sort: this.sort()
+        })
+        .subscribe((res: HttpResponse<IPost[]>) => this.paginatePosts(res.body, res.headers));
+      return;
+    }
+    this.postService
+      .query({
+        page: this.page,
+        size: this.itemsPerPage,
+        sort: this.sort()
+      })
+      .subscribe((res: HttpResponse<IPost[]>) => this.paginatePosts(res.body, res.headers));
+  }
+
+  reset() {
+    this.page = 0;
+    this.posts = [];
+    this.loadAll();
+  }
+
+  loadPage(page) {
+    this.page = page;
+    this.loadAll();
+  }
+
+  clear() {
+    this.posts = [];
+    this.links = {
+      last: 0
+    };
+    this.page = 0;
+    this.predicate = 'id';
+    this.reverse = true;
+    this.currentSearch = '';
+    this.loadAll();
+  }
+
+  search(query) {
+    if (!query) {
+      return this.clear();
+    }
+    this.posts = [];
+    this.links = {
+      last: 0
+    };
+    this.page = 0;
+    this.predicate = '_score';
+    this.reverse = false;
+    this.currentSearch = query;
+    this.loadAll();
+  }
+  trackId(index: number, item: IPost) {
+    return item.id;
+  }
+
+  registerChangeInPosts() {
+    this.eventSubscriber = this.eventManager.subscribe('postListModification', () => this.reset());
+  }
+
+  delete(post: IPost) {
+    const modalRef = this.modalService.open(PostDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.post = post;
+  }
+
+  sort() {
+    const result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
+    if (this.predicate !== 'id') {
+      result.push('id');
+    }
+    return result;
+  }
+
+  protected paginatePosts(data: IPost[], headers: HttpHeaders) {
+    this.links = this.parseLinks.parse(headers.get('link'));
+    this.totalItems = parseInt(headers.get('X-Total-Count'), 10);
+    for (let i = 0; i < data.length; i++) {
+      this.posts.push(data[i]);
     }
   }
 }

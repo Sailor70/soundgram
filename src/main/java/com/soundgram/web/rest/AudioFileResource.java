@@ -2,19 +2,27 @@ package com.soundgram.web.rest;
 
 import com.soundgram.domain.AudioFile;
 import com.soundgram.repository.AudioFileRepository;
+import com.soundgram.repository.UserRepository;
 import com.soundgram.repository.search.AudioFileSearchRepository;
+import com.soundgram.security.SecurityUtils;
 import com.soundgram.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional; 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -40,13 +48,18 @@ public class AudioFileResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    @Autowired
+    private HttpServletRequest request;
+
     private final AudioFileRepository audioFileRepository;
 
     private final AudioFileSearchRepository audioFileSearchRepository;
+    private final UserRepository userRepository;
 
-    public AudioFileResource(AudioFileRepository audioFileRepository, AudioFileSearchRepository audioFileSearchRepository) {
+    public AudioFileResource(AudioFileRepository audioFileRepository, AudioFileSearchRepository audioFileSearchRepository, UserRepository userRepository) {
         this.audioFileRepository = audioFileRepository;
         this.audioFileSearchRepository = audioFileSearchRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -56,7 +69,7 @@ public class AudioFileResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new audioFile, or with status {@code 400 (Bad Request)} if the audioFile has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/audio-files")
+/*    @PostMapping("/audio-files")
     public ResponseEntity<AudioFile> createAudioFile(@Valid @RequestBody AudioFile audioFile) throws URISyntaxException {
         log.debug("REST request to save AudioFile : {}", audioFile);
         if (audioFile.getId() != null) {
@@ -64,6 +77,49 @@ public class AudioFileResource {
         }
         AudioFile result = audioFileRepository.save(audioFile);
         audioFileSearchRepository.save(result);
+        return ResponseEntity.created(new URI("/api/audio-files/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    }*/
+
+    @PostMapping("/audio-files")
+    public ResponseEntity<AudioFile> createAudioFile(@RequestParam("file") MultipartFile file) throws URISyntaxException, IOException { // @RequestParam AudioFile audioFile, @RequestParam("file") MultipartFile file
+
+        String uploadsDir = "/uploads/";
+        String realPathtoUploads =  request.getServletContext().getRealPath(uploadsDir);
+        if(! new File(realPathtoUploads).exists())
+        {
+            new File(realPathtoUploads).mkdir();
+        }
+        log.info("realPathtoUploads = {}", realPathtoUploads);
+
+        InputStream inputStream = file.getInputStream();
+        String originalName = file.getOriginalFilename();
+        String name = file.getName();
+        String contentType = file.getContentType();
+        long size = file.getSize();
+        log.info("inputStream: " + inputStream);
+        log.info("originalName: " + originalName);
+        log.info("name: " + name);
+        log.info("contentType: " + contentType);
+        log.info("size: " + size);
+
+        String filePath = realPathtoUploads + originalName;
+        File dest = new File(filePath);
+        file.transferTo(dest);
+
+        AudioFile audioFile = new AudioFile();
+        audioFile.addUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null));
+        audioFile.setAudioPath(filePath);
+        audioFile.setPost(null);
+
+        AudioFile result = audioFileRepository.save(audioFile);
+        /*        log.debug("REST request to save AudioFile : {}", audioFile);
+        if (audioFile.getId() != null) {
+            throw new BadRequestAlertException("A new audioFile cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        AudioFile result = audioFileRepository.save(audioFile);
+        */
         return ResponseEntity.created(new URI("/api/audio-files/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);

@@ -1,4 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { IAudioFile } from 'app/shared/model/audio-file.model';
+import { Subscription } from 'rxjs';
+import { AudioFileService } from 'app/entities/audio-file/audio-file.service';
+import { JhiEventManager } from 'ng-jhipster';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ActivatedRoute } from '@angular/router';
+import { AudioFileDeleteDialogComponent } from 'app/entities/audio-file/audio-file-delete-dialog.component';
+import { HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'jhi-music',
@@ -6,11 +14,69 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['music.component.scss']
 })
 export class MusicComponent implements OnInit {
-  message: string;
+  audioFiles: IAudioFile[];
+  eventSubscriber: Subscription;
+  currentSearch: string;
 
-  constructor() {
-    this.message = 'MusicComponent message';
+  constructor(
+    protected audioFileService: AudioFileService,
+    protected eventManager: JhiEventManager,
+    protected modalService: NgbModal,
+    protected activatedRoute: ActivatedRoute
+  ) {
+    this.currentSearch =
+      this.activatedRoute.snapshot && this.activatedRoute.snapshot.queryParams['search']
+        ? this.activatedRoute.snapshot.queryParams['search']
+        : '';
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.loadAll();
+    this.registerChangeInAudioFiles();
+  }
+
+  loadAll() {
+    if (this.currentSearch) {
+      this.audioFileService
+        .search({
+          query: this.currentSearch
+        })
+        .subscribe((res: HttpResponse<IAudioFile[]>) => (this.audioFiles = res.body));
+      return;
+    }
+    this.audioFileService.query().subscribe((res: HttpResponse<IAudioFile[]>) => {
+      this.audioFiles = res.body;
+      this.currentSearch = '';
+    });
+  }
+
+  search(query) {
+    if (!query) {
+      return this.clear();
+    }
+    this.currentSearch = query;
+    this.loadAll();
+  }
+
+  clear() {
+    this.currentSearch = '';
+    this.loadAll();
+  }
+
+  OnDestroy() {
+    this.eventManager.destroy(this.eventSubscriber);
+  }
+
+  trackId(index: number, item: IAudioFile) {
+    return item.id;
+  }
+
+  registerChangeInAudioFiles() {
+    this.eventSubscriber = this.eventManager.subscribe('audioFileListModification', () => this.loadAll());
+  }
+
+  delete(audioFile: IAudioFile) {
+    const modalRef = this.modalService.open(AudioFileDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.audioFile = audioFile;
+  }
 }

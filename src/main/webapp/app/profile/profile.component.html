@@ -1,11 +1,56 @@
-<div class="row">
-  <div class="col-md-1"></div>
-  <div class="col-md-10">
-    <h6 class="text-right">{{message}}</h6>
-    <h1 class="text-capitalize text-center" jhiTranslate="profile.title">Title</h1>
-    <h5 class="text-center" jhiTranslate="profile.subtitle">Subtitle</h5>
-    <hr/>
-    <p class="text-justify" jhiTranslate="profile.content">Content</p>
-  </div>
-  <div class="col-md-1"></div>
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div>
+            <h2>
+                <span jhiTranslate="userManagement.detail.title">User</span> [<b>{{user.login}}</b>]
+            </h2>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="userManagement.login">Login</span></dt>
+                <dd>
+                    <span>{{user.login}}</span>
+                    <jhi-boolean
+                        [value]="user.activated"
+                        [textTrue]="'userManagement.activated' | translate"
+                        [textFalse]="'userManagement.deactivated' | translate">
+                    </jhi-boolean>
+                </dd>
+                <dt><span jhiTranslate="userManagement.firstName">First Name</span></dt>
+                <dd>{{user.firstName}}</dd>
+                <dt><span jhiTranslate="userManagement.lastName">Last Name</span></dt>
+                <dd>{{user.lastName}}</dd>
+                <dt><span jhiTranslate="userManagement.email">Email</span></dt>
+                <dd>{{user.email}}</dd>
+                <dt><span jhiTranslate="userManagement.langKey">Lang Key</span></dt>
+                <dd>{{user.langKey}}</dd>
+                <dt><span jhiTranslate="userManagement.createdBy">Created By</span></dt>
+                <dd>{{user.createdBy}}</dd>
+                <dt><span jhiTranslate="userManagement.createdDate">Created Date</span></dt>
+                <dd>{{user.createdDate | date:'dd/MM/yy HH:mm' }}</dd>
+                <dt><span jhiTranslate="userManagement.lastModifiedBy">Last Modified By</span></dt>
+                <dd>{{user.lastModifiedBy}}</dd>
+                <dt><span jhiTranslate="userManagement.lastModifiedDate">Last Modified Date</span></dt>
+                <dd>{{user.lastModifiedDate | date:'dd/MM/yy HH:mm'}}</dd>
+                <dt><span jhiTranslate="userManagement.profiles">Profiles</span></dt>
+                <dd>
+                    <ul class="list-unstyled">
+                        <li *ngFor="let authority of user.authorities">
+                            <span class="badge badge-info">{{authority}}</span>
+                        </li>
+                    </ul>
+                </dd>
+            </dl>
+            <!--"../../"-->
+            <button type="submit"
+                    routerLink="/users"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
+        </div>
+    </div>
 </div>
+<h3>User tags:</h3>
+<p></p>
+<h3>User audio files:</h3>
+<p></p>
+<h3>User posts:</h3>
+<p></p>
