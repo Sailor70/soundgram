@@ -1,6 +1,7 @@
 package com.soundgram.web.rest;
 
 import com.soundgram.domain.FollowedUser;
+import com.soundgram.domain.User;
 import com.soundgram.repository.FollowedUserRepository;
 import com.soundgram.repository.UserRepository;
 import com.soundgram.repository.search.FollowedUserSearchRepository;
@@ -167,8 +168,12 @@ public class FollowedUserResource {
     @DeleteMapping("/followed-users_id/{id}")
     public ResponseEntity<Void> deleteFollowedUserId(@PathVariable Long id) {
         log.debug("REST request to delete FollowedUser with followedUserId : {}", id);
-        followedUserRepository.deleteFollowedUserByFollowedUserIdAndUser(id, userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null));
-        followedUserSearchRepository.deleteFollowedUserByFollowedUserIdAndUser(id, userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null));
+        User user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null);
+        followedUserRepository.deleteFollowedUserByFollowedUserIdAndUser(id, user);
+        if(followedUserRepository.findFollowedUserByFollowedUserIdAndUser(id, user).isPresent()) {
+            FollowedUser followedUser = followedUserRepository.findFollowedUserByFollowedUserIdAndUser(id, user).get();
+            followedUserSearchRepository.deleteById(followedUser.getId());
+        }
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 

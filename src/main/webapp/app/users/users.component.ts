@@ -145,6 +145,8 @@ export class UsersComponent implements OnInit {
       });
       // this.activeModal.dismiss(true);
     });
+    this.loadFollowed();
+    // location.reload();
   }
 
   sort() {

@@ -3,6 +3,7 @@ import com.soundgram.domain.FollowedUser;
 import com.soundgram.domain.User;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,8 +18,10 @@ public interface FollowedUserRepository extends JpaRepository<FollowedUser, Long
     @Query("select followedUser from FollowedUser followedUser where followedUser.user.login = ?#{principal.username}")
     List<FollowedUser> findByUserIsCurrentUser();
 
-    // @Query("select followedUser from FollowedUser followedUser where followedUser.followedUserId = ?#{principal.username}")
     Optional<FollowedUser> findFollowedUserByFollowedUserIdAndUser(Long followedUserId, User user); //FindOne
 
+    @Transactional
+    @Modifying
     void deleteFollowedUserByFollowedUserIdAndUser(Long followedUserId, User user);
+
 }

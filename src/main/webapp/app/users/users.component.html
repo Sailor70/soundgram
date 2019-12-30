@@ -77,11 +77,10 @@
                             </button>
                         </div>
                         <div *ngSwitchCase="false">
-                            <!--(click)="unfollowUser(user.id)" - zakomentowano bo nie działa a error jest potężny-->
-                            <button type="button"
+                            <button type="button" (click)="unfollowUser(user.id)"
                                     class="btn btn-primary btn-sm" [disabled]="currentAccount.login === user.login">
                                 <fa-icon [icon]="'user-minus'"></fa-icon>
-                                <span class="d-none d-md-inline" jhiTranslate="entity.action.unfollow">Follow</span>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.unfollow">Unfollow</span>
                             </button>
                         </div>
                     </div>
