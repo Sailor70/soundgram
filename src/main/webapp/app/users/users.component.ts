@@ -9,7 +9,7 @@ import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { AccountService } from 'app/core/auth/account.service';
 import { UserService } from 'app/core/user/user.service';
-import { User } from 'app/core/user/user.model';
+import { IUser, User } from 'app/core/user/user.model';
 import { FollowedUserService } from 'app/entities/followed-user/followed-user.service';
 import { FollowedUser } from 'app/shared/model/followed-user.model';
 
@@ -20,7 +20,7 @@ import { FollowedUser } from 'app/shared/model/followed-user.model';
 })
 export class UsersComponent implements OnInit {
   currentAccount: any;
-  users: User[];
+  users: IUser[];
   usersCpy: User[];
   followedUsers: FollowedUser[];
   error: any;
@@ -58,6 +58,10 @@ export class UsersComponent implements OnInit {
       // this.predicate = data.pagingParams.predicate;
       // }
       ();
+    this.currentSearch =
+      this.activatedRoute.snapshot && this.activatedRoute.snapshot.queryParams['search']
+        ? this.activatedRoute.snapshot.queryParams['search']
+        : '';
   }
 
   ngOnInit() {
@@ -79,23 +83,28 @@ export class UsersComponent implements OnInit {
     this.loadAll();
   }
 
-  loadPage(page: number) {
-    page;
-    // if (page !== this.previousPage) {
-    //   this.previousPage = page;
-    //   this.transition();
-    // }
-  }
+  // loadPage(page: number) {
+  //   page;
+  //   // if (page !== this.previousPage) {
+  //   //   this.previousPage = page;
+  //   //   this.transition();
+  //   // }
+  // }
 
   loadAll() {
     this.allUsersDisplayed = true;
+    // console.error("load alles");
+    if (this.currentSearch) {
+      this.userService
+        .search({
+          query: this.currentSearch
+        })
+        .subscribe((res: HttpResponse<IUser[]>) => (this.users = res.body));
+      return;
+    }
     this.userService
-      .query({
-        // page: this.page - 1,
-        size: this.itemsPerPage
-        // sort: this.sort()
-      })
-      .subscribe((res: HttpResponse<User[]>) => this.onSuccess(res.body, res.headers), (res: HttpResponse<any>) => this.onError(res.body));
+      .query()
+      .subscribe((res: HttpResponse<IUser[]>) => this.onSuccess(res.body, res.headers), (res: HttpResponse<any>) => this.onError(res.body));
   }
 
   loadFollowed() {
@@ -176,12 +185,11 @@ export class UsersComponent implements OnInit {
   }
 
   search(query) {
-    query;
-    /*    if (!query) {
+    if (!query) {
       return this.clear();
     }
     this.currentSearch = query;
-    this.loadAll();*/
+    this.loadAll();
   }
 
   clear() {

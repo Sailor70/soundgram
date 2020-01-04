@@ -9,6 +9,7 @@ import { IUser } from './user.model';
 @Injectable({ providedIn: 'root' })
 export class UserService {
   public resourceUrl = SERVER_API_URL + 'api/users';
+  public resourceSearchUrl = SERVER_API_URL + 'api/_search/users';
 
   constructor(private http: HttpClient) {}
 
@@ -35,5 +36,11 @@ export class UserService {
 
   authorities(): Observable<string[]> {
     return this.http.get<string[]>(SERVER_API_URL + 'api/users/authorities');
+  }
+
+  search(req?: any): Observable<HttpResponse<IUser[]>> {
+    const options = createRequestOption(req);
+    return this.http.get<IUser[]>(`${this.resourceSearchUrl}/${options}`, { params: options, observe: 'response' });
+    // .pipe(map((res: HttpResponse<IUser[]>) => this.convertDateArrayFromServer(res)));
   }
 }
