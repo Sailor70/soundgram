@@ -3,6 +3,7 @@ package com.soundgram;
 import com.soundgram.config.ApplicationProperties;
 import com.soundgram.config.DefaultProfileUtil;
 
+import com.soundgram.config.StorageProperties;
 import io.github.jhipster.config.JHipsterConstants;
 
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @SpringBootApplication
-@EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
+@EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class, StorageProperties.class})
 public class SoundgramApp implements InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(SoundgramApp.class);

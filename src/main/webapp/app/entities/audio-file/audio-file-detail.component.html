@@ -42,6 +42,22 @@
                     class="btn btn-primary">
                 <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
             </button>
+
+            <button type="button"
+                    (click)="playAudio()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'play-circle'"></fa-icon>
+            </button>
+            <button type="button"
+                    (click)="pauseAudio()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'pause-circle'"></fa-icon>
+            </button>
+
+            <!--            <audio id="voice" controls="">
+                            <source src="{{fileUrl}}" type="audio/mpeg">
+                        </audio>-->
+
         </div>
     </div>
 </div>

@@ -1,24 +1,32 @@
 package com.soundgram.web.rest;
 
 import com.soundgram.domain.AudioFile;
+import com.soundgram.domain.User;
 import com.soundgram.repository.AudioFileRepository;
 import com.soundgram.repository.UserRepository;
 import com.soundgram.repository.search.AudioFileSearchRepository;
 import com.soundgram.security.SecurityUtils;
+import com.soundgram.service.StorageService;
 import com.soundgram.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
@@ -26,8 +34,13 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.sql.Blob;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -48,28 +61,30 @@ public class AudioFileResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
-    @Autowired
-    private HttpServletRequest request;
-
     private final AudioFileRepository audioFileRepository;
 
     private final AudioFileSearchRepository audioFileSearchRepository;
+
+    private StorageService storageService;
+
     private final UserRepository userRepository;
 
-    public AudioFileResource(AudioFileRepository audioFileRepository, AudioFileSearchRepository audioFileSearchRepository, UserRepository userRepository) {
+    public AudioFileResource(AudioFileRepository audioFileRepository, AudioFileSearchRepository audioFileSearchRepository, UserRepository userRepository, StorageService storageService) {
         this.audioFileRepository = audioFileRepository;
         this.audioFileSearchRepository = audioFileSearchRepository;
+        this.storageService = storageService;
         this.userRepository = userRepository;
     }
 
     /**
      * {@code POST  /audio-files} : Create a new audioFile.
      *
-     * @param audioFile the audioFile to create.
+     * @param file the audioFile to create.
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new audioFile, or with status {@code 400 (Bad Request)} if the audioFile has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-/*    @PostMapping("/audio-files")
+
+    /*    @PostMapping("/audio-files")
     public ResponseEntity<AudioFile> createAudioFile(@Valid @RequestBody AudioFile audioFile) throws URISyntaxException {
         log.debug("REST request to save AudioFile : {}", audioFile);
         if (audioFile.getId() != null) {
@@ -83,43 +98,24 @@ public class AudioFileResource {
     }*/
 
     @PostMapping("/audio-files")
-    public ResponseEntity<AudioFile> createAudioFile(@RequestParam("file") MultipartFile file) throws URISyntaxException, IOException { // @RequestParam AudioFile audioFile, @RequestParam("file") MultipartFile file
+    public ResponseEntity<AudioFile> createAudioFile(@RequestParam("file") MultipartFile file) throws URISyntaxException {
 
-        String uploadsDir = "/uploads/";
-        String realPathtoUploads =  request.getServletContext().getRealPath(uploadsDir);
-        if(! new File(realPathtoUploads).exists())
-        {
-            new File(realPathtoUploads).mkdir();
-        }
-        log.info("realPathtoUploads = {}", realPathtoUploads);
-
-        InputStream inputStream = file.getInputStream();
-        String originalName = file.getOriginalFilename();
-        String name = file.getName();
-        String contentType = file.getContentType();
-        long size = file.getSize();
-        log.info("inputStream: " + inputStream);
-        log.info("originalName: " + originalName);
-        log.info("name: " + name);
-        log.info("contentType: " + contentType);
-        log.info("size: " + size);
-
-        String filePath = realPathtoUploads + originalName;
-        File dest = new File(filePath);
-        file.transferTo(dest);
+        User currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null);
+        Path audioPath = storageService.store(file, currentUser.getId());
+        String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path("/download/")
+            .path(file.getName())
+            .toUriString();
 
         AudioFile audioFile = new AudioFile();
-        audioFile.addUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null));
-        audioFile.setAudioPath(filePath);
-        audioFile.setPost(null);
+        audioFile.addUser(currentUser);
+        audioFile.setAudioPath(audioPath.toString());
+        audioFile.setPost(null); //
+        audioFile.setTitle(file.getOriginalFilename()); // audioPath.getFileName().toString()
+        audioFile.setIconPath(null); // to na później zostawiamy
 
         AudioFile result = audioFileRepository.save(audioFile);
-        /*        log.debug("REST request to save AudioFile : {}", audioFile);
-        if (audioFile.getId() != null) {
-            throw new BadRequestAlertException("A new audioFile cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        AudioFile result = audioFileRepository.save(audioFile);
-        */
+        audioFileSearchRepository.save(result);
         return ResponseEntity.created(new URI("/api/audio-files/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -172,6 +168,91 @@ public class AudioFileResource {
         return ResponseUtil.wrapOrNotFound(audioFile);
     }
 
+
+    @GetMapping("/audio-files-download/{id}")
+    public ResponseEntity<byte[]> downloadAudioFile(@PathVariable Long id) {
+        Optional<AudioFile> audioFile = audioFileRepository.findOneWithEagerRelationships(id);
+        if (audioFile.isPresent()) {
+            AudioFile af = audioFile.get();
+            String title = af.getTitle();
+
+            Set<User> users = af.getUsers();
+            Long firstUserId = users.iterator().next().getId(); // the owner of file
+
+            Resource resource = storageService.loadAsResource(title, firstUserId);
+
+            byte[] templateContent = new byte[0];
+            try {
+                templateContent = FileCopyUtils.copyToByteArray(resource.getFile());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            HttpHeaders respHeaders = new HttpHeaders();
+            respHeaders.setContentLength(templateContent.length);
+            respHeaders.setContentType(new MediaType("audio", "mpeg"));
+            respHeaders.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+            respHeaders.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + title);
+
+            return new ResponseEntity<byte[]>(templateContent, respHeaders, HttpStatus.OK);
+
+        } else {
+            log.debug("Nie ma w bazie takiego pliku o id: {}", id);
+            return new ResponseEntity<byte[]>(null, null, HttpStatus.OK);
+        }
+    }
+
+/*    @GetMapping("/audio-files-download/{id}")
+    public ResponseEntity<InputStreamResource> downloadAudioFile(@PathVariable Long id) {
+        Optional<AudioFile> audioFile = audioFileRepository.findOneWithEagerRelationships(id);
+        // AudioFile af = new AudioFile();
+        //Resource resource;
+        if(audioFile.isPresent()) {
+            AudioFile af = audioFile.get();
+            String title = af.getTitle();
+            Resource resource = storageService.loadAsResource(title);
+
+            long r = 0;
+            InputStream is=null;
+
+            try {
+                is = resource.getInputStream();
+                r = resource.contentLength();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return ResponseEntity.ok().contentLength(r)
+                .contentType(MediaType.parseMediaType("audio/mpeg"))
+                .body(new InputStreamResource(is));
+        }
+        else {
+            log.debug("Nie ma w bazie takiego pliku o id: {}", id);
+            return ResponseEntity.ok().body(null);
+        }
+    }*/
+
+/*    @GetMapping("/audio-files-download/{id}")
+    public ResponseEntity<Resource> downloadAudioFile(@PathVariable Long id) {
+        Optional<AudioFile> audioFile = audioFileRepository.findOneWithEagerRelationships(id);
+        AudioFile af = new AudioFile();
+        Resource resource;
+        if(audioFile.isPresent()) {
+            af = audioFile.get();
+            String title = af.getTitle();
+            resource = storageService.loadAsResource(title);
+
+            return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
+        }
+        else {
+            log.debug("Nie ma w bazie takiego pliku o id: {}", id);
+            return ResponseEntity.ok().body(null);
+        }
+    }*/
+
     /**
      * {@code DELETE  /audio-files/:id} : delete the "id" audioFile.
      *
@@ -181,8 +262,15 @@ public class AudioFileResource {
     @DeleteMapping("/audio-files/{id}")
     public ResponseEntity<Void> deleteAudioFile(@PathVariable Long id) {
         log.debug("REST request to delete AudioFile : {}", id);
-        audioFileRepository.deleteById(id);
-        audioFileSearchRepository.deleteById(id);
+        Optional<AudioFile> audioFile = audioFileRepository.findOneWithEagerRelationships(id);
+        if (audioFile.isPresent()) {
+            AudioFile af = audioFile.get();
+            Set<User> users = af.getUsers();
+            Long firstUserId = users.iterator().next().getId(); // the owner of file
+            storageService.deleteOne(af.getTitle(), firstUserId);
+            audioFileRepository.deleteById(id);
+            audioFileSearchRepository.deleteById(id);
+        }
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 

@@ -5,6 +5,7 @@ import com.soundgram.domain.AudioFile;
 import com.soundgram.repository.AudioFileRepository;
 import com.soundgram.repository.UserRepository;
 import com.soundgram.repository.search.AudioFileSearchRepository;
+import com.soundgram.service.StorageService;
 import com.soundgram.web.rest.errors.ExceptionTranslator;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -57,6 +58,9 @@ public class AudioFileResourceIT {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private StorageService storageService;
+
     @Mock
     private AudioFileRepository audioFileRepositoryMock;
 
@@ -90,7 +94,7 @@ public class AudioFileResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final AudioFileResource audioFileResource = new AudioFileResource(audioFileRepository, mockAudioFileSearchRepository, userRepository);
+        final AudioFileResource audioFileResource = new AudioFileResource(audioFileRepository, mockAudioFileSearchRepository, userRepository, storageService);
         this.restAudioFileMockMvc = MockMvcBuilders.standaloneSetup(audioFileResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -213,7 +217,7 @@ public class AudioFileResourceIT {
 
     @SuppressWarnings({"unchecked"})
     public void getAllAudioFilesWithEagerRelationshipsIsEnabled() throws Exception {
-        AudioFileResource audioFileResource = new AudioFileResource(audioFileRepositoryMock, mockAudioFileSearchRepository, userRepository);
+        AudioFileResource audioFileResource = new AudioFileResource(audioFileRepositoryMock, mockAudioFileSearchRepository, userRepository, storageService);
         when(audioFileRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         MockMvc restAudioFileMockMvc = MockMvcBuilders.standaloneSetup(audioFileResource)
@@ -223,25 +227,25 @@ public class AudioFileResourceIT {
             .setMessageConverters(jacksonMessageConverter).build();
 
         restAudioFileMockMvc.perform(get("/api/audio-files?eagerload=true"))
-        .andExpect(status().isOk());
+            .andExpect(status().isOk());
 
         verify(audioFileRepositoryMock, times(1)).findAllWithEagerRelationships(any());
     }
 
     @SuppressWarnings({"unchecked"})
     public void getAllAudioFilesWithEagerRelationshipsIsNotEnabled() throws Exception {
-        AudioFileResource audioFileResource = new AudioFileResource(audioFileRepositoryMock, mockAudioFileSearchRepository, userRepository);
-            when(audioFileRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
-            MockMvc restAudioFileMockMvc = MockMvcBuilders.standaloneSetup(audioFileResource)
+        AudioFileResource audioFileResource = new AudioFileResource(audioFileRepositoryMock, mockAudioFileSearchRepository, userRepository, storageService);
+        when(audioFileRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+        MockMvc restAudioFileMockMvc = MockMvcBuilders.standaloneSetup(audioFileResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
 
         restAudioFileMockMvc.perform(get("/api/audio-files?eagerload=true"))
-        .andExpect(status().isOk());
+            .andExpect(status().isOk());
 
-            verify(audioFileRepositoryMock, times(1)).findAllWithEagerRelationships(any());
+        verify(audioFileRepositoryMock, times(1)).findAllWithEagerRelationships(any());
     }
 
     @Test

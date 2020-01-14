@@ -90,6 +90,9 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
+storage:
+  location: ./uploads
+
 server:
   port: 8080
 
