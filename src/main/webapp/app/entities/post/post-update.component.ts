@@ -12,6 +12,7 @@ import { IPost, Post } from 'app/shared/model/post.model';
 import { PostService } from './post.service';
 import { ITag } from 'app/shared/model/tag.model';
 import { TagService } from 'app/entities/tag/tag.service';
+import { now } from 'moment';
 
 @Component({
   selector: 'jhi-post-update',
@@ -75,7 +76,7 @@ export class PostUpdateComponent implements OnInit {
       ...new Post(),
       id: this.editForm.get(['id']).value,
       postContent: this.editForm.get(['postContent']).value,
-      date: this.editForm.get(['date']).value != null ? moment(this.editForm.get(['date']).value, DATE_TIME_FORMAT) : undefined,
+      date: moment(new Date(now()), DATE_TIME_FORMAT), // aktualna data
       tags: this.editForm.get(['tags']).value
     };
   }

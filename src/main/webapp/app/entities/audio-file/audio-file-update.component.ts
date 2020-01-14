@@ -79,7 +79,7 @@ export class AudioFileUpdateComponent implements OnInit {
     this.isSaving = true;
     const audioFile = this.createFromForm();
     if (audioFile.id !== undefined) {
-      this.subscribeToSaveResponse(this.audioFileService.update(audioFile, this.currentFile));
+      this.subscribeToSaveResponse(this.audioFileService.update(audioFile)); // this.currentFile
     } else {
       this.subscribeToSaveResponse(this.audioFileService.create(this.currentFile));
     }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { SERVER_API_URL } from 'app/app.constants';
@@ -35,10 +35,11 @@ export class AudioFileService {
     return this.http.put<IAudioFile>(this.resourceUrl, audioFile, { observe: 'response' });
   }*/
 
-  update(audioFile: IAudioFile, file: File): Observable<EntityResponseType> {
-    const formdata: FormData = new FormData();
-    formdata.append('file', file);
-    return this.http.put<IAudioFile>(this.resourceUrl, { audioFile, formdata }, { observe: 'response' });
+  update(audioFile: IAudioFile): Observable<EntityResponseType> {
+    // file: File
+    // const formdata: FormData = new FormData();
+    // formdata.append('file', file);
+    return this.http.put<IAudioFile>(this.resourceUrl, audioFile, { observe: 'response' });
   }
 
   find(id: number): Observable<EntityResponseType> {
@@ -46,12 +47,12 @@ export class AudioFileService {
   }
 
   getFile(id: number): Observable<any> {
-    const httpOptions = {
+    /*    const httpOptions = {
       headers: new HttpHeaders({
         Accept: 'application/json',
         responseType: 'arraybuffer'
       })
-    };
+    };*/
 
     return this.http.get(`${this.resourceUrl + '-download'}/${id}`, { responseType: 'blob', observe: 'response' }).pipe(
       map((res: any) => {

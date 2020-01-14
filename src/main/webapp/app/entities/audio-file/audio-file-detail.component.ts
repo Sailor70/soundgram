@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { AudioFile, IAudioFile } from 'app/shared/model/audio-file.model';
+import { IAudioFile } from 'app/shared/model/audio-file.model';
 import { AudioFileService } from 'app/entities/audio-file/audio-file.service';
 import { HttpResponse } from '@angular/common/http';
 
@@ -26,7 +26,6 @@ export class AudioFileDetailComponent implements OnInit {
     this.audioFileService.getFile(this.audioFile.id).subscribe(
       res => {
         const blob: Blob = res; // new Blob([res.blob()], {type: "audio/mpeg"}); // mp3?
-        const url = URL.createObjectURL(res);
         const file = new File([blob], 'plik.mp3', { type: 'audio/mpeg', lastModified: Date.now() });
         const blobUrl = URL.createObjectURL(res);
         this.fileUrl = blobUrl;
