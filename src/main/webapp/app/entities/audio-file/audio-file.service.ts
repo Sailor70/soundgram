@@ -17,11 +17,13 @@ export class AudioFileService {
 
   constructor(protected http: HttpClient) {}
 
-  create(file: File): Observable<EntityResponseType> {
+  create(file: File, id: number): Observable<EntityResponseType> {
     // audioFile: IAudioFile
     // audioFile: IAudioFile,
+    console.error('Przekazane id: {}', id);
     const formdata: FormData = new FormData();
     formdata.append('file', file);
+    formdata.append('id', id.toString());
     // formdata.append('icon', icon); //plik ikony do zapisu i utworzenia iconPath
     // formdata.append('postId', audioFile.post.id.toString()); // id posta
     return this.http.post<IAudioFile>(this.resourceUrl, formdata, { observe: 'response' });

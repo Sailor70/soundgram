@@ -1,8 +1,10 @@
 package com.soundgram.web.rest;
 
 import com.soundgram.domain.AudioFile;
+import com.soundgram.domain.Post;
 import com.soundgram.domain.User;
 import com.soundgram.repository.AudioFileRepository;
+import com.soundgram.repository.PostRepository;
 import com.soundgram.repository.UserRepository;
 import com.soundgram.repository.search.AudioFileSearchRepository;
 import com.soundgram.security.SecurityUtils;
@@ -69,11 +71,14 @@ public class AudioFileResource {
 
     private final UserRepository userRepository;
 
-    public AudioFileResource(AudioFileRepository audioFileRepository, AudioFileSearchRepository audioFileSearchRepository, UserRepository userRepository, StorageService storageService) {
+    private final PostRepository postRepository;
+
+    public AudioFileResource(AudioFileRepository audioFileRepository, AudioFileSearchRepository audioFileSearchRepository, UserRepository userRepository, PostRepository postRepository, StorageService storageService) {
         this.audioFileRepository = audioFileRepository;
         this.audioFileSearchRepository = audioFileSearchRepository;
         this.storageService = storageService;
         this.userRepository = userRepository;
+        this.postRepository = postRepository;
     }
 
     /**
@@ -96,29 +101,37 @@ public class AudioFileResource {
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }*/
-
     @PostMapping("/audio-files")
-    public ResponseEntity<AudioFile> createAudioFile(@RequestParam("file") MultipartFile file) throws URISyntaxException {
+    public ResponseEntity<AudioFile> createAudioFile(@RequestParam("file") MultipartFile file, @RequestParam("id") String id) throws URISyntaxException {
 
-        User currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null);
-        Path audioPath = storageService.store(file, currentUser.getId());
-        String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path("/download/")
-            .path(file.getName())
-            .toUriString();
+        Long postId = Long.parseLong(id);
+        Optional<Post> postOpt = postRepository.findPostById(postId);
+        Post post;
+        if (postOpt.isPresent()) {
+            post = postOpt.get();
+            User currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null);
+            Path audioPath = storageService.store(file, currentUser.getId());
+            String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/download/")
+                .path(file.getName())
+                .toUriString();
 
-        AudioFile audioFile = new AudioFile();
-        audioFile.addUser(currentUser);
-        audioFile.setAudioPath(audioPath.toString());
-        audioFile.setPost(null); //
-        audioFile.setTitle(file.getOriginalFilename()); // audioPath.getFileName().toString()
-        audioFile.setIconPath(null); // to na później zostawiamy
+            AudioFile audioFile = new AudioFile();
+            audioFile.addUser(currentUser);
+            audioFile.setAudioPath(audioPath.toString()); // to jest niepotrzebne właściwie
+            audioFile.setPost(post); //
+            audioFile.setTitle(file.getOriginalFilename()); // audioPath.getFileName().toString()
+            audioFile.setIconPath(null); // to na później zostawiamy
 
-        AudioFile result = audioFileRepository.save(audioFile);
-        audioFileSearchRepository.save(result);
-        return ResponseEntity.created(new URI("/api/audio-files/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+            AudioFile result = audioFileRepository.save(audioFile);
+            audioFileSearchRepository.save(result);
+            return ResponseEntity.created(new URI("/api/audio-files/" + result.getId()))
+                .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+                .body(result);
+        }
+        return ResponseEntity.created(new URI("/api/audio-files/" + null))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, null))
+            .body(null); // te nule pozmieniać
     }
 
     /**

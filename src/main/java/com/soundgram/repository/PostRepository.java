@@ -25,4 +25,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("select post from Post post left join fetch post.tags where post.id =:id")
     Optional<Post> findOneWithEagerRelationships(@Param("id") Long id);
 
+    Optional<Post> findPostById(Long id);
+
 }

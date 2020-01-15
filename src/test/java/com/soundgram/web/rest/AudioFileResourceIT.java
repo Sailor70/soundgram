@@ -3,6 +3,7 @@ package com.soundgram.web.rest;
 import com.soundgram.SoundgramApp;
 import com.soundgram.domain.AudioFile;
 import com.soundgram.repository.AudioFileRepository;
+import com.soundgram.repository.PostRepository;
 import com.soundgram.repository.UserRepository;
 import com.soundgram.repository.search.AudioFileSearchRepository;
 import com.soundgram.service.StorageService;
@@ -61,6 +62,9 @@ public class AudioFileResourceIT {
     @Autowired
     private StorageService storageService;
 
+    @Autowired
+    private PostRepository postRepository;
+
     @Mock
     private AudioFileRepository audioFileRepositoryMock;
 
@@ -94,7 +98,7 @@ public class AudioFileResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final AudioFileResource audioFileResource = new AudioFileResource(audioFileRepository, mockAudioFileSearchRepository, userRepository, storageService);
+        final AudioFileResource audioFileResource = new AudioFileResource(audioFileRepository, mockAudioFileSearchRepository, userRepository, postRepository, storageService);
         this.restAudioFileMockMvc = MockMvcBuilders.standaloneSetup(audioFileResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -217,7 +221,7 @@ public class AudioFileResourceIT {
 
     @SuppressWarnings({"unchecked"})
     public void getAllAudioFilesWithEagerRelationshipsIsEnabled() throws Exception {
-        AudioFileResource audioFileResource = new AudioFileResource(audioFileRepositoryMock, mockAudioFileSearchRepository, userRepository, storageService);
+        AudioFileResource audioFileResource = new AudioFileResource(audioFileRepositoryMock, mockAudioFileSearchRepository, userRepository, postRepository, storageService);
         when(audioFileRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         MockMvc restAudioFileMockMvc = MockMvcBuilders.standaloneSetup(audioFileResource)
@@ -234,7 +238,7 @@ public class AudioFileResourceIT {
 
     @SuppressWarnings({"unchecked"})
     public void getAllAudioFilesWithEagerRelationshipsIsNotEnabled() throws Exception {
-        AudioFileResource audioFileResource = new AudioFileResource(audioFileRepositoryMock, mockAudioFileSearchRepository, userRepository, storageService);
+        AudioFileResource audioFileResource = new AudioFileResource(audioFileRepositoryMock, mockAudioFileSearchRepository, userRepository, postRepository, storageService);
         when(audioFileRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
         MockMvc restAudioFileMockMvc = MockMvcBuilders.standaloneSetup(audioFileResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)

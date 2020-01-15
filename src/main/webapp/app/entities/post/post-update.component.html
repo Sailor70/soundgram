@@ -25,24 +25,31 @@
 
                 <div class="form-group">
                     <label jhiTranslate="soundgramApp.post.tag" for="field_tags">Tag</label>
+                    <button id="jh-create-tag" class="btn btn-primary jh-create-entity create-audio-file" [routerLink]="['/tag/new']">
+                        <fa-icon [icon]="'plus'"></fa-icon>
+                        <span class="hidden-sm-down" >
+                        Add Tag
+                    </span>
+                    </button>
                     <select class="form-control" id="field_tags" multiple name="tags" formControlName="tags">
                         <option [ngValue]="getSelected(editForm.get('tags').value, tagOption)" *ngFor="let tagOption of tags; trackBy: trackTagByName">{{tagOption.name}}</option>
                     </select>
                 </div>
 
-                <button id="jh-create-audio" class="btn btn-primary jh-create-entity create-audio-file" [routerLink]="['/audio-file/new']">
+<!--                <button type="file" id="jh-create-audio" class="btn btn-primary jh-create-entity create-audio-file" (change)="selectFile($event)">
                     <fa-icon [icon]="'plus'"></fa-icon>
                     <span class="hidden-sm-down" >
                         Add audio file
                     </span>
-                </button>
+                </button>-->
 
-                <button id="jh-create-image" class="btn btn-primary jh-create-entity create-image" [routerLink]="['/image/new']">
-                    <fa-icon [icon]="'plus'"></fa-icon>
-                    <span class="hidden-sm-down">
-                        Add Image
-                    </span>
-                </button>
+                <div style="text-align:center">
+                    <div [innerHtml]='msg'></div>
+                    <label>
+                        <input type="file" (change)="selectFile($event)">
+                    </label>
+                    <!--<button [disabled]="!selectedFiles" (click)="upload()">Upload</button>-->
+                </div>
 
                 <p></p>
 
