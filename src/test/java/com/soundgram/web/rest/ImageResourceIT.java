@@ -3,7 +3,10 @@ package com.soundgram.web.rest;
 import com.soundgram.SoundgramApp;
 import com.soundgram.domain.Image;
 import com.soundgram.repository.ImageRepository;
+import com.soundgram.repository.PostRepository;
+import com.soundgram.repository.UserRepository;
 import com.soundgram.repository.search.ImageSearchRepository;
+import com.soundgram.service.StorageService;
 import com.soundgram.web.rest.errors.ExceptionTranslator;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -46,6 +49,15 @@ public class ImageResourceIT {
     @Autowired
     private ImageRepository imageRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private StorageService storageService;
+
+    @Autowired
+    private PostRepository postRepository;
+
     /**
      * This repository is mocked in the com.soundgram.repository.search test package.
      *
@@ -76,7 +88,7 @@ public class ImageResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final ImageResource imageResource = new ImageResource(imageRepository, mockImageSearchRepository);
+        final ImageResource imageResource = new ImageResource(imageRepository, mockImageSearchRepository, userRepository, postRepository, storageService);
         this.restImageMockMvc = MockMvcBuilders.standaloneSetup(imageResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -192,7 +204,7 @@ public class ImageResourceIT {
             .andExpect(jsonPath("$.[*].path").value(hasItem(DEFAULT_PATH)))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)));
     }
-    
+
     @Test
     @Transactional
     public void getImage() throws Exception {

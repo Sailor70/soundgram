@@ -81,7 +81,7 @@ export class AudioFileUpdateComponent implements OnInit {
     if (audioFile.id !== undefined) {
       this.subscribeToSaveResponse(this.audioFileService.update(audioFile)); // this.currentFile
     } else {
-      this.subscribeToSaveResponse(this.audioFileService.create(this.currentFile, 3));
+      this.subscribeToSaveResponse(this.audioFileService.create(this.currentFile, audioFile.post.id));
     }
   }
 

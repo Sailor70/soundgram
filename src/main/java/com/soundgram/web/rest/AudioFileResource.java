@@ -110,7 +110,7 @@ public class AudioFileResource {
         if (postOpt.isPresent()) {
             post = postOpt.get();
             User currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null);
-            Path audioPath = storageService.store(file, currentUser.getId());
+            Path audioPath = storageService.storeAudioFile(file, currentUser.getId());
             String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/download/")
                 .path(file.getName())
@@ -192,7 +192,7 @@ public class AudioFileResource {
             Set<User> users = af.getUsers();
             Long firstUserId = users.iterator().next().getId(); // the owner of file
 
-            Resource resource = storageService.loadAsResource(title, firstUserId);
+            Resource resource = storageService.loadAudioAsResource(title, firstUserId);
 
             byte[] templateContent = new byte[0];
             try {
@@ -280,7 +280,7 @@ public class AudioFileResource {
             AudioFile af = audioFile.get();
             Set<User> users = af.getUsers();
             Long firstUserId = users.iterator().next().getId(); // the owner of file
-            storageService.deleteOne(af.getTitle(), firstUserId);
+            storageService.deleteOneAudioFile(af.getTitle(), firstUserId);
             audioFileRepository.deleteById(id);
             audioFileSearchRepository.deleteById(id);
         }

@@ -145,4 +145,5 @@ Desktop.ini
 # ESLint
 ######################
 .eslintcache
-/uploads/
+/uploads/audioFiles/
+/uploads/images/*

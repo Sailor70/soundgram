@@ -10,16 +10,20 @@ public interface StorageService {
 
     void init();
 
-    Path store(MultipartFile file, Long id);
+    Path storeAudioFile(MultipartFile file, Long id);
+
+    Path storeImage(MultipartFile file, Long id);
 
     Stream<Path> loadAll();
 
-    Path load(String filename, Long id);
+    Resource loadAudioAsResource(String filename, Long id);
 
-    Resource loadAsResource(String filename, Long id);
+    Resource loadImageAsResource(String filename, Long id);
 
     void deleteAll();
 
-    void deleteOne(String filename, Long id);
+    void deleteOneAudioFile(String filename, Long id);
+
+    void deleteOneImage(String filename, Long id);
 
 }

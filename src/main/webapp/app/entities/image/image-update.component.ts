@@ -20,6 +20,9 @@ export class ImageUpdateComponent implements OnInit {
 
   posts: IPost[];
 
+  selectedFiles: FileList;
+  currentFile: File;
+
   editForm = this.fb.group({
     id: [],
     path: [null, [Validators.required]],
@@ -59,12 +62,13 @@ export class ImageUpdateComponent implements OnInit {
   }
 
   save() {
+    this.currentFile = this.selectedFiles.item(0);
     this.isSaving = true;
     const image = this.createFromForm();
     if (image.id !== undefined) {
       this.subscribeToSaveResponse(this.imageService.update(image));
     } else {
-      this.subscribeToSaveResponse(this.imageService.create(image));
+      this.subscribeToSaveResponse(this.imageService.create(this.currentFile, image.post.id));
     }
   }
 
@@ -83,6 +87,7 @@ export class ImageUpdateComponent implements OnInit {
   }
 
   protected onSaveSuccess() {
+    this.selectedFiles = null;
     this.isSaving = false;
     this.previousState();
   }
@@ -96,5 +101,9 @@ export class ImageUpdateComponent implements OnInit {
 
   trackPostById(index: number, item: IPost) {
     return item.id;
+  }
+
+  selectFile(event) {
+    this.selectedFiles = event.target.files;
   }
 }

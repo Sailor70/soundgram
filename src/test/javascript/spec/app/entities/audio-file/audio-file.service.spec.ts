@@ -45,7 +45,7 @@ describe('Service Tests', () => {
         );
         const expected = Object.assign({}, returnedFromService);
         service
-          .create(new File([null], 'plik.mp3', { type: 'audio/mpeg', lastModified: Date.now() })) // new AudioFile(null)
+          .create(new File([null], 'plik.mp3', { type: 'audio/mpeg', lastModified: Date.now() }), 5674) // new AudioFile(null)
           .pipe(take(1))
           .subscribe(resp => (expectedResult = resp));
         const req = httpMock.expectOne({ method: 'POST' });

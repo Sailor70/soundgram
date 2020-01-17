@@ -13,7 +13,7 @@ export class AudioFileDetailComponent implements OnInit {
   audioFile: IAudioFile;
   fileName: String;
   fileUrl: any;
-  audio;
+  audio: any;
 
   constructor(protected activatedRoute: ActivatedRoute, protected audioFileService: AudioFileService) {
     this.audio = new Audio();
