@@ -113,7 +113,9 @@ public class FileSystemStorageService implements StorageService {
     @Override
     public Resource loadAudioAsResource(String filename, Long id) {
         try {
-            Path file = Paths.get(rootLocation.toString() + "/" + id.toString()).resolve(filename);
+            log.debug("Files user id: " + id);
+            Path file = Paths.get(audioLocation.toString() + "/" + id.toString()).resolve(filename);
+            log.debug("File path: " + file.toString());
             Resource resource = new UrlResource(file.toUri());
             if (resource.exists() || resource.isReadable()) {
                 return resource;
@@ -153,7 +155,7 @@ public class FileSystemStorageService implements StorageService {
 
     @Override
     public void deleteOneAudioFile(String filename, Long id) {
-        Path filePath = Paths.get(rootLocation.toString() + "/" + id.toString()).resolve(filename);
+        Path filePath = Paths.get(audioLocation.toString() + "/" + id.toString()).resolve(filename);
         FileSystemUtils.deleteRecursively(filePath.toFile());
     }
 

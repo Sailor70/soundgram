@@ -13,4 +13,5 @@ import java.util.Optional;
 @Repository
 public interface ImageRepository extends JpaRepository<Image, Long> {
 
+    Optional<Image> findImageByPostId(Long postId);
 }

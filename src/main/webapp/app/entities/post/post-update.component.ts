@@ -14,6 +14,7 @@ import { ITag } from 'app/shared/model/tag.model';
 import { TagService } from 'app/entities/tag/tag.service';
 import { now } from 'moment';
 import { AudioFileService } from 'app/entities/audio-file/audio-file.service';
+import { ImageService } from 'app/entities/image/image.service';
 
 @Component({
   selector: 'jhi-post-update',
@@ -23,8 +24,10 @@ export class PostUpdateComponent implements OnInit {
   isSaving: boolean;
 
   tags: ITag[];
-  selectedFiles: FileList;
-  currentFile: File;
+  selectedAudioFiles: FileList;
+  selectedImages: FileList;
+  currentAudioFile: File;
+  currentImage: File;
   msg: any;
 
   currentPost: IPost;
@@ -41,6 +44,7 @@ export class PostUpdateComponent implements OnInit {
     protected postService: PostService,
     protected tagService: TagService,
     protected audioFileService: AudioFileService,
+    protected imageService: ImageService,
     protected activatedRoute: ActivatedRoute,
     private fb: FormBuilder
   ) {}
@@ -69,8 +73,8 @@ export class PostUpdateComponent implements OnInit {
   }
 
   save() {
-    this.currentFile = this.selectedFiles.item(0);
-
+    this.currentAudioFile = this.selectedAudioFiles.item(0);
+    this.currentImage = this.selectedImages.item(0);
     this.isSaving = true;
     const post = this.createFromForm();
     if (post.id !== undefined) {
@@ -97,10 +101,13 @@ export class PostUpdateComponent implements OnInit {
   protected onSaveSuccess(res: HttpResponse<IPost>) {
     this.currentPost = res.body;
 
-    this.audioFileService.create(this.currentFile, this.currentPost.id).subscribe();
+    this.audioFileService.create(this.currentAudioFile, this.currentPost.id).subscribe();
+    this.imageService.create(this.currentImage, this.currentPost.id).subscribe();
     console.error('currentPost: {]', this.currentPost.id);
 
-    this.selectedFiles = null;
+    this.selectedAudioFiles = null;
+    this.selectedImages = null;
+
     this.isSaving = false;
     this.previousState();
   }
@@ -128,10 +135,12 @@ export class PostUpdateComponent implements OnInit {
     return option;
   }
 
-  addImage() {}
+  selectAudioFile(event) {
+    this.selectedAudioFiles = event.target.files;
+  }
 
-  selectFile(event) {
-    this.selectedFiles = event.target.files;
+  selectImage(event) {
+    this.selectedImages = event.target.files;
   }
 }
 

@@ -1,5 +1,6 @@
 package com.soundgram.repository;
 import com.soundgram.domain.AudioFile;
+import com.soundgram.domain.Image;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
@@ -24,5 +25,7 @@ public interface AudioFileRepository extends JpaRepository<AudioFile, Long> {
 
     @Query("select audioFile from AudioFile audioFile left join fetch audioFile.users where audioFile.id =:id")
     Optional<AudioFile> findOneWithEagerRelationships(@Param("id") Long id);
+
+    Optional<AudioFile> findAudioFileByPostId(Long postId);
 
 }

@@ -36,6 +36,10 @@ export class ImageService {
     return this.http.get<IImage>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
+  findByPost(id: number): Observable<EntityResponseType> {
+    return this.http.get<IImage>(`${this.resourceUrl + '-by-post'}/${id}`, { observe: 'response' });
+  }
+
   getFile(id: number): Observable<any> {
     return this.http.get(`${this.resourceUrl + '-download'}/${id}`, { responseType: 'blob', observe: 'response' }).pipe(
       map((res: any) => {

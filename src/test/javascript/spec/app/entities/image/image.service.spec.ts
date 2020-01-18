@@ -3,6 +3,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { take, map } from 'rxjs/operators';
 import { ImageService } from 'app/entities/image/image.service';
 import { IImage, Image } from 'app/shared/model/image.model';
+import { Post } from 'app/shared/model/post.model';
 
 describe('Service Tests', () => {
   describe('Image Service', () => {
@@ -45,7 +46,7 @@ describe('Service Tests', () => {
         );
         const expected = Object.assign({}, returnedFromService);
         service
-          .create(new Image(null))
+          .create(new File([null], 'grafika.jpg', { type: 'image/jpeg', lastModified: Date.now() }), new Post(null).id)
           .pipe(take(1))
           .subscribe(resp => (expectedResult = resp));
         const req = httpMock.expectOne({ method: 'POST' });

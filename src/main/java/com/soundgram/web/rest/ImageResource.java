@@ -169,6 +169,13 @@ public class ImageResource {
         return ResponseUtil.wrapOrNotFound(image);
     }
 
+    @GetMapping("/images-by-post/{id}")
+    public ResponseEntity<Image> getImageByPost(@PathVariable Long id) {
+        log.debug("REST request to get Image that belongs to post of id : {}", id);
+        Optional<Image> image = imageRepository.findImageByPostId(id);
+        return ResponseUtil.wrapOrNotFound(image);
+    }
+
     @GetMapping("/images-download/{id}")
     public ResponseEntity<byte[]> downloadImage(@PathVariable Long id) {
         Optional<Image> image = imageRepository.findById(id);

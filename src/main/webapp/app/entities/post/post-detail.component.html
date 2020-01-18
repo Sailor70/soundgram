@@ -21,6 +21,19 @@
                 </dd>
             </dl>
 
+            <button type="button"
+                    (click)="playAudio()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'play-circle'"></fa-icon>
+            </button>
+            <button type="button"
+                    (click)="pauseAudio()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'pause-circle'"></fa-icon>
+            </button>
+
+            <img id="img}"/>
+
             <button type="submit"
                     (click)="previousState()"
                     class="btn btn-info">

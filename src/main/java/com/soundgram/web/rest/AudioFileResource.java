@@ -1,6 +1,7 @@
 package com.soundgram.web.rest;
 
 import com.soundgram.domain.AudioFile;
+import com.soundgram.domain.Image;
 import com.soundgram.domain.Post;
 import com.soundgram.domain.User;
 import com.soundgram.repository.AudioFileRepository;
@@ -181,6 +182,12 @@ public class AudioFileResource {
         return ResponseUtil.wrapOrNotFound(audioFile);
     }
 
+    @GetMapping("/audio-files-by-post/{id}")
+    public ResponseEntity<AudioFile> getAudioFileByPost(@PathVariable Long id) {
+        log.debug("REST request to get Image that belongs to post of id : {}", id);
+        Optional<AudioFile> audioFile = audioFileRepository.findAudioFileByPostId(id);
+        return ResponseUtil.wrapOrNotFound(audioFile);
+    }
 
     @GetMapping("/audio-files-download/{id}")
     public ResponseEntity<byte[]> downloadAudioFile(@PathVariable Long id) {

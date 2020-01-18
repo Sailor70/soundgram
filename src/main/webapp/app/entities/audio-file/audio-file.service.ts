@@ -44,6 +44,10 @@ export class AudioFileService {
     return this.http.get<IAudioFile>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
+  findByPost(id: number): Observable<EntityResponseType> {
+    return this.http.get<IAudioFile>(`${this.resourceUrl + '-by-post'}/${id}`, { observe: 'response' });
+  }
+
   getFile(id: number): Observable<any> {
     /*    const httpOptions = {
       headers: new HttpHeaders({
@@ -54,6 +58,8 @@ export class AudioFileService {
 
     return this.http.get(`${this.resourceUrl + '-download'}/${id}`, { responseType: 'blob', observe: 'response' }).pipe(
       map((res: any) => {
+        // console.error('File resource title: ' + res['filename'].data);
+        // console.error('File name: ' + res.headers.getAll());
         return new Blob([res.body], { type: 'audio/mpeg' });
       })
     ); // params: {responseType: "blob"}

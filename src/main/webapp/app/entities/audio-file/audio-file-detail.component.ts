@@ -25,12 +25,13 @@ export class AudioFileDetailComponent implements OnInit {
     });
     this.audioFileService.getFile(this.audioFile.id).subscribe(
       res => {
-        const blob: Blob = res; // new Blob([res.blob()], {type: "audio/mpeg"}); // mp3?
-        const file = new File([blob], 'plik.mp3', { type: 'audio/mpeg', lastModified: Date.now() });
+        // const blob: Blob = res; // new Blob([res.blob()], {type: "audio/mpeg"}); // mp3?
+        // const file = new File([blob], 'plik.mp3', { type: 'audio/mpeg', lastModified: Date.now() });
         const blobUrl = URL.createObjectURL(res);
         this.fileUrl = blobUrl;
-        console.error('File resource type: ' + blob.size);
-        console.error('File name: ' + file.name);
+        this.audio.src = this.fileUrl;
+        // console.error('File resource title: ' + res.headers.get('filename'));
+        // console.error('File name: ' + res.headers.getAttributeNames());
       },
       (res: HttpResponse<IAudioFile>) => {
         console.error('File resource error: ' + res);
@@ -44,7 +45,6 @@ export class AudioFileDetailComponent implements OnInit {
 
   playAudio() {
     if (!this.audio.paused) {
-      this.audio.src = this.fileUrl;
       this.audio.load();
       this.audio.play();
     } else {
