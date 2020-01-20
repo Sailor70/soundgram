@@ -157,6 +157,25 @@ public class AudioFileResource {
             .body(result);
     }
 
+    // Give a like to audio file ( Audio_File_User ) - add current logged user to audio file
+    @PutMapping("/audio-files-user")
+    public ResponseEntity<AudioFile> addUserToAudioFile(@Valid @RequestBody AudioFile audioFile) throws URISyntaxException {
+        log.debug("REST request to add user to AudioFile : {}", audioFile);
+        if (audioFile.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        User currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null);
+        log.debug("Audio File: {}", audioFile.getId());
+        log.debug("Current user: {}", currentUser.getLogin());
+        log.debug("AudioFile users: {}", audioFile.getUsers());
+        audioFile.addUser(currentUser);
+        AudioFile result = audioFileRepository.save(audioFile);
+        audioFileSearchRepository.save(result);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, audioFile.getId().toString()))
+            .body(result);
+    }
+
     /**
      * {@code GET  /audio-files} : get all the audioFiles.
      *
@@ -186,6 +205,13 @@ public class AudioFileResource {
     public ResponseEntity<AudioFile> getAudioFileByPost(@PathVariable Long id) {
         log.debug("REST request to get Image that belongs to post of id : {}", id);
         Optional<AudioFile> audioFile = audioFileRepository.findAudioFileByPostId(id);
+        if(audioFile.isPresent()){
+            log.debug("AudioFile users : {}", audioFile.get().getUsers()); // trzeba użyć get() bo inaczej nie zwraca listy userów
+        }
+/*        if(audioFile.isPresent()){
+            AudioFile af = audioFile.get();
+            log.debug("AudioFile users : {}", af.getUsers());
+        }*/
         return ResponseUtil.wrapOrNotFound(audioFile);
     }
 

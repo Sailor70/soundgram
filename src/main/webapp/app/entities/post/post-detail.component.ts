@@ -5,7 +5,7 @@ import { IPost } from 'app/shared/model/post.model';
 import { ImageService } from 'app/entities/image/image.service';
 import { IImage } from 'app/shared/model/image.model';
 import { HttpResponse } from '@angular/common/http';
-import { IAudioFile } from 'app/shared/model/audio-file.model';
+import { AudioFile, IAudioFile } from 'app/shared/model/audio-file.model';
 import { AudioFileService } from 'app/entities/audio-file/audio-file.service';
 
 @Component({
@@ -39,7 +39,9 @@ export class PostDetailComponent implements OnInit {
       (res: HttpResponse<IAudioFile>) => {
         this.audioFile = res.body;
         this.onLoadAudioFileSuccess();
-        console.error('Audio info: {}' + this.audioFile.id);
+        console.error('Audio id:' + this.audioFile.id);
+        // this.audioFile.users.forEach((user) => user.id);
+        console.error('Audio users count:' + this.audioFile.users.length);
       },
       res => {
         console.error('Audio load error: ' + res.body);
@@ -50,7 +52,7 @@ export class PostDetailComponent implements OnInit {
       (res: HttpResponse<IImage>) => {
         this.image = res.body;
         this.onLoadImageSuccess();
-        console.error('image info: {}' + this.image.id);
+        console.error('image id:' + this.image.id);
       },
       res => {
         console.error('Image load error: ' + res.body);
@@ -96,10 +98,18 @@ export class PostDetailComponent implements OnInit {
       this.audio.play();
     }
   }
+
   pauseAudio() {
     if (!this.audio.paused) {
       this.audio.pause();
     }
+  }
+
+  likeAudioFile() {
+    // this.audioFile.users.push()
+    this.audioFileService.addUser(this.audioFile).subscribe((res: HttpResponse<AudioFile>) => {
+      this.audioFile = res.body;
+    });
   }
 
   previousState() {

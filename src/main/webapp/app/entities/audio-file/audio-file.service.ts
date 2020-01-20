@@ -34,10 +34,11 @@ export class AudioFileService {
   }*/
 
   update(audioFile: IAudioFile): Observable<EntityResponseType> {
-    // file: File
-    // const formdata: FormData = new FormData();
-    // formdata.append('file', file);
     return this.http.put<IAudioFile>(this.resourceUrl, audioFile, { observe: 'response' });
+  }
+
+  addUser(audioFile: IAudioFile): Observable<EntityResponseType> {
+    return this.http.put<IAudioFile>(this.resourceUrl + '-user', audioFile, { observe: 'response' });
   }
 
   find(id: number): Observable<EntityResponseType> {

@@ -21,30 +21,50 @@
                 </dd>
             </dl>
 
-            <button type="button"
-                    (click)="playAudio()"
-                    class="btn btn-info">
-                <fa-icon [icon]="'play-circle'"></fa-icon>
-            </button>
-            <button type="button"
-                    (click)="pauseAudio()"
-                    class="btn btn-info">
-                <fa-icon [icon]="'pause-circle'"></fa-icon>
-            </button>
+            <div *ngIf="audioFile">
 
-            <img id="img}"/>
+                <span>{{audioFile.title}}</span><br>
+                <span> Likes: {{audioFile.users.length}}</span>
 
-            <button type="submit"
-                    (click)="previousState()"
-                    class="btn btn-info">
-                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
-            </button>
+            </div>
 
-            <button type="button"
-                    [routerLink]="['/post', post.id, 'edit']"
-                    class="btn btn-primary">
-                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-            </button>
+            <div class="form-group row">
+                <button type="button"
+                        (click)="playAudio()"
+                        class="btn btn-info">
+                    <fa-icon [icon]="'play-circle'"></fa-icon>
+                </button>
+                <button type="button"
+                        (click)="pauseAudio()"
+                        class="btn btn-info">
+                    <fa-icon [icon]="'pause-circle'"></fa-icon>
+                </button>
+
+                <button class="btn btn-primary" (click)="likeAudioFile()">
+                    <fa-icon [icon]="'star'"></fa-icon>
+                    <span class="hidden-sm-down">
+                        Like this Audio
+                    </span>
+                </button>
+            </div>
+
+            <img class="row" id="img}" style="max-width:400px;width:100%;max-height:500px;height:100%"/>
+
+            <br>
+
+            <div class="form-group row">
+                <button type="submit"
+                        (click)="previousState()"
+                        class="btn btn-info">
+                    <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+                </button>
+
+                <button type="button"
+                        [routerLink]="['/post', post.id, 'edit']"
+                        class="btn btn-primary">
+                    <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+                </button>
+            </div>
         </div>
     </div>
 </div>
