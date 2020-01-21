@@ -2,7 +2,9 @@ package com.soundgram.web.rest;
 
 import com.soundgram.domain.Comment;
 import com.soundgram.repository.CommentRepository;
+import com.soundgram.repository.UserRepository;
 import com.soundgram.repository.search.CommentSearchRepository;
+import com.soundgram.security.SecurityUtils;
 import com.soundgram.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -17,7 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional; 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -49,9 +51,12 @@ public class CommentResource {
 
     private final CommentSearchRepository commentSearchRepository;
 
-    public CommentResource(CommentRepository commentRepository, CommentSearchRepository commentSearchRepository) {
+    private final UserRepository userRepository;
+
+    public CommentResource(CommentRepository commentRepository, CommentSearchRepository commentSearchRepository, UserRepository userRepository) {
         this.commentRepository = commentRepository;
         this.commentSearchRepository = commentSearchRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -67,6 +72,7 @@ public class CommentResource {
         if (comment.getId() != null) {
             throw new BadRequestAlertException("A new comment cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        comment.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null));
         Comment result = commentRepository.save(comment);
         commentSearchRepository.save(result);
         return ResponseEntity.created(new URI("/api/comments/" + result.getId()))
@@ -110,6 +116,14 @@ public class CommentResource {
         Page<Comment> page = commentRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    @GetMapping("/comments-post")
+    public ResponseEntity<List<Comment>> getCommentsByPost(@PathVariable Long postId) {
+        log.debug("REST request to get a page of Comments");
+        List<Comment> page = commentRepository.findCommentByPostId(postId);
+        HttpHeaders headers = new HttpHeaders(null); // PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page);
     }
 
     /**

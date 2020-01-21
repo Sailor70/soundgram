@@ -7,6 +7,12 @@ import { IImage } from 'app/shared/model/image.model';
 import { HttpResponse } from '@angular/common/http';
 import { AudioFile, IAudioFile } from 'app/shared/model/audio-file.model';
 import { AudioFileService } from 'app/entities/audio-file/audio-file.service';
+import { CommentService } from 'app/entities/comment/comment.service';
+import { IComment } from 'app/shared/model/comment.model';
+import { IUser } from 'app/core/user/user.model';
+import * as moment from 'moment';
+import { now } from 'moment';
+import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 
 @Component({
   selector: 'jhi-post-detail',
@@ -22,10 +28,16 @@ export class PostDetailComponent implements OnInit {
   fileUrl: any;
   audio: any;
 
+  commentContent: string;
+  newComment: IComment;
+  usersComments: IComment[];
+  currentUser: IUser;
+
   constructor(
     protected activatedRoute: ActivatedRoute,
     protected imageService: ImageService,
-    protected audioFileService: AudioFileService
+    protected audioFileService: AudioFileService,
+    protected commentService: CommentService
   ) {
     this.audio = new Audio();
   }
@@ -58,6 +70,19 @@ export class PostDetailComponent implements OnInit {
         console.error('Image load error: ' + res.body);
       }
     );
+
+    this.commentService.findByPost(this.post.id).subscribe(
+      (res: HttpResponse<IComment[]>) => {
+        this.usersComments = res.body;
+      },
+      res => {
+        console.error('Comments load error: ' + res.body);
+      }
+    );
+
+    // this.principal.identity().then(account => {
+    //   this.currentUser = account;
+    // });
   }
 
   protected onLoadImageSuccess() {
@@ -109,6 +134,23 @@ export class PostDetailComponent implements OnInit {
     // this.audioFile.users.push()
     this.audioFileService.addUser(this.audioFile).subscribe((res: HttpResponse<AudioFile>) => {
       this.audioFile = res.body;
+    });
+  }
+
+  addComment() {
+    this.newComment = new (class implements IComment {
+      date: moment.Moment;
+      id: number;
+      post: IPost;
+      textContent: string;
+      user: IUser;
+    })();
+    this.newComment.post = this.post;
+    this.newComment.textContent = this.commentContent;
+    this.newComment.user = null; // spróbować pobrać usera na frontendzie bo teraz idzie ze spring security
+    this.newComment.date = moment(new Date(now()), DATE_TIME_FORMAT);
+    this.commentService.create(this.newComment).subscribe((res: HttpResponse<IUser>) => {
+      this.currentUser = res.body;
     });
   }
 

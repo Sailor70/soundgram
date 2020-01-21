@@ -3,6 +3,7 @@ package com.soundgram.web.rest;
 import com.soundgram.SoundgramApp;
 import com.soundgram.domain.Comment;
 import com.soundgram.repository.CommentRepository;
+import com.soundgram.repository.UserRepository;
 import com.soundgram.repository.search.CommentSearchRepository;
 import com.soundgram.web.rest.errors.ExceptionTranslator;
 
@@ -68,6 +69,9 @@ public class CommentResourceIT {
     private ExceptionTranslator exceptionTranslator;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private EntityManager em;
 
     @Autowired
@@ -80,7 +84,7 @@ public class CommentResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final CommentResource commentResource = new CommentResource(commentRepository, mockCommentSearchRepository);
+        final CommentResource commentResource = new CommentResource(commentRepository, mockCommentSearchRepository, userRepository);
         this.restCommentMockMvc = MockMvcBuilders.standaloneSetup(commentResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -178,7 +182,7 @@ public class CommentResourceIT {
             .andExpect(jsonPath("$.[*].textContent").value(hasItem(DEFAULT_TEXT_CONTENT)))
             .andExpect(jsonPath("$.[*].date").value(hasItem(DEFAULT_DATE.toString())));
     }
-    
+
     @Test
     @Transactional
     public void getComment() throws Exception {
