@@ -66,6 +66,14 @@ export class AudioFileService {
     ); // params: {responseType: "blob"}
   }
 
+  getLiked(): Observable<EntityArrayResponseType> {
+    return this.http.get<IAudioFile[]>(this.resourceUrl + '-liked', { observe: 'response' });
+  }
+
+  getUserFiles(): Observable<EntityArrayResponseType> {
+    return this.http.get<IAudioFile[]>(this.resourceUrl + '-users', { observe: 'response' });
+  }
+
   query(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http.get<IAudioFile[]>(this.resourceUrl, { params: options, observe: 'response' });

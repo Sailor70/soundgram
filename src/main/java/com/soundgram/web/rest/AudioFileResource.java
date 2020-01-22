@@ -40,10 +40,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Blob;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -203,7 +200,7 @@ public class AudioFileResource {
 
     @GetMapping("/audio-files-by-post/{id}")
     public ResponseEntity<AudioFile> getAudioFileByPost(@PathVariable Long id) {
-        log.debug("REST request to get Image that belongs to post of id : {}", id);
+        log.debug("REST request to get AudioFile that belongs to post of id : {}", id);
         Optional<AudioFile> audioFile = audioFileRepository.findAudioFileByPostId(id);
         if(audioFile.isPresent()){
             log.debug("AudioFile users : {}", audioFile.get().getUsers()); // trzeba użyć get() bo inaczej nie zwraca listy userów
@@ -213,6 +210,43 @@ public class AudioFileResource {
             log.debug("AudioFile users : {}", af.getUsers());
         }*/
         return ResponseUtil.wrapOrNotFound(audioFile);
+    }
+
+    @GetMapping("/audio-files-liked")
+    public List<AudioFile> getLikedAudioFiles() {
+        User currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null);
+        Long currentUserId = currentUser.getId();
+        log.debug("REST request to get Audiofiles liked by the user of login : {}", currentUserId);
+        List<AudioFile> allAF = audioFileRepository.findAllWithEagerRelationships();
+        List<AudioFile> likedAFs = new ArrayList<>();
+        for(AudioFile af : allAF){
+            Set<User> users = af.getUsers();
+            Iterator<User> usersIt = users.iterator();
+            usersIt.next(); // skip the owner of File (user's owned audio files wont be displayed at liked afs)
+            while(usersIt.hasNext()){
+                if(usersIt.next().getId().equals(currentUserId)) {
+                    likedAFs.add(af);
+                }
+            }
+        }
+        return likedAFs;
+    }
+
+    @GetMapping("/audio-files-users")
+    public List<AudioFile> getUsersAudioFiles() {
+        User currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null);
+        Long currentUserId = currentUser.getId();
+        log.debug("REST request to get Audiofiles that are owned by the user of id : {}", currentUserId);
+        List<AudioFile> allAF = audioFileRepository.findAllWithEagerRelationships();
+        List<AudioFile> usersAFs = new ArrayList<>();
+        for(AudioFile af : allAF){
+            Set<User> users = af.getUsers();
+            Long firstUserId = users.iterator().next().getId(); // the owner of file
+            if(firstUserId.equals(currentUserId)){
+                usersAFs.add(af);
+            }
+        }
+        return usersAFs;
     }
 
     @GetMapping("/audio-files-download/{id}")

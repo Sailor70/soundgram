@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core'; // OnDestroy
 import { IAudioFile } from 'app/shared/model/audio-file.model';
 import { Subscription } from 'rxjs';
 import { AudioFileService } from 'app/entities/audio-file/audio-file.service';
@@ -13,10 +13,12 @@ import { HttpResponse } from '@angular/common/http';
   templateUrl: './music.component.html',
   styleUrls: ['music.component.scss']
 })
-export class MusicComponent implements OnInit {
+export class MusicComponent implements OnInit, OnDestroy {
   audioFiles: IAudioFile[];
   eventSubscriber: Subscription;
   currentSearch: string;
+
+  likedAudioDisplayed = true;
 
   constructor(
     protected audioFileService: AudioFileService,
@@ -31,11 +33,13 @@ export class MusicComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadAll();
+    this.loadLikedFiles();
+    // this.loadAll();
     this.registerChangeInAudioFiles();
   }
 
   loadAll() {
+    this.likedAudioDisplayed = true;
     if (this.currentSearch) {
       this.audioFileService
         .search({
@@ -45,6 +49,22 @@ export class MusicComponent implements OnInit {
       return;
     }
     this.audioFileService.query().subscribe((res: HttpResponse<IAudioFile[]>) => {
+      this.audioFiles = res.body;
+      this.currentSearch = '';
+    });
+  }
+
+  loadLikedFiles() {
+    this.likedAudioDisplayed = true;
+    this.audioFileService.getLiked().subscribe((res: HttpResponse<IAudioFile[]>) => {
+      this.audioFiles = res.body;
+      this.currentSearch = '';
+    });
+  }
+
+  loadUserFiles() {
+    this.likedAudioDisplayed = false;
+    this.audioFileService.getUserFiles().subscribe((res: HttpResponse<IAudioFile[]>) => {
       this.audioFiles = res.body;
       this.currentSearch = '';
     });
@@ -63,7 +83,8 @@ export class MusicComponent implements OnInit {
     this.loadAll();
   }
 
-  OnDestroy() {
+  ngOnDestroy() {
+    // console.error('destroyed!');
     this.eventManager.destroy(this.eventSubscriber);
   }
 
