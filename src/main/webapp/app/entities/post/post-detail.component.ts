@@ -74,6 +74,7 @@ export class PostDetailComponent implements OnInit {
     this.commentService.findByPost(this.post.id).subscribe(
       (res: HttpResponse<IComment[]>) => {
         this.usersComments = res.body;
+        this.usersComments.forEach(value => console.error(value));
       },
       res => {
         console.error('Comments load error: ' + res.body);

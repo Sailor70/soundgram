@@ -48,6 +48,7 @@ export class CommentService {
   }
 
   findByPost(postId: number): Observable<EntityArrayResponseType> {
+    console.error('Find comment by post of id:' + postId);
     return this.http
       .get<IComment[]>(`${this.resourceUrl + '-post'}/${postId}`, { observe: 'response' })
       .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
