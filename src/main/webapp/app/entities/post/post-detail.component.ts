@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { IPost } from 'app/shared/model/post.model';
@@ -18,7 +18,7 @@ import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
   selector: 'jhi-post-detail',
   templateUrl: './post-detail.component.html'
 })
-export class PostDetailComponent implements OnInit {
+export class PostDetailComponent implements OnInit, OnDestroy {
   post: IPost;
   image: IImage;
   imageUrl: any;
@@ -84,6 +84,10 @@ export class PostDetailComponent implements OnInit {
     // this.principal.identity().then(account => {
     //   this.currentUser = account;
     // });
+  }
+
+  ngOnDestroy(): void {
+    this.audio.pause();
   }
 
   protected onLoadImageSuccess() {

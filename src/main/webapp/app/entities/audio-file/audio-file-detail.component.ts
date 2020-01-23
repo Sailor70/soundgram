@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { IAudioFile } from 'app/shared/model/audio-file.model';
@@ -9,11 +9,11 @@ import { HttpResponse } from '@angular/common/http';
   selector: 'jhi-audio-file-detail',
   templateUrl: './audio-file-detail.component.html'
 })
-export class AudioFileDetailComponent implements OnInit {
+export class AudioFileDetailComponent implements OnInit, OnDestroy {
   audioFile: IAudioFile;
   fileName: String;
   fileUrl: any;
-  audio: any;
+  audio: HTMLAudioElement;
 
   constructor(protected activatedRoute: ActivatedRoute, protected audioFileService: AudioFileService) {
     this.audio = new Audio();
@@ -37,6 +37,10 @@ export class AudioFileDetailComponent implements OnInit {
         console.error('File resource error: ' + res);
       }
     );
+  }
+
+  ngOnDestroy(): void {
+    this.audio.pause();
   }
 
   previousState() {
