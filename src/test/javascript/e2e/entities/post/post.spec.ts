@@ -40,8 +40,9 @@ describe('Post e2e test', () => {
     await postComponentsPage.clickOnCreateButton();
     await promise.all([
       postUpdatePage.setPostContentInput('postContent'),
-      postUpdatePage.setDateInput('01/01/2001' + protractor.Key.TAB + '02:30AM')
+      postUpdatePage.setDateInput('01/01/2001' + protractor.Key.TAB + '02:30AM'),
       // postUpdatePage.tagSelectLastOption(),
+      postUpdatePage.userSelectLastOption()
     ]);
     expect(await postUpdatePage.getPostContentInput()).to.eq('postContent', 'Expected PostContent value to be equals to postContent');
     expect(await postUpdatePage.getDateInput()).to.contain('2001-01-01T02:30', 'Expected date value to be equals to 2000-12-31');

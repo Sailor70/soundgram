@@ -19,7 +19,8 @@
       },
       "postContent": "Post Content",
       "date": "Date",
-      "tag": "Tag"
+      "tag": "Tag",
+      "user": "User"
     }
   }
 }

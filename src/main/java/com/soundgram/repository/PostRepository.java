@@ -15,6 +15,9 @@ import java.util.Optional;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 
+    @Query("select post from Post post where post.user.login = ?#{principal.username}")
+    List<Post> findByUserIsCurrentUser();
+
     @Query(value = "select distinct post from Post post left join fetch post.tags",
         countQuery = "select count(distinct post) from Post post")
     Page<Post> findAllWithEagerRelationships(Pageable pageable);

@@ -15,6 +15,7 @@ import { TagService } from 'app/entities/tag/tag.service';
 import { now } from 'moment';
 import { AudioFileService } from 'app/entities/audio-file/audio-file.service';
 import { ImageService } from 'app/entities/image/image.service';
+import { UserService } from 'app/core/user/user.service';
 
 @Component({
   selector: 'jhi-post-update',
@@ -24,6 +25,7 @@ export class PostUpdateComponent implements OnInit {
   isSaving: boolean;
 
   tags: ITag[];
+  // users: IUser[];
   selectedAudioFiles: FileList;
   selectedImages: FileList;
   currentAudioFile: File;
@@ -36,7 +38,8 @@ export class PostUpdateComponent implements OnInit {
     id: [],
     postContent: [],
     date: [],
-    tags: []
+    tags: [],
+    user: []
   });
 
   constructor(
@@ -46,6 +49,7 @@ export class PostUpdateComponent implements OnInit {
     protected audioFileService: AudioFileService,
     protected imageService: ImageService,
     protected activatedRoute: ActivatedRoute,
+    protected userService: UserService,
     private fb: FormBuilder
   ) {}
 
@@ -57,6 +61,9 @@ export class PostUpdateComponent implements OnInit {
     this.tagService
       .query()
       .subscribe((res: HttpResponse<ITag[]>) => (this.tags = res.body), (res: HttpErrorResponse) => this.onError(res.message));
+    /*    this.userService
+      .query()
+      .subscribe((res: HttpResponse<IUser[]>) => (this.users = res.body), (res: HttpErrorResponse) => this.onError(res.message));*/
   }
 
   updateForm(post: IPost) {
@@ -64,7 +71,8 @@ export class PostUpdateComponent implements OnInit {
       id: post.id,
       postContent: post.postContent,
       date: post.date != null ? post.date.format(DATE_TIME_FORMAT) : null,
-      tags: post.tags
+      tags: post.tags,
+      user: null
     });
   }
 
@@ -90,7 +98,8 @@ export class PostUpdateComponent implements OnInit {
       id: this.editForm.get(['id']).value,
       postContent: this.editForm.get(['postContent']).value,
       date: moment(new Date(now()), DATE_TIME_FORMAT), // aktualna data
-      tags: this.editForm.get(['tags']).value
+      tags: this.editForm.get(['tags']).value,
+      user: null
     };
   }
 

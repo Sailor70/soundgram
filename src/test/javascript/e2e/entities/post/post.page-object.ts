@@ -29,6 +29,7 @@ export class PostUpdatePage {
   postContentInput = element(by.id('field_postContent'));
   dateInput = element(by.id('field_date'));
   tagSelect = element(by.id('field_tag'));
+  userSelect = element(by.id('field_user'));
 
   async getPageTitle() {
     return this.pageTitle.getAttribute('jhiTranslate');
@@ -67,6 +68,25 @@ export class PostUpdatePage {
 
   async getTagSelectedOption() {
     return await this.tagSelect.element(by.css('option:checked')).getText();
+  }
+
+  async userSelectLastOption() {
+    await this.userSelect
+      .all(by.tagName('option'))
+      .last()
+      .click();
+  }
+
+  async userSelectOption(option) {
+    await this.userSelect.sendKeys(option);
+  }
+
+  getUserSelect(): ElementFinder {
+    return this.userSelect;
+  }
+
+  async getUserSelectedOption() {
+    return await this.userSelect.element(by.css('option:checked')).getText();
   }
 
   async save() {

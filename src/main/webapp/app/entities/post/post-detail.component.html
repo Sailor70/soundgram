@@ -16,8 +16,12 @@
                 <dt><span jhiTranslate="soundgramApp.post.tag">Tag</span></dt>
                 <dd>
                     <span *ngFor="let tag of post.tags; let last = last">
-                        <a [routerLink]="['/tag', tag?.id, 'view' ]">{{tag.name}}</a>{{last ? '' : ', '}}
+                        <a [routerLink]="['/tag', tag?.id, 'view' ]">{{tag.id}}</a>{{last ? '' : ', '}}
                     </span>
+                </dd>
+                <dt><span jhiTranslate="soundgramApp.post.user">User</span></dt>
+                <dd>
+                    {{post.user?.login}}
                 </dd>
             </dl>
 
@@ -54,17 +58,17 @@
 
             <div class="form-group row">
                 <label class="form-control-label">Write a comment</label><br>
-<!--                <input id="name" name="name" required type="text" [ngModel]="commentContent" #name="ngModel">-->
+                <!--                <input id="name" name="name" required type="text" [ngModel]="commentContent" #name="ngModel">-->
                 <input [(ngModel)]="commentContent"/>
 
-<!--                <div *ngIf="name.errors.required">-->
-                    <button class="btn btn-primary" (click)="addComment()">
-                        <fa-icon [icon]="'plus'"></fa-icon>
-                        <span class="hidden-sm-down">
+                <!--                <div *ngIf="name.errors.required">-->
+                <button class="btn btn-primary" (click)="addComment()">
+                    <fa-icon [icon]="'plus'"></fa-icon>
+                    <span class="hidden-sm-down">
                         Submit comment
                     </span>
-                    </button>
-<!--                </div>-->
+                </button>
+                <!--                </div>-->
             </div>
 
             <div class="form-group row">
@@ -125,5 +129,4 @@
             </tbody>
         </table>
     </div>
-
 </div>

@@ -20,5 +20,11 @@
                                  referencedColumnNames="id"
                                  referencedTableName="tag"/>
         
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="post"
+                                 constraintName="fk_post_user_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="jhi_user"/>
+
     </changeSet>
 </databaseChangeLog>

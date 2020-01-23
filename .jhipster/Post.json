@@ -9,6 +9,14 @@
             "otherEntityField": "id",
             "ownerSide": true,
             "otherEntityRelationshipName": "post"
+        },
+        {
+            "relationshipName": "user",
+            "otherEntityName": "user",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "login",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "post"
         }
     ],
     "fields": [

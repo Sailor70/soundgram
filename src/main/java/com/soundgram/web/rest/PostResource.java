@@ -1,8 +1,11 @@
 package com.soundgram.web.rest;
 
 import com.soundgram.domain.Post;
+import com.soundgram.domain.User;
 import com.soundgram.repository.PostRepository;
+import com.soundgram.repository.UserRepository;
 import com.soundgram.repository.search.PostSearchRepository;
+import com.soundgram.security.SecurityUtils;
 import com.soundgram.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -17,7 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional; 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -49,9 +52,12 @@ public class PostResource {
 
     private final PostSearchRepository postSearchRepository;
 
-    public PostResource(PostRepository postRepository, PostSearchRepository postSearchRepository) {
+    private final UserRepository userRepository;
+
+    public PostResource(PostRepository postRepository, PostSearchRepository postSearchRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
         this.postSearchRepository = postSearchRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -67,6 +73,8 @@ public class PostResource {
         if (post.getId() != null) {
             throw new BadRequestAlertException("A new post cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        User currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null);
+        post.setUser(currentUser);
         Post result = postRepository.save(post);
         postSearchRepository.save(result);
         return ResponseEntity.created(new URI("/api/posts/" + result.getId()))

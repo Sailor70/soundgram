@@ -56,6 +56,7 @@
                             <th scope="col"  jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
                             <th scope="col"  jhiSortBy="postContent"><span jhiTranslate="soundgramApp.post.postContent">Post Content</span> <fa-icon [icon]="'sort'"></fa-icon></th>
                             <th scope="col"  jhiSortBy="date"><span jhiTranslate="soundgramApp.post.date">Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+                            <th scope="col"  jhiSortBy="user.login"><span jhiTranslate="soundgramApp.post.user">User</span> <fa-icon [icon]="'sort'"></fa-icon></th>
                             <th scope="col"></th>
                         </tr>
                         </thead>
@@ -64,6 +65,7 @@
                             <td><a [routerLink]="['/post', post.id, 'view' ]">{{post.id}}</a></td>
                             <td>{{post.postContent}}</td>
                             <td>{{post.date | date:'medium'}}</td>
+                            <td>{{post.user?.login}}</td>
                             <td class="text-right">
                                 <div class="btn-group">
                                     <button type="submit"
