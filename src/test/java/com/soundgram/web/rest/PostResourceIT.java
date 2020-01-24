@@ -2,6 +2,7 @@ package com.soundgram.web.rest;
 
 import com.soundgram.SoundgramApp;
 import com.soundgram.domain.Post;
+import com.soundgram.repository.FollowedUserRepository;
 import com.soundgram.repository.PostRepository;
 import com.soundgram.repository.UserRepository;
 import com.soundgram.repository.search.PostSearchRepository;
@@ -56,6 +57,9 @@ public class PostResourceIT {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private FollowedUserRepository followedUserRepository;
+
     @Mock
     private PostRepository postRepositoryMock;
 
@@ -89,7 +93,7 @@ public class PostResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final PostResource postResource = new PostResource(postRepository, mockPostSearchRepository, userRepository);
+        final PostResource postResource = new PostResource(postRepository, mockPostSearchRepository, userRepository, followedUserRepository);
         this.restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -190,7 +194,7 @@ public class PostResourceIT {
 
     @SuppressWarnings({"unchecked"})
     public void getAllPostsWithEagerRelationshipsIsEnabled() throws Exception {
-        PostResource postResource = new PostResource(postRepositoryMock, mockPostSearchRepository, userRepository);
+        PostResource postResource = new PostResource(postRepositoryMock, mockPostSearchRepository, userRepository, followedUserRepository);
         when(postRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         MockMvc restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
@@ -207,7 +211,7 @@ public class PostResourceIT {
 
     @SuppressWarnings({"unchecked"})
     public void getAllPostsWithEagerRelationshipsIsNotEnabled() throws Exception {
-        PostResource postResource = new PostResource(postRepositoryMock, mockPostSearchRepository, userRepository);
+        PostResource postResource = new PostResource(postRepositoryMock, mockPostSearchRepository, userRepository, followedUserRepository);
             when(postRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
             MockMvc restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)

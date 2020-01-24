@@ -119,7 +119,7 @@ public class AudioFileResource {
             audioFile.setAudioPath(audioPath.toString()); // to jest niepotrzebne właściwie
             audioFile.setPost(post); //
             audioFile.setTitle(file.getOriginalFilename()); // audioPath.getFileName().toString()
-            audioFile.setIconPath(null); // to na później zostawiamy
+            audioFile.setIconPath(currentUser.getId().toString()); // to na później zostawiamy
 
             AudioFile result = audioFileRepository.save(audioFile);
             audioFileSearchRepository.save(result);
@@ -255,11 +255,10 @@ public class AudioFileResource {
         if (audioFile.isPresent()) {
             AudioFile af = audioFile.get();
             String title = af.getTitle();
-
-            Set<User> users = af.getUsers();
-            Long firstUserId = users.iterator().next().getId(); // the owner of file
-
-            Resource resource = storageService.loadAudioAsResource(title, firstUserId);
+            Long fileOwnerId = Long.parseLong(af.getIconPath());
+//            Set<User> users = af.getUsers();
+//            Long firstUserId = users.iterator().next().getId(); // the owner of file
+            Resource resource = storageService.loadAudioAsResource(title, fileOwnerId);
 
             byte[] templateContent = new byte[0];
             try {

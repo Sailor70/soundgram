@@ -22,10 +22,11 @@
                 </div>
 
                 <div class="form-group">
-                    <label jhiTranslate="soundgramApp.tag.user" for="field_users">User</label>
-                    <select class="form-control" id="field_users" multiple name="users" formControlName="users">
-                        <option [ngValue]="getSelected(editForm.get('users').value, userOption)" *ngFor="let userOption of users; trackBy: trackUserById">{{userOption.login}}</option>
-                    </select>
+                    <label>Add this tag to your profile?</label>
+                    <input (change)="checkValue($event)" value="angular" type="checkbox"/>
+<!--                    <select class="form-control" id="field_users" multiple name="users" formControlName="users">-->
+<!--                        <option [ngValue]="getSelected(editForm.get('users').value, userOption)" *ngFor="let userOption of users; trackBy: trackUserById">{{userOption.login}}</option>-->
+<!--                    </select>-->
                 </div>
             </div>
             <div>

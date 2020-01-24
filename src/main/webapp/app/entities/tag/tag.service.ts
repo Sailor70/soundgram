@@ -24,6 +24,10 @@ export class TagService {
     return this.http.put<ITag>(this.resourceUrl, tag, { observe: 'response' });
   }
 
+  addUserToTag(tag: ITag): Observable<EntityResponseType> {
+    return this.http.put<ITag>(this.resourceUrl + '-add-user', tag, { observe: 'response' });
+  }
+
   find(id: number): Observable<EntityResponseType> {
     return this.http.get<ITag>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }

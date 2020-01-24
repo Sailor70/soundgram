@@ -3,6 +3,7 @@ package com.soundgram.web.rest;
 import com.soundgram.SoundgramApp;
 import com.soundgram.domain.Tag;
 import com.soundgram.repository.TagRepository;
+import com.soundgram.repository.UserRepository;
 import com.soundgram.repository.search.TagSearchRepository;
 import com.soundgram.web.rest.errors.ExceptionTranslator;
 
@@ -47,6 +48,9 @@ public class TagResourceIT {
     @Autowired
     private TagRepository tagRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Mock
     private TagRepository tagRepositoryMock;
 
@@ -80,7 +84,7 @@ public class TagResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final TagResource tagResource = new TagResource(tagRepository, mockTagSearchRepository);
+        final TagResource tagResource = new TagResource(tagRepository, mockTagSearchRepository, userRepository);
         this.restTagMockMvc = MockMvcBuilders.standaloneSetup(tagResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -192,10 +196,10 @@ public class TagResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(tag.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)));
     }
-    
+
     @SuppressWarnings({"unchecked"})
     public void getAllTagsWithEagerRelationshipsIsEnabled() throws Exception {
-        TagResource tagResource = new TagResource(tagRepositoryMock, mockTagSearchRepository);
+        TagResource tagResource = new TagResource(tagRepositoryMock, mockTagSearchRepository, userRepository);
         when(tagRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         MockMvc restTagMockMvc = MockMvcBuilders.standaloneSetup(tagResource)
@@ -212,7 +216,7 @@ public class TagResourceIT {
 
     @SuppressWarnings({"unchecked"})
     public void getAllTagsWithEagerRelationshipsIsNotEnabled() throws Exception {
-        TagResource tagResource = new TagResource(tagRepositoryMock, mockTagSearchRepository);
+        TagResource tagResource = new TagResource(tagRepositoryMock, mockTagSearchRepository, userRepository);
             when(tagRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
             MockMvc restTagMockMvc = MockMvcBuilders.standaloneSetup(tagResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)

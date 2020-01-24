@@ -19,10 +19,13 @@ import { PostService } from 'app/entities/post/post.service';
 })
 export class TagUpdateComponent implements OnInit {
   isSaving: boolean;
+  addTagToUser: boolean;
 
   users: IUser[];
 
   posts: IPost[];
+
+  tag: ITag;
 
   editForm = this.fb.group({
     id: [],
@@ -41,6 +44,7 @@ export class TagUpdateComponent implements OnInit {
 
   ngOnInit() {
     this.isSaving = false;
+    // this.addTagToUser = false;
     this.activatedRoute.data.subscribe(({ tag }) => {
       this.updateForm(tag);
     });
@@ -66,11 +70,11 @@ export class TagUpdateComponent implements OnInit {
 
   save() {
     this.isSaving = true;
-    const tag = this.createFromForm();
-    if (tag.id !== undefined) {
-      this.subscribeToSaveResponse(this.tagService.update(tag));
+    this.tag = this.createFromForm();
+    if (this.tag.id !== undefined) {
+      this.subscribeToSaveResponse(this.tagService.update(this.tag));
     } else {
-      this.subscribeToSaveResponse(this.tagService.create(tag));
+      this.subscribeToSaveResponse(this.tagService.create(this.tag));
     }
   }
 
@@ -79,16 +83,23 @@ export class TagUpdateComponent implements OnInit {
       ...new Tag(),
       id: this.editForm.get(['id']).value,
       name: this.editForm.get(['name']).value,
-      users: this.editForm.get(['users']).value
+      users: null
     };
   }
 
   protected subscribeToSaveResponse(result: Observable<HttpResponse<ITag>>) {
-    result.subscribe(() => this.onSaveSuccess(), () => this.onSaveError());
+    result.subscribe(res => this.onSaveSuccess(res), () => this.onSaveError());
   }
 
-  protected onSaveSuccess() {
+  protected onSaveSuccess(res: HttpResponse<ITag>) {
+    this.tag = res.body;
     this.isSaving = false;
+    console.error('onSaveSuccess');
+    console.error('addTagToUser ' + this.addTagToUser);
+    console.error('this tag ' + this.tag.id);
+    if (this.addTagToUser) {
+      this.tagService.addUserToTag(this.tag).subscribe(); // res => this.tag = res.body
+    }
     this.previousState();
   }
 
@@ -97,6 +108,10 @@ export class TagUpdateComponent implements OnInit {
   }
   protected onError(errorMessage: string) {
     this.jhiAlertService.error(errorMessage, null, null);
+  }
+
+  checkValue(event: any) {
+    this.addTagToUser = event.currentTarget.checked;
   }
 
   trackUserById(index: number, item: IUser) {

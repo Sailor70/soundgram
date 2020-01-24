@@ -1,7 +1,9 @@
 package com.soundgram.web.rest;
 
+import com.soundgram.domain.FollowedUser;
 import com.soundgram.domain.Post;
 import com.soundgram.domain.User;
+import com.soundgram.repository.FollowedUserRepository;
 import com.soundgram.repository.PostRepository;
 import com.soundgram.repository.UserRepository;
 import com.soundgram.repository.search.PostSearchRepository;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -54,10 +57,13 @@ public class PostResource {
 
     private final UserRepository userRepository;
 
-    public PostResource(PostRepository postRepository, PostSearchRepository postSearchRepository, UserRepository userRepository) {
+    private final FollowedUserRepository followedUserRepository;
+
+    public PostResource(PostRepository postRepository, PostSearchRepository postSearchRepository, UserRepository userRepository, FollowedUserRepository followedUserRepository) {
         this.postRepository = postRepository;
         this.postSearchRepository = postSearchRepository;
         this.userRepository = userRepository;
+        this.followedUserRepository = followedUserRepository;
     }
 
     /**
@@ -107,8 +113,7 @@ public class PostResource {
     /**
      * {@code GET  /posts} : get all the posts.
      *
-
-     * @param pageable the pagination information.
+     * @param pageable  the pagination information.
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of posts in body.
      */
@@ -123,6 +128,27 @@ public class PostResource {
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    @GetMapping("/posts-followed")
+    public ResponseEntity<List<Post>> getFollowedUsersPosts() {
+        log.debug("REST request to get a page of followed users Posts");
+        List<FollowedUser> allFU = followedUserRepository.findByUserIsCurrentUser();
+        List<Post> allPosts = postRepository.findAll();
+        log.debug("Searching for posts for user: {}", allFU.get(0).getUser().getLogin());
+        log.debug("Followed users amount: {}", allFU.size());
+        log.debug("First post owner: {}", allPosts.size());
+        // page = postRepository.findAll(pageable); // if no eagerload
+        List<Post> followedPosts = new ArrayList<>();
+        for (Post post : allPosts) {
+            for (FollowedUser fl : allFU) {
+                if ( post.getUser().getId().equals(fl.getFollowedUserId()) ) {
+                    followedPosts.add(post);
+                }
+            }
+        }
+        // HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().body(followedPosts);
     }
 
     /**
@@ -156,7 +182,7 @@ public class PostResource {
      * {@code SEARCH  /_search/posts?query=:query} : search for the post corresponding
      * to the query.
      *
-     * @param query the query of the post search.
+     * @param query    the query of the post search.
      * @param pageable the pagination information.
      * @return the result of the search.
      */

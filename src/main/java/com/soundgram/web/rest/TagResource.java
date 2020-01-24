@@ -1,8 +1,11 @@
 package com.soundgram.web.rest;
 
 import com.soundgram.domain.Tag;
+import com.soundgram.domain.User;
 import com.soundgram.repository.TagRepository;
+import com.soundgram.repository.UserRepository;
 import com.soundgram.repository.search.TagSearchRepository;
+import com.soundgram.security.SecurityUtils;
 import com.soundgram.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -11,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional; 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -44,9 +47,12 @@ public class TagResource {
 
     private final TagSearchRepository tagSearchRepository;
 
-    public TagResource(TagRepository tagRepository, TagSearchRepository tagSearchRepository) {
+    private final UserRepository userRepository;
+
+    public TagResource(TagRepository tagRepository, TagSearchRepository tagSearchRepository, UserRepository userRepository) {
         this.tagRepository = tagRepository;
         this.tagSearchRepository = tagSearchRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -84,6 +90,21 @@ public class TagResource {
         if (tag.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        Tag result = tagRepository.save(tag);
+        tagSearchRepository.save(result);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, tag.getId().toString()))
+            .body(result);
+    }
+
+    @PutMapping("/tags-add-user")
+    public ResponseEntity<Tag> addUserToTag(@Valid @RequestBody Tag tag) throws URISyntaxException {
+        log.debug("REST request to update Tag : {}", tag);
+        if (tag.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        User currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null);
+        tag.addUser(currentUser);
         Tag result = tagRepository.save(tag);
         tagSearchRepository.save(result);
         return ResponseEntity.ok()

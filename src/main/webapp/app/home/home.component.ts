@@ -62,7 +62,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
     this.registerAuthenticationSuccess();
 
-    this.loadAll();
+    // this.loadAll();
+    this.loadFollowed();
     this.registerChangeInPosts();
   }
 
@@ -110,15 +111,30 @@ export class HomeComponent implements OnInit, OnDestroy {
       .subscribe((res: HttpResponse<IPost[]>) => this.paginatePosts(res.body, res.headers));
   }
 
+  loadFollowed() {
+    if (this.currentSearch) {
+      this.postService
+        .search({
+          query: this.currentSearch,
+          page: this.page,
+          size: this.itemsPerPage,
+          sort: this.sort()
+        })
+        .subscribe((res: HttpResponse<IPost[]>) => this.paginatePosts(res.body, res.headers));
+      return;
+    }
+    this.postService.getFollowed().subscribe((res: HttpResponse<IPost[]>) => (this.posts = res.body));
+  }
+
   reset() {
     this.page = 0;
     this.posts = [];
-    this.loadAll();
+    this.loadFollowed();
   }
 
   loadPage(page) {
     this.page = page;
-    this.loadAll();
+    this.loadFollowed();
   }
 
   clear() {
@@ -130,7 +146,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.predicate = 'id';
     this.reverse = true;
     this.currentSearch = '';
-    this.loadAll();
+    this.loadFollowed();
   }
 
   search(query) {
@@ -145,7 +161,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.predicate = '_score';
     this.reverse = false;
     this.currentSearch = query;
-    this.loadAll();
+    this.loadFollowed();
   }
   trackId(index: number, item: IPost) {
     return item.id;
