@@ -83,7 +83,7 @@ export class TagUpdateComponent implements OnInit {
       ...new Tag(),
       id: this.editForm.get(['id']).value,
       name: this.editForm.get(['name']).value,
-      users: null
+      users: undefined
     };
   }
 
