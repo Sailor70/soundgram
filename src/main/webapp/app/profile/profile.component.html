@@ -2,31 +2,32 @@
     <div class="col-8">
         <div>
             <h2>
-                <span jhiTranslate="userManagement.detail.title">User</span> [<b>{{user.login}}</b>]
+                <span jhiTranslate="userManagement.detail.title">User</span> [<b>{{user?.login}}</b>]
             </h2>
             <dl class="row-md jh-entity-details">
                 <dt><span jhiTranslate="userManagement.login">Login</span></dt>
-                <dd>
-                    <span>{{user.login}}</span>
-                    <jhi-boolean
-                        [value]="user.activated"
-                        [textTrue]="'userManagement.activated' | translate"
-                        [textFalse]="'userManagement.deactivated' | translate">
-                    </jhi-boolean>
-                </dd>
+                <dd>{{user?.login}}</dd>
+<!--                <dd>-->
+<!--                    <span>{{user.login}}</span>-->
+<!--                    <jhi-boolean-->
+<!--                        [value]="user.activated"-->
+<!--                        [textTrue]="'userManagement.activated' | translate"-->
+<!--                        [textFalse]="'userManagement.deactivated' | translate">-->
+<!--                    </jhi-boolean>-->
+<!--                </dd>-->
                 <dt><span jhiTranslate="userManagement.firstName">First Name</span></dt>
-                <dd>{{user.firstName}}</dd>
+                <dd>{{user?.firstName}}</dd>
                 <dt><span jhiTranslate="userManagement.lastName">Last Name</span></dt>
-                <dd>{{user.lastName}}</dd>
+                <dd>{{user?.lastName}}</dd>
                 <dt><span jhiTranslate="userManagement.email">Email</span></dt>
-                <dd>{{user.email}}</dd>
+                <dd>{{user?.email}}</dd>
                 <dt><span jhiTranslate="userManagement.langKey">Lang Key</span></dt>
-                <dd>{{user.langKey}}</dd>
-                <dt><span jhiTranslate="userManagement.createdBy">Created By</span></dt>
+                <dd>{{user?.langKey}}</dd>
+<!--                <dt><span jhiTranslate="userManagement.createdBy">Created By</span></dt>
                 <dd>{{user.createdBy}}</dd>
                 <dt><span jhiTranslate="userManagement.createdDate">Created Date</span></dt>
-                <dd>{{user.createdDate | date:'dd/MM/yy HH:mm' }}</dd>
-                <dt><span jhiTranslate="userManagement.lastModifiedBy">Last Modified By</span></dt>
+                <dd>{{user.createdDate | date:'dd/MM/yy HH:mm' }}</dd>-->
+<!--                <dt><span jhiTranslate="userManagement.lastModifiedBy">Last Modified By</span></dt>
                 <dd>{{user.lastModifiedBy}}</dd>
                 <dt><span jhiTranslate="userManagement.lastModifiedDate">Last Modified Date</span></dt>
                 <dd>{{user.lastModifiedDate | date:'dd/MM/yy HH:mm'}}</dd>
@@ -37,7 +38,7 @@
                             <span class="badge badge-info">{{authority}}</span>
                         </li>
                     </ul>
-                </dd>
+                </dd>-->
             </dl>
             <!--"../../"-->
             <button type="submit"
@@ -47,10 +48,159 @@
             </button>
         </div>
     </div>
+
 </div>
-<h3>User tags:</h3>
-<p></p>
-<h3>User audio files:</h3>
-<p></p>
+
+    <h3>User tags:</h3>
+    <p></p>
+
+    <div class="table-responsive" *ngIf="userTags?.length > 0">
+        <table class="table table-striped" aria-describedby="page-heading">
+            <thead>
+            <tr>
+                <th scope="col" ><span jhiTranslate="global.field.id">ID</span></th>
+                <th scope="col" ><span jhiTranslate="soundgramApp.tag.name">Name</span></th>
+                <th scope="col" ><span jhiTranslate="soundgramApp.tag.user">User</span></th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let tag of userTags">
+                <td><a [routerLink]="['/tag', tag.id, 'view' ]">{{tag.id}}</a></td>
+                <td>{{tag.name}}</td>
+                <td>
+                    <span *ngFor="let user of tag.users; let last = last">
+                            {{user.login}}{{last ? '' : ', '}}
+                        </span>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group">
+                        <button type="submit"
+                                [routerLink]="['/tag', tag.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/tag', tag.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+<!--                        <button type="submit" (click)="delete(tag)"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>-->
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
 <h3>User posts:</h3>
 <p></p>
+
+<div class="table-responsive" *ngIf="userPosts?.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+        <tr>
+            <th scope="col"><span jhiTranslate="global.field.id">ID</span></th>
+            <th scope="col"><span jhiTranslate="soundgramApp.post.postContent">Post Content</span></th>
+            <th scope="col"><span jhiTranslate="soundgramApp.post.date">Date</span></th>
+            <th scope="col"><span jhiTranslate="soundgramApp.post.user">User</span></th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let post of userPosts">
+            <td><a [routerLink]="['/post', post.id, 'view' ]">{{post.id}}</a></td>
+            <td>{{post.postContent}}</td>
+            <td>{{post.date | date:'medium'}}</td>
+            <td>
+                {{post.user?.login}}
+            </td>
+            <td class="text-right">
+                <div class="btn-group">
+                    <button type="submit"
+                            [routerLink]="['/post', post.id, 'view' ]"
+                            class="btn btn-info btn-sm">
+                        <fa-icon [icon]="'eye'"></fa-icon>
+                        <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                    </button>
+                    <button type="submit"
+                            [routerLink]="['/post', post.id, 'edit']"
+                            class="btn btn-primary btn-sm">
+                        <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                        <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                    </button>
+<!--                    <button type="submit" (click)="delete(post)"
+                            class="btn btn-danger btn-sm">
+                        <fa-icon [icon]="'times'"></fa-icon>
+                        <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                    </button>-->
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<h3>User audio files:</h3>
+<p></p>
+
+<div class="table-responsive" *ngIf="userAudioFiles?.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+        <tr>
+            <th scope="col" ><span jhiTranslate="global.field.id">ID</span></th>
+            <th scope="col" ><span jhiTranslate="soundgramApp.audioFile.audioPath">Audio Path</span></th>
+            <th scope="col" ><span jhiTranslate="soundgramApp.audioFile.title">Title</span></th>
+            <th scope="col" ><span jhiTranslate="soundgramApp.audioFile.iconPath">Icon Path</span></th>
+            <th scope="col" ><span jhiTranslate="soundgramApp.audioFile.post">Post</span></th>
+            <th scope="col" ><span jhiTranslate="soundgramApp.audioFile.user">User</span></th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let audioFile of userAudioFiles">
+            <td><a [routerLink]="['/audio-file', audioFile.id, 'view' ]">{{audioFile.id}}</a></td>
+            <td>{{audioFile.audioPath}}</td>
+            <td>{{audioFile.title}}</td>
+            <td>{{audioFile.iconPath}}</td>
+            <td>
+                <div *ngIf="audioFile.post">
+                    <a [routerLink]="['/post', audioFile.post?.id, 'view' ]" >{{audioFile.post?.id}}</a>
+                </div>
+            </td>
+            <td>
+                    <span *ngFor="let user of audioFile.users; let last = last">
+                            {{user.login}}{{last ? '' : ', '}}
+                        </span>
+            </td>
+            <td class="text-right">
+                <div class="btn-group">
+                    <button type="submit"
+                            [routerLink]="['/audio-file', audioFile.id, 'view' ]"
+                            class="btn btn-info btn-sm">
+                        <fa-icon [icon]="'eye'"></fa-icon>
+                        <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                    </button>
+                    <button type="submit"
+                            [routerLink]="['/audio-file', audioFile.id, 'edit']"
+                            class="btn btn-primary btn-sm">
+                        <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                        <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                    </button>
+<!--                    <button type="submit" (click)="delete(audioFile)"
+                            class="btn btn-danger btn-sm">
+                        <fa-icon [icon]="'times'"></fa-icon>
+                        <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                    </button>-->
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

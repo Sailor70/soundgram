@@ -53,6 +53,12 @@ export class PostService {
       .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
   }
 
+  getUserPosts(login: string): Observable<EntityArrayResponseType> {
+    return this.http
+      .get<IPost[]>(`${this.resourceUrl + '-user'}/${login}`, { observe: 'response' })
+      .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
+  }
+
   delete(id: number): Observable<HttpResponse<any>> {
     return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }

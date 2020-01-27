@@ -30,4 +30,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Optional<Post> findPostById(Long id);
 
+    @Query("select post from Post post where post.user.login =:login")
+    List<Post> findPostByUserLogin(@Param("login") String login);
+
 }

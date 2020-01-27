@@ -1,5 +1,6 @@
 package com.soundgram.web.rest;
 
+import com.soundgram.config.Constants;
 import com.soundgram.domain.FollowedUser;
 import com.soundgram.domain.Post;
 import com.soundgram.domain.User;
@@ -149,6 +150,13 @@ public class PostResource {
         }
         // HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().body(followedPosts);
+    }
+
+    @GetMapping("/posts-user/{login:" + Constants.LOGIN_REGEX + "}")
+    public ResponseEntity<List<Post>> getUserPosts(@PathVariable String login) {
+        log.debug("REST request to get posts that belong to user: {}", login);
+        List<Post> userPosts = postRepository.findPostByUserLogin(login);
+        return ResponseEntity.ok().body(userPosts);
     }
 
     /**

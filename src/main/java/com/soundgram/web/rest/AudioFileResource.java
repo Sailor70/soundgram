@@ -115,7 +115,7 @@ public class AudioFileResource {
                 .toUriString();
 
             AudioFile audioFile = new AudioFile();
-            audioFile.addUser(currentUser);
+            // audioFile.addUser(currentUser); // nie dodajemy do polubionych od razu
             audioFile.setAudioPath(audioPath.toString()); // to jest niepotrzebne właściwie
             audioFile.setPost(post); //
             audioFile.setTitle(file.getOriginalFilename()); // audioPath.getFileName().toString()
@@ -221,10 +221,8 @@ public class AudioFileResource {
         List<AudioFile> likedAFs = new ArrayList<>();
         for(AudioFile af : allAF){
             Set<User> users = af.getUsers();
-            Iterator<User> usersIt = users.iterator();
-            usersIt.next(); // skip the owner of File (user's owned audio files wont be displayed at liked afs)
-            while(usersIt.hasNext()){
-                if(usersIt.next().getId().equals(currentUserId)) {
+            for (User user : users) {
+                if (user.getId().equals(currentUserId)) { // && !usersIt.next().getId().equals(Long.parseLong(af.getIconPath()))
                     likedAFs.add(af);
                 }
             }
@@ -233,16 +231,15 @@ public class AudioFileResource {
     }
 
     @GetMapping("/audio-files-users")
-    public List<AudioFile> getUsersAudioFiles() {
+    public List<AudioFile> getUserAudioFiles() {
         User currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null);
         Long currentUserId = currentUser.getId();
         log.debug("REST request to get Audiofiles that are owned by the user of id : {}", currentUserId);
         List<AudioFile> allAF = audioFileRepository.findAllWithEagerRelationships();
-        List<AudioFile> usersAFs = new ArrayList<>();
+        List<AudioFile> usersAFs = new ArrayList<AudioFile>();
         for(AudioFile af : allAF){
-            Set<User> users = af.getUsers();
-            Long firstUserId = users.iterator().next().getId(); // the owner of file
-            if(firstUserId.equals(currentUserId)){
+            Long ownerId = Long.parseLong(af.getIconPath());
+            if(ownerId.equals(currentUserId)){
                 usersAFs.add(af);
             }
         }

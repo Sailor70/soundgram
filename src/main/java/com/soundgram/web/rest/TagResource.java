@@ -1,5 +1,6 @@
 package com.soundgram.web.rest;
 
+import com.soundgram.config.Constants;
 import com.soundgram.domain.Tag;
 import com.soundgram.domain.User;
 import com.soundgram.repository.TagRepository;
@@ -21,8 +22,10 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -122,6 +125,22 @@ public class TagResource {
     public List<Tag> getAllTags(@RequestParam(required = false, defaultValue = "false") boolean eagerload) {
         log.debug("REST request to get all Tags");
         return tagRepository.findAllWithEagerRelationships();
+    }
+
+    @GetMapping("/tags-user/{login:" + Constants.LOGIN_REGEX + "}")
+    public List<Tag> getAllUserTags(@PathVariable String login) {
+        log.debug("REST request to get all Tags assigned to user of login: {}", login);
+        List<Tag> allTags = tagRepository.findAllWithEagerRelationships();
+        List<Tag> userTags = new ArrayList<Tag>();;
+        for(Tag tag : allTags) {
+            Set<User> tagUsers = tag.getUsers();
+            for(User user : tagUsers) {
+                if(user.getLogin().equals(login)) {
+                    userTags.add(tag);
+                }
+            }
+        }
+        return userTags;
     }
 
     /**
