@@ -5,10 +5,11 @@ import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
 import { TagService } from 'app/entities/tag/tag.service';
 import { PostService } from 'app/entities/post/post.service';
-import { ITag } from 'app/shared/model/tag.model';
+import { ITag, Tag } from 'app/shared/model/tag.model';
 import { IPost } from 'app/shared/model/post.model';
 import { AudioFileService } from 'app/entities/audio-file/audio-file.service';
 import { IAudioFile } from 'app/shared/model/audio-file.model';
+import { FormBuilder, Validators } from '@angular/forms';
 // import { Account } from "app/core/user/user.service";
 
 @Component({
@@ -23,19 +24,32 @@ export class ProfileComponent implements OnInit {
   userAudioFiles: IAudioFile[];
   account: Account;
 
+  allTags: ITag[];
+  success: boolean;
+
+  tagForm = this.fb.group({
+    tagName: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(50), Validators.pattern('^[_.@A-Za-z0-9-]*$')]]
+  });
+
   constructor(
     private userService: UserService,
     private accountService: AccountService,
     private tagService: TagService,
     private postService: PostService,
-    private audioFileService: AudioFileService
+    private audioFileService: AudioFileService,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit() {
+    this.success = false;
     this.accountService.identity().subscribe((account: Account) => {
       this.account = account;
       console.error('user account name: ' + this.account.login);
       this.identificationSuccess();
+    });
+
+    this.tagService.query().subscribe(res => {
+      this.allTags = res.body;
     });
   }
 
@@ -60,5 +74,26 @@ export class ProfileComponent implements OnInit {
       this.userAudioFiles = res.body;
       console.error('audioFiles: ' + this.userAudioFiles.length);
     });
+  }
+
+  addTagToProfile() {
+    const newTag = this.tagForm
+      .get(['tagName'])
+      .value.toString()
+      .toLowerCase();
+    let tagToAdd;
+    for (let tag of this.allTags) {
+      if (tag.name === newTag) {
+        tagToAdd = tag;
+        break;
+      } else {
+        tagToAdd = {
+          ...new Tag(),
+          id: undefined,
+          name: newTag,
+          users: undefined // add current user
+        };
+      }
+    }
   }
 }
