@@ -10,6 +10,7 @@ import { IPost } from 'app/shared/model/post.model';
 import { AudioFileService } from 'app/entities/audio-file/audio-file.service';
 import { IAudioFile } from 'app/shared/model/audio-file.model';
 import { FormBuilder, Validators } from '@angular/forms';
+
 // import { Account } from "app/core/user/user.service";
 
 @Component({
@@ -55,10 +56,8 @@ export class ProfileComponent implements OnInit {
 
   identificationSuccess() {
     this.userService.find(this.account.login).subscribe(res => (this.user = res));
-    this.tagService.findUserTags(this.account.login).subscribe(res => {
-      this.userTags = res.body;
-      console.error('tags: ' + this.userTags.length);
-    });
+
+    this.refreshTags(); // load tasks
 
     this.postService.getUserPosts(this.account.login).subscribe(
       res => {
@@ -76,24 +75,52 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  refreshTags() {
+    this.tagService.findUserTags(this.account.login).subscribe(res => {
+      this.userTags = res.body;
+      console.error('tags: ' + this.userTags.length);
+    });
+  }
+
   addTagToProfile() {
-    const newTag = this.tagForm
+    const newTagName = this.tagForm
       .get(['tagName'])
       .value.toString()
       .toLowerCase();
-    let tagToAdd;
-    for (let tag of this.allTags) {
-      if (tag.name === newTag) {
+    let tagToAdd = null;
+    for (const tag of this.allTags) {
+      if (tag.name === newTagName) {
         tagToAdd = tag;
         break;
-      } else {
-        tagToAdd = {
-          ...new Tag(),
-          id: undefined,
-          name: newTag,
-          users: undefined // add current user
-        };
       }
     }
+    if (tagToAdd === null) {
+      tagToAdd = {
+        ...new Tag(),
+        id: undefined,
+        name: newTagName,
+        users: this.user
+      };
+      this.tagService.create(tagToAdd).subscribe(res => {
+        this.userTags.push(res.body); // add new tag to user
+      });
+    } else {
+      this.tagService.addUserToTag(tagToAdd).subscribe(() => {
+        // this.userTags.push(res.body);
+        this.refreshTags();
+      });
+    }
+  }
+
+  deleteFromProfile(tag: ITag) {
+    const tagUsers = tag.users;
+    const userIndex = tagUsers.findIndex(ut => ut.login === this.user.login);
+    if (userIndex > -1) {
+      tagUsers.splice(userIndex, 1);
+    }
+    tag.users = tagUsers;
+    this.tagService.update(tag).subscribe(() => {
+      this.refreshTags();
+    });
   }
 }

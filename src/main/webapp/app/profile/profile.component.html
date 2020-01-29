@@ -52,44 +52,27 @@
 </div>
 
 <h4>Add tags to your profile</h4>
-<!--<div class="row">
-    <div class="col-sm-12">
-        <form name="searchForm" class="form-inline">
-            <div class="input-group w-100 mt-3">
-                <input type="text" [(ngModel)]="newTagName" id="newTag" name="newTag">
-                <button class="input-group-append btn btn-info" (click)="addTagToProfile(newTagName)">
-                    <fa-icon [icon]="'plus'"></fa-icon>
-                </button>
-            </div>
-        </form>
-    </div>
-</div>-->
 
 <form name="form" role="form" (ngSubmit)="addTagToProfile()" [formGroup]="tagForm" *ngIf="!success">
     <div class="form-group">
-        <label class="form-control-label" for="newTagName" jhiTranslate="global.form.username.label">Enter new
-            Tag</label>
-        <input type="text" class="form-control" id="newTagName" name="newTagName" formControlName="newTagName">
+        <label class="form-control-label" for="tagName">Enter new Tag</label>
+        <input type="text" class="form-control" id="tagName" name="tagName" formControlName="tagName">
         <div *ngIf="tagForm.get('tagName').invalid && (tagForm.get('tagName').dirty || tagForm.get('tagName').touched)">
-            <small class="form-text text-danger" *ngIf="tagForm.get('tagName').errors.required"
-                   jhiTranslate="register.messages.validate.login.required">
-                Your username is required.
+            <small class="form-text text-danger" *ngIf="tagForm.get('tagName').errors.required">
+                Tag name is required.
             </small>
-            <small class="form-text text-danger" *ngIf="tagForm.get('tagName').errors.minlength"
-                   jhiTranslate="register.messages.validate.login.minlength">
+            <small class="form-text text-danger" *ngIf="tagForm.get('tagName').errors.minlength">
                 Tag is required to be at least 1 character.
             </small>
-            <small class="form-text text-danger" *ngIf="tagForm.get('tagName').errors.maxlength"
-                   jhiTranslate="register.messages.validate.login.maxlength">
+            <small class="form-text text-danger" *ngIf="tagForm.get('tagName').errors.maxlength">
                 Tag cannot be longer than 50 characters.
             </small>
-            <small class="form-text text-danger" *ngIf="tagForm.get('tagName').errors.pattern"
-                   jhiTranslate="register.messages.validate.login.pattern">
+            <small class="form-text text-danger" *ngIf="tagForm.get('tagName').errors.pattern">
                 Tag can only contain letters and digits.
             </small>
         </div>
     </div>
-    <button type="submit" [disabled]="tagForm.invalid" class="btn btn-primary" jhiTranslate="register.form.button">Register</button>
+    <button type="submit" [disabled]="tagForm.invalid" class="btn btn-primary">Assign tag to your profile</button>
 </form>
 
 <h3>User tags:</h3>
@@ -116,23 +99,23 @@
             </td>
             <td class="text-right">
                 <div class="btn-group">
-                    <button type="submit"
-                            [routerLink]="['/tag', tag.id, 'view' ]"
-                            class="btn btn-info btn-sm">
-                        <fa-icon [icon]="'eye'"></fa-icon>
-                        <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+<!--                    <button type="submit"-->
+<!--                            [routerLink]="['/tag', tag.id, 'view' ]"-->
+<!--                            class="btn btn-info btn-sm">-->
+<!--                        <fa-icon [icon]="'eye'"></fa-icon>-->
+<!--                        <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>-->
+<!--                    </button>-->
+<!--                    <button type="submit"-->
+<!--                            [routerLink]="['/tag', tag.id, 'edit']"-->
+<!--                            class="btn btn-primary btn-sm">-->
+<!--                        <fa-icon [icon]="'pencil-alt'"></fa-icon>-->
+<!--                        <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>-->
+<!--                    </button>-->
+                    <button type="submit" (click)="deleteFromProfile(tag)"
+                            class="btn btn-danger btn-sm">
+                        <fa-icon [icon]="'times'"></fa-icon>
+                        <span class="d-none d-md-inline" >Delete tag from your profile</span>
                     </button>
-                    <button type="submit"
-                            [routerLink]="['/tag', tag.id, 'edit']"
-                            class="btn btn-primary btn-sm">
-                        <fa-icon [icon]="'pencil-alt'"></fa-icon>
-                        <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-                    </button>
-                    <!--                        <button type="submit" (click)="delete(tag)"
-                                                    class="btn btn-danger btn-sm">
-                                                <fa-icon [icon]="'times'"></fa-icon>
-                                                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-                                            </button>-->
                 </div>
             </td>
         </tr>
