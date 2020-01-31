@@ -59,11 +59,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.accountService.identity().subscribe((account: Account) => {
       this.account = account;
+      this.loadFollowed();
     });
     this.registerAuthenticationSuccess();
 
     // this.loadAll();
-    this.loadFollowed();
+    // this.loadFollowed();
     this.registerChangeInPosts();
   }
 
@@ -71,6 +72,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.authSubscription = this.eventManager.subscribe('authenticationSuccess', () => {
       this.accountService.identity().subscribe(account => {
         this.account = account;
+        this.loadFollowed();
       });
     });
   }

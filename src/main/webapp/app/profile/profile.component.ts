@@ -57,7 +57,7 @@ export class ProfileComponent implements OnInit {
   identificationSuccess() {
     this.userService.find(this.account.login).subscribe(res => (this.user = res));
 
-    this.refreshTags(); // load tasks
+    this.refreshTags(); // load tags
 
     this.postService.getUserPosts(this.account.login).subscribe(
       res => {
@@ -112,7 +112,7 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  deleteFromProfile(tag: ITag) {
+  deleteTagFromProfile(tag: ITag) {
     const tagUsers = tag.users;
     const userIndex = tagUsers.findIndex(ut => ut.login === this.user.login);
     if (userIndex > -1) {

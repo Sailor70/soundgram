@@ -10,12 +10,14 @@ import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 import { JhiAlertService } from 'ng-jhipster';
 import { IPost, Post } from 'app/shared/model/post.model';
 import { PostService } from './post.service';
-import { ITag } from 'app/shared/model/tag.model';
+import { ITag, Tag } from 'app/shared/model/tag.model';
 import { TagService } from 'app/entities/tag/tag.service';
 import { now } from 'moment';
 import { AudioFileService } from 'app/entities/audio-file/audio-file.service';
 import { ImageService } from 'app/entities/image/image.service';
 import { UserService } from 'app/core/user/user.service';
+import { Account } from 'app/core/user/account.model';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'jhi-post-update',
@@ -24,8 +26,11 @@ import { UserService } from 'app/core/user/user.service';
 export class PostUpdateComponent implements OnInit {
   isSaving: boolean;
 
-  tags: ITag[];
+  allTags: ITag[];
+  postTags: ITag[] = [];
+  tagsToAdd: ITag[] = [];
   // users: IUser[];
+
   selectedAudioFiles: FileList;
   selectedImages: FileList;
   currentAudioFile: File;
@@ -33,6 +38,10 @@ export class PostUpdateComponent implements OnInit {
   msg: any;
 
   currentPost: IPost;
+  success: boolean;
+  ready = false;
+  account: Account;
+  // currentUser: IUser;
 
   editForm = this.fb.group({
     id: [],
@@ -40,6 +49,10 @@ export class PostUpdateComponent implements OnInit {
     date: [],
     tags: [],
     user: []
+  });
+
+  tagForm = this.fb.group({
+    tagName: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(50), Validators.pattern('^[_.@A-Za-z0-9-]*$')]]
   });
 
   constructor(
@@ -50,20 +63,26 @@ export class PostUpdateComponent implements OnInit {
     protected imageService: ImageService,
     protected activatedRoute: ActivatedRoute,
     protected userService: UserService,
+    protected accountService: AccountService,
     private fb: FormBuilder
   ) {}
 
   ngOnInit() {
+    this.success = false;
     this.isSaving = false;
     this.activatedRoute.data.subscribe(({ post }) => {
       this.updateForm(post);
+      this.currentPost = post;
     });
     this.tagService
       .query()
-      .subscribe((res: HttpResponse<ITag[]>) => (this.tags = res.body), (res: HttpErrorResponse) => this.onError(res.message));
-    /*    this.userService
-      .query()
-      .subscribe((res: HttpResponse<IUser[]>) => (this.users = res.body), (res: HttpErrorResponse) => this.onError(res.message));*/
+      .subscribe((res: HttpResponse<ITag[]>) => (this.allTags = res.body), (res: HttpErrorResponse) => this.onError(res.message));
+
+    /*    this.accountService.identity().subscribe((account: Account) => {
+          this.account = account;
+          console.error('user account name: ' + this.account.login);
+          this.userService.find(this.account.login).subscribe(res => (this.currentUser = res));
+        });*/
   }
 
   updateForm(post: IPost) {
@@ -72,8 +91,11 @@ export class PostUpdateComponent implements OnInit {
       postContent: post.postContent,
       date: post.date != null ? post.date.format(DATE_TIME_FORMAT) : null,
       tags: post.tags,
-      user: null
+      user: post.user // jak edytujemy to nie nullujemy usera
     });
+    if (post.tags !== undefined) {
+      this.postTags = post.tags;
+    }
   }
 
   previousState() {
@@ -84,7 +106,9 @@ export class PostUpdateComponent implements OnInit {
     this.currentAudioFile = this.selectedAudioFiles.item(0);
     this.currentImage = this.selectedImages.item(0);
     this.isSaving = true;
+    this.createOrAssignTagToPost(); // trzeba poczekać aż to się wszystko wykona
     const post = this.createFromForm();
+    console.error('tags to add: ' + post.tags.length + ' ' + post.tags); // tego jest 0
     if (post.id !== undefined) {
       this.subscribeToSaveResponse(this.postService.update(post));
     } else {
@@ -98,7 +122,7 @@ export class PostUpdateComponent implements OnInit {
       id: this.editForm.get(['id']).value,
       postContent: this.editForm.get(['postContent']).value,
       date: moment(new Date(now()), DATE_TIME_FORMAT), // aktualna data
-      tags: this.editForm.get(['tags']).value,
+      tags: this.tagsToAdd,
       user: null
     };
   }
@@ -125,6 +149,7 @@ export class PostUpdateComponent implements OnInit {
     this.msg = res.body;
     this.isSaving = false;
   }
+
   protected onError(errorMessage: string) {
     this.jhiAlertService.error(errorMessage, null, null);
   }
@@ -151,170 +176,66 @@ export class PostUpdateComponent implements OnInit {
   selectImage(event) {
     this.selectedImages = event.target.files;
   }
-}
 
-// Create new empty post
-/*
-import { Component, OnInit } from '@angular/core';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
-import * as moment from 'moment';
-import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
-import { JhiAlertService } from 'ng-jhipster';
-import { IPost, Post } from 'app/shared/model/post.model';
-import { PostService } from './post.service';
-import { ITag } from 'app/shared/model/tag.model';
-import { TagService } from 'app/entities/tag/tag.service';
-import { now } from 'moment';
-
-@Component({
-  selector: 'jhi-post-update',
-  templateUrl: './post-update.component.html'
-})
-export class PostUpdateComponent implements OnInit {
-  isSaving: boolean;
-  newPost: boolean;
-
-  tags: ITag[];
-  currentPost: IPost;
-  selectedFiles: FileList;
-
-  editForm = this.fb.group({
-    id: [],
-    postContent: [],
-    date: [],
-    tags: []
-  });
-
-  constructor(
-    protected jhiAlertService: JhiAlertService,
-    protected postService: PostService,
-    protected tagService: TagService,
-    protected activatedRoute: ActivatedRoute,
-    private fb: FormBuilder
-  ) {}
-
-  ngOnInit() {
-    this.isSaving = false;
-    this.newPost = false;
-    this.activatedRoute.data.subscribe(({ post }) => {
-      this.updateForm(post);
-      this.currentPost = post;
+  makeNewTag() {
+    const newTagName = this.tagForm
+      .get(['tagName'])
+      .value.toString()
+      .toLowerCase();
+    this.postTags.push({
+      ...new Tag(),
+      id: undefined,
+      name: newTagName,
+      posts: []
     });
-    this.tagService
-      .query()
-      .subscribe((res: HttpResponse<ITag[]>) => (this.tags = res.body), (res: HttpErrorResponse) => this.onError(res.message));
-    // if not updating post, then create new empty one to pass its id to new AudioFile
-    if (this.currentPost.id === undefined) {
-      this.newPost = true;
-      this.postService.create(this.createEmptyPost())
-        .subscribe((res: HttpResponse<IPost>) => this.currentPost = res.body, (res: HttpErrorResponse) => this.onError(res.message));
-    }
+    this.tagForm.get('tagName').setValue('');
   }
 
-  updateForm(post: IPost) {
-    this.editForm.patchValue({
-      id: post.id,
-      postContent: post.postContent,
-      date: post.date != null ? post.date.format(DATE_TIME_FORMAT) : null,
-      tags: post.tags
-    });
-  }
-
-  previousState() {
-    console.error('Wycofalo');
-    window.history.back();
-  }
-
-  save() {
-    this.isSaving = true;
-    if(this.newPost) { // to uaktualniamy nullowy post
-      this.currentPost = this.updateFromForm(this.currentPost);
-      this.subscribeToSaveResponse(this.postService.update(this.currentPost));
-    }
-    else { // aktualizuje stary post
-      const post = this.createFromForm();
-      this.subscribeToSaveResponse(this.postService.update(post));
-    }
-/!*    const post = this.createFromForm();
-    if (post.id !== undefined) {
-      this.subscribeToSaveResponse(this.postService.update(post));
-    } else {
-      this.subscribeToSaveResponse(this.postService.create(post));
-    }*!/
-  }
-
-  private updateFromForm(post: IPost): IPost {
-    return {
-      ...new Post(),
-      id: post.id, // tylko id zostaje
-      postContent: this.editForm.get(['postContent']).value,
-      date: moment(new Date(now()), DATE_TIME_FORMAT), // aktualna data
-      tags: this.editForm.get(['tags']).value
-    };
-  }
-
-  private createFromForm(): IPost {
-    return {
-      ...new Post(),
-      id: this.editForm.get(['id']).value,
-      postContent: this.editForm.get(['postContent']).value,
-      date: moment(new Date(now()), DATE_TIME_FORMAT), // aktualna data
-      tags: this.editForm.get(['tags']).value
-    };
-  }
-
-  private createEmptyPost(): IPost {
-    return {
-      ...new Post(),
-      id: null,
-      postContent: null,
-      date: null,
-      tags: null
-    };
-  }
-
-  protected subscribeToSaveResponse(result: Observable<HttpResponse<IPost>>) {
-    result.subscribe(() => this.onSaveSuccess(), () => this.onSaveError());
-  }
-
-  protected onSaveSuccess() {
-    this.isSaving = false;
-    this.previousState();
-  }
-
-  protected onSaveError() {
-    this.isSaving = false;
-  }
-  protected onError(errorMessage: string) {
-    this.jhiAlertService.error(errorMessage, null, null);
-  }
-
-  trackTagByName(index: number, item: ITag) {
-    return item.name;
-  }
-
-  getSelected(selectedVals: any[], option: any) {
-    if (selectedVals) {
-      for (let i = 0; i < selectedVals.length; i++) {
-        if (option.id === selectedVals[i].id) {
-          return selectedVals[i];
+  createOrAssignTagToPost() {
+    for (const tagToAdd of this.postTags) {
+      let toCreate = true;
+      for (const tag of this.allTags) {
+        if (tagToAdd.name === tag) {
+          // this.assignTagToPost(tag); // przesyłamy tag bo tagToAdd może mieć niepełne info
+          this.tagsToAdd.push(tag);
+          toCreate = false;
+          break; // wychodzi z środkowej pętli
         }
       }
+      if (toCreate) {
+        this.createNewTag(tagToAdd);
+      }
     }
-    return option;
+    this.ready = true;
   }
 
-  addAudioFile() {
-
+  assignTagToPost(tag: ITag) {
+    // if tag exists
+    tag.posts.push(this.currentPost);
+    this.tagService.update(tag).subscribe(res => {
+      this.currentPost = res.body;
+    });
   }
 
-  selectFile(event) {
-    this.selectedFiles = event.target.files;
+  createNewTag(tag: ITag) {
+    // create and assign post to tag
+    // tag.posts.push(this.currentPost);
+    this.tagService.create(tag).subscribe(res => {
+      this.tagsToAdd.push(res.body);
+    });
+  }
+
+  deleteTagFromPost(tag: ITag) {
+    const tagPosts = tag.posts;
+    const postIndex = tagPosts.findIndex(ut => ut.id === this.currentPost.id);
+    if (postIndex > -1) {
+      tagPosts.splice(postIndex, 1);
+    }
+    tag.posts = tagPosts;
+    this.tagService.update(tag).subscribe(() => {
+      this.postService.find(this.currentPost.id).subscribe(res => {
+        this.currentPost = res.body;
+      });
+    });
   }
 }
-*/

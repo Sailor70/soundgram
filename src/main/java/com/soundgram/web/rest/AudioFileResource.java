@@ -341,9 +341,9 @@ public class AudioFileResource {
         Optional<AudioFile> audioFile = audioFileRepository.findOneWithEagerRelationships(id);
         if (audioFile.isPresent()) {
             AudioFile af = audioFile.get();
-            Set<User> users = af.getUsers();
-            Long firstUserId = users.iterator().next().getId(); // the owner of file
-            storageService.deleteOneAudioFile(af.getTitle(), firstUserId);
+//            Set<User> users = af.getUsers();
+//            Long firstUserId = users.iterator().next().getId(); // the owner of file
+            storageService.deleteOneAudioFile(af.getTitle(), Long.parseLong(af.getIconPath()));
             audioFileRepository.deleteById(id);
             audioFileSearchRepository.deleteById(id);
         }
