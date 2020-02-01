@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,7 +23,7 @@ import { AccountService } from 'app/core/auth/account.service';
   selector: 'jhi-post-update',
   templateUrl: './post-update.component.html'
 })
-export class PostUpdateComponent implements OnInit {
+export class PostUpdateComponent implements OnInit, OnDestroy {
   isSaving: boolean;
 
   allTags: ITag[];
@@ -85,6 +85,13 @@ export class PostUpdateComponent implements OnInit {
         });*/
   }
 
+  ngOnDestroy(): void {
+    for (const tag of this.tagsToAdd) {
+      this.currentPost.tags.push(tag);
+    }
+    this.postService.update(this.currentPost).subscribe();
+  }
+
   updateForm(post: IPost) {
     this.editForm.patchValue({
       id: post.id,
@@ -108,7 +115,7 @@ export class PostUpdateComponent implements OnInit {
     this.isSaving = true;
     this.createOrAssignTagToPost(); // trzeba poczekać aż to się wszystko wykona
     const post = this.createFromForm();
-    console.error('tags to add: ' + post.tags.length + ' ' + post.tags); // tego jest 0
+    // console.error('tags to add: ' + post.tags.length + ' ' + post.tags); // tego jest 0
     if (post.id !== undefined) {
       this.subscribeToSaveResponse(this.postService.update(post));
     } else {
@@ -122,7 +129,7 @@ export class PostUpdateComponent implements OnInit {
       id: this.editForm.get(['id']).value,
       postContent: this.editForm.get(['postContent']).value,
       date: moment(new Date(now()), DATE_TIME_FORMAT), // aktualna data
-      tags: this.tagsToAdd,
+      tags: this.editForm.get(['tags']).value,
       user: null
     };
   }
@@ -195,9 +202,10 @@ export class PostUpdateComponent implements OnInit {
     for (const tagToAdd of this.postTags) {
       let toCreate = true;
       for (const tag of this.allTags) {
-        if (tagToAdd.name === tag) {
+        if (tagToAdd.name === tag.name) {
           // this.assignTagToPost(tag); // przesyłamy tag bo tagToAdd może mieć niepełne info
           this.tagsToAdd.push(tag);
+          console.error('Dodano istniejący tag ' + tag.name);
           toCreate = false;
           break; // wychodzi z środkowej pętli
         }

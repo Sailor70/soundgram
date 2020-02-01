@@ -12,6 +12,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { PostDeleteDialogComponent } from 'app/entities/post/post-delete-dialog.component';
+import { FollowedUserService } from 'app/entities/followed-user/followed-user.service';
 
 @Component({
   selector: 'jhi-home',
@@ -32,6 +33,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   reverse: any;
   totalItems: number;
   currentSearch: string;
+  hasFollowedUsers = true;
 
   constructor(
     private accountService: AccountService,
@@ -40,6 +42,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     protected postService: PostService,
     protected modalService: NgbModal,
     protected parseLinks: JhiParseLinks,
+    protected followedUserService: FollowedUserService,
     protected activatedRoute: ActivatedRoute
   ) {
     this.posts = [];
@@ -59,7 +62,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.accountService.identity().subscribe((account: Account) => {
       this.account = account;
-      this.loadFollowed();
+      this.followedUserService.findFollowed().subscribe(res => {
+        console.error('followed users length: ' + res.body.length);
+        if (res.body.length > 0) {
+          this.loadFollowed();
+        } else {
+          this.hasFollowedUsers = false;
+        }
+      });
     });
     this.registerAuthenticationSuccess();
 
@@ -125,7 +135,9 @@ export class HomeComponent implements OnInit, OnDestroy {
         .subscribe((res: HttpResponse<IPost[]>) => this.paginatePosts(res.body, res.headers));
       return;
     }
-    this.postService.getFollowed().subscribe((res: HttpResponse<IPost[]>) => (this.posts = res.body));
+    if (this.hasFollowedUsers) {
+      this.postService.getFollowed().subscribe((res: HttpResponse<IPost[]>) => (this.posts = res.body));
+    }
   }
 
   reset() {
