@@ -30,6 +30,8 @@ public class FileSystemStorageService implements StorageService {
 
     private final Path imagesLocation;
 
+    private final Path avatarsLocation;
+
     private final Logger log = LoggerFactory.getLogger(FileSystemStorageService.class);
 
     @Autowired
@@ -37,6 +39,7 @@ public class FileSystemStorageService implements StorageService {
         this.rootLocation = Paths.get(properties.getLocation());
         this.audioLocation = Paths.get(properties.getLocation() + "/audioFiles");
         this.imagesLocation = Paths.get(properties.getLocation() + "/images");
+        this.avatarsLocation = Paths.get(properties.getLocation() + "/avatars");
     }
 
     @Override
@@ -46,6 +49,7 @@ public class FileSystemStorageService implements StorageService {
             Files.createDirectories(rootLocation);
             Files.createDirectories(audioLocation);
             Files.createDirectories(imagesLocation);
+            Files.createDirectories(avatarsLocation);
         } catch (IOException e) {
             throw new StorageException("Could not initialize storage location", e);
         }
@@ -74,6 +78,15 @@ public class FileSystemStorageService implements StorageService {
         String filename = StringUtils.cleanPath(id.toString().concat(file.getOriginalFilename())); // 5467plik.mp3 : idPostaNazwaPlku.mp3
         //store(file, filename);
         return getPath(file, filename, imagesLocation);
+    }
+
+    @Override // czy usuwać stare avatary?
+    public String storeAvatar(MultipartFile file, Long id) {
+        String filename = StringUtils.cleanPath(id.toString().concat(file.getOriginalFilename())); // 5467plik.mp3 : idUseraNazwaPlku.mp3
+        //store(file, filename);
+        Path path = getPath(file, filename, avatarsLocation);
+        log.debug("Zapisano nowy avatar w: {}", path.toString());
+        return filename;
     }
 
     private Path getPath(MultipartFile file, String filename, Path imagesLocation) {
@@ -134,6 +147,24 @@ public class FileSystemStorageService implements StorageService {
     public Resource loadImageAsResource(String filename, Long postId) {
         try {
             Path file = imagesLocation.resolve(postId.toString().concat(filename));
+            Resource resource = new UrlResource(file.toUri());
+            if (resource.exists() || resource.isReadable()) {
+                return resource;
+            }
+            else {
+                throw new FileNotFoundException(
+                    "Could not read file: " + filename);
+            }
+        }
+        catch (MalformedURLException e) {
+            throw new FileNotFoundException("Could not read file: " + filename, e);
+        }
+    }
+
+    @Override
+    public Resource loadAvatarAsResource(String filename, Long userId) {
+        try {
+            Path file = avatarsLocation.resolve(userId.toString().concat(filename));
             Resource resource = new UrlResource(file.toUri());
             if (resource.exists() || resource.isReadable()) {
                 return resource;

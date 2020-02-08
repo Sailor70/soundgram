@@ -10,6 +10,7 @@ import { AccountService } from 'app/core/auth/account.service';
 import { LoginModalService } from 'app/core/login/login-modal.service';
 import { LoginService } from 'app/core/login/login.service';
 import { ProfileService } from 'app/layouts/profiles/profile.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'jhi-navbar',
@@ -32,7 +33,8 @@ export class NavbarComponent implements OnInit {
     private accountService: AccountService,
     private loginModalService: LoginModalService,
     private profileService: ProfileService,
-    private router: Router
+    private router: Router,
+    private sanitizer: DomSanitizer
   ) {
     this.version = VERSION ? (VERSION.toLowerCase().startsWith('v') ? VERSION : 'v' + VERSION) : '';
     this.isNavbarCollapsed = true;
@@ -75,6 +77,8 @@ export class NavbarComponent implements OnInit {
   }
 
   getImageUrl() {
-    return this.isAuthenticated() ? this.accountService.getImageUrl() : null;
+    // return this.isAuthenticated() ? this.accountService.getImageUrl() : null;
+    // console.error(this.accountService.getImageUrl());
+    return this.isAuthenticated() ? this.sanitizer.bypassSecurityTrustUrl(this.accountService.getImageUrl()) : null;
   }
 }

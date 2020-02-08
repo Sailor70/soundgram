@@ -1,10 +1,12 @@
 package com.soundgram.web.rest;
 
 
+import com.soundgram.domain.Image;
 import com.soundgram.domain.User;
 import com.soundgram.repository.UserRepository;
 import com.soundgram.security.SecurityUtils;
 import com.soundgram.service.MailService;
+import com.soundgram.service.StorageService;
 import com.soundgram.service.UserService;
 import com.soundgram.service.dto.PasswordChangeDTO;
 import com.soundgram.service.dto.UserDTO;
@@ -16,10 +18,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -43,11 +49,14 @@ public class AccountResource {
 
     private final MailService mailService;
 
-    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService) {
+    private StorageService storageService;
+
+    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService, StorageService storageService) {
 
         this.userRepository = userRepository;
         this.userService = userService;
         this.mailService = mailService;
+        this.storageService = storageService;
     }
 
     /**
@@ -127,6 +136,20 @@ public class AccountResource {
         }
         userService.updateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
             userDTO.getLangKey(), userDTO.getImageUrl());
+    }
+
+    @PostMapping("/account/userImage")
+    public ResponseEntity<String> saveImage(@RequestParam("file") MultipartFile file, @RequestParam("id") String login) throws URISyntaxException {
+        // Long userId = Long.parseLong(id);
+        Optional<User> existingUser = userRepository.findOneByLogin(login);
+        if(existingUser.isPresent()) {
+            User user = existingUser.get();
+            log.debug("Creating image file for user of id: {}", user.getId());
+            String imageFilename = storageService.storeAvatar(file, user.getId());
+            return new ResponseEntity<>(imageFilename, HttpStatus.OK); // returns example: 4563name.mp3 (id_nazwaPliku.mp3)
+        } else {
+            return null;
+        }
     }
 
     /**

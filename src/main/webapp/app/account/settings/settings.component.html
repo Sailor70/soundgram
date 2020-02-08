@@ -11,6 +11,14 @@
 
             <form name="form" role="form" (ngSubmit)="save()" [formGroup]="settingsForm" *ngIf="settingsForm.get('login').value" novalidate>
 
+                <div style="text-align:center">
+                    <label>
+                        <span>Wybierz swój awatar: </span>
+                        <input type="file" (change)="selectFile($event)">
+                    </label>
+                    <!--<button [disabled]="!selectedFiles" (click)="upload()">Upload</button>-->
+                </div>
+
                 <div class="form-group">
                     <label class="form-control-label" for="firstName" jhiTranslate="settings.form.firstname">First Name</label>
                     <input type="text" class="form-control" id="firstName" name="firstName" placeholder="{{'settings.form.firstname.placeholder' | translate}}"

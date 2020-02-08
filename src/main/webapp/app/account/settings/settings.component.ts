@@ -25,6 +25,10 @@ export class SettingsComponent implements OnInit {
     imageUrl: []
   });
 
+  selectedFiles: FileList;
+  currentFile: File;
+  currentAccount: Account;
+
   constructor(
     private accountService: AccountService,
     private fb: FormBuilder,
@@ -35,11 +39,35 @@ export class SettingsComponent implements OnInit {
   ngOnInit() {
     this.accountService.identity().subscribe(account => {
       this.updateForm(account);
+      this.currentAccount = account;
     });
     this.languages = this.languageHelper.getAll();
+    // console.error("current selected file: " + this.currentFile);
   }
 
   save() {
+    if (this.selectedFiles !== undefined) {
+      this.currentFile = this.selectedFiles.item(0);
+      this.accountService.saveImage(this.currentFile, this.currentAccount.login).subscribe(
+        res => {
+          this.settingsForm.patchValue({
+            imageUrl: res.body
+          });
+          console.error('avatarFilename: ' + res.body);
+          this.saveAccountSettings();
+        },
+        error => {
+          console.error('error' + error);
+          console.error('avatarFilename: ' + error.body);
+        }
+      );
+      // this.selectedFiles = null;
+    } else {
+      this.saveAccountSettings();
+    }
+  }
+
+  saveAccountSettings() {
     const settingsAccount = this.accountFromForm();
     this.accountService.save(settingsAccount).subscribe(
       () => {
@@ -87,5 +115,9 @@ export class SettingsComponent implements OnInit {
       login: account.login,
       imageUrl: account.imageUrl
     });
+  }
+
+  selectFile(event) {
+    this.selectedFiles = event.target.files;
   }
 }

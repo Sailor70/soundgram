@@ -14,6 +14,7 @@ export class AccountService {
   private authenticated = false;
   private authenticationState = new Subject<any>();
   private accountCache$: Observable<Account>;
+  private avatarsPath = 'file:///home/sailor/Dokumenty/PracaInz/Soundgram/uploads/avatars/';
 
   constructor(private languageService: JhiLanguageService, private sessionStorage: SessionStorageService, private http: HttpClient) {}
 
@@ -23,6 +24,14 @@ export class AccountService {
 
   save(account: Account): Observable<Account> {
     return this.http.post<Account>(SERVER_API_URL + 'api/account', account);
+  }
+
+  saveImage(file: File, userLogin: string): Observable<any> {
+    // Observable<any>
+    const formdata: FormData = new FormData();
+    formdata.append('file', file);
+    formdata.append('id', userLogin);
+    return this.http.post(SERVER_API_URL + 'api/account/userImage', formdata, { observe: 'response', responseType: 'text' });
   }
 
   authenticate(identity) {
@@ -88,6 +97,6 @@ export class AccountService {
   }
 
   getImageUrl(): string {
-    return this.isIdentityResolved() ? this.userIdentity.imageUrl : null;
+    return this.isIdentityResolved() ? this.avatarsPath + this.userIdentity.imageUrl : null;
   }
 }

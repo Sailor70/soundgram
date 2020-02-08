@@ -14,11 +14,15 @@ public interface StorageService {
 
     Path storeImage(MultipartFile file, Long id);
 
+    String storeAvatar(MultipartFile file, Long id);
+
     Stream<Path> loadAll();
 
     Resource loadAudioAsResource(String filename, Long id);
 
     Resource loadImageAsResource(String filename, Long id);
+
+    Resource loadAvatarAsResource(String filename, Long userId);
 
     void deleteAll();
 
