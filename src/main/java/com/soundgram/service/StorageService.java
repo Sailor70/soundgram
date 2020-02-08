@@ -22,7 +22,7 @@ public interface StorageService {
 
     Resource loadImageAsResource(String filename, Long id);
 
-    Resource loadAvatarAsResource(String filename, Long userId);
+    Resource loadAvatarAsResource(String filename);
 
     void deleteAll();
 

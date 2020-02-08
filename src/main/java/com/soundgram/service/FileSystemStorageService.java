@@ -162,9 +162,10 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public Resource loadAvatarAsResource(String filename, Long userId) {
+    public Resource loadAvatarAsResource(String filename) {
+        log.debug("Loading filen: " + filename);
         try {
-            Path file = avatarsLocation.resolve(userId.toString().concat(filename));
+            Path file = avatarsLocation.resolve(filename);
             Resource resource = new UrlResource(file.toUri());
             if (resource.exists() || resource.isReadable()) {
                 return resource;

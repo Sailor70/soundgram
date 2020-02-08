@@ -17,13 +17,18 @@ import com.soundgram.web.rest.vm.ManagedUserVM;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.*;
@@ -114,6 +119,27 @@ public class AccountResource {
         return userService.getUserWithAuthorities()
             .map(UserDTO::new)
             .orElseThrow(() -> new AccountResourceException("User could not be found"));
+    }
+
+    @GetMapping("/account/userImage/{filename}")
+    public ResponseEntity<byte[]> downloadAvatar(@PathVariable String filename) {
+            log.debug("Rest request to download users avatar od name: {}", filename);
+            Resource resource = storageService.loadAvatarAsResource(filename);
+
+            byte[] templateContent = new byte[0];
+            try {
+                templateContent = FileCopyUtils.copyToByteArray(resource.getFile());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+/*            HttpHeaders respHeaders = new HttpHeaders();
+            respHeaders.setContentLength(templateContent.length);
+            respHeaders.setContentType(new MediaType("audio", "mpeg"));
+            respHeaders.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+            respHeaders.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + imageName);*/
+
+            return new ResponseEntity<byte[]>(templateContent, HttpStatus.OK);
     }
 
     /**

@@ -28,6 +28,8 @@ export class ProfileComponent implements OnInit {
   allTags: ITag[];
   success: boolean;
 
+  avatar: any;
+
   tagForm = this.fb.group({
     tagName: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(50), Validators.pattern('^[_.@A-Za-z0-9-]*$')]]
   });
@@ -55,8 +57,11 @@ export class ProfileComponent implements OnInit {
   }
 
   identificationSuccess() {
-    this.userService.find(this.account.login).subscribe(res => (this.user = res));
+    this.userService.find(this.account.login).subscribe(res => {
+      this.user = res;
+    });
 
+    this.loadAvatar();
     this.refreshTags(); // load tags
 
     this.postService.getUserPosts(this.account.login).subscribe(
@@ -73,6 +78,22 @@ export class ProfileComponent implements OnInit {
       this.userAudioFiles = res.body;
       console.error('audioFiles: ' + this.userAudioFiles.length);
     });
+  }
+
+  loadAvatar() {
+    this.accountService.getAvatar(this.account.imageUrl).subscribe(
+      res => {
+        const imageUrl = URL.createObjectURL(res);
+        console.error('imageUrl: ' + imageUrl);
+        this.avatar = document.querySelector('img');
+        this.avatar.addEventListener('load', () => URL.revokeObjectURL(imageUrl));
+        document.querySelector('img').src = imageUrl;
+        // console.error('img file: ' + this.avatar);
+      },
+      res => {
+        console.error('Image resource error: ' + res);
+      }
+    );
   }
 
   refreshTags() {

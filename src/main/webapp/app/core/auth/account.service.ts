@@ -3,7 +3,7 @@ import { JhiLanguageService } from 'ng-jhipster';
 import { SessionStorageService } from 'ngx-webstorage';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, of } from 'rxjs';
-import { shareReplay, tap, catchError } from 'rxjs/operators';
+import { shareReplay, tap, catchError, map } from 'rxjs/operators';
 
 import { SERVER_API_URL } from 'app/app.constants';
 import { Account } from 'app/core/user/account.model';
@@ -32,6 +32,14 @@ export class AccountService {
     formdata.append('file', file);
     formdata.append('id', userLogin);
     return this.http.post(SERVER_API_URL + 'api/account/userImage', formdata, { observe: 'response', responseType: 'text' });
+  }
+
+  getAvatar(imageName: string): Observable<any> {
+    return this.http.get(`${SERVER_API_URL + 'api/account/userImage'}/${imageName}`, { responseType: 'blob', observe: 'response' }).pipe(
+      map((res: any) => {
+        return new Blob([res.body], { type: 'image/jpeg' });
+      })
+    ); // params: {responseType: "blob"}
   }
 
   authenticate(identity) {
