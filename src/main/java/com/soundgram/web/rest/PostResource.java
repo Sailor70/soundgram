@@ -121,14 +121,15 @@ public class PostResource {
     @GetMapping("/posts")
     public ResponseEntity<List<Post>> getAllPosts(Pageable pageable, @RequestParam(required = false, defaultValue = "false") boolean eagerload) {
         log.debug("REST request to get a page of Posts");
+        log.debug("eagerLoad" + eagerload);
         Page<Post> page;
-        if (eagerload) {
+//        if (eagerload) {
             page = postRepository.findAllWithEagerRelationships(pageable);
-        } else {
-            page = postRepository.findAll(pageable);
-        }
+//        } else {
+            List<Post> allPosts = postRepository.findAll();
+        //}
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        return ResponseEntity.ok().headers(headers).body(allPosts);
     }
 
     @GetMapping("/posts-followed")

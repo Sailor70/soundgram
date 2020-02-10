@@ -13,6 +13,8 @@ import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { PostDeleteDialogComponent } from 'app/entities/post/post-delete-dialog.component';
 import { FollowedUserService } from 'app/entities/followed-user/followed-user.service';
+import { TagService } from 'app/entities/tag/tag.service';
+import { ITag } from 'app/shared/model/tag.model';
 
 @Component({
   selector: 'jhi-home',
@@ -35,6 +37,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   currentSearch: string;
   hasFollowedUsers = true;
 
+  followedUsersPosts = true;
+  userTags: ITag[];
+
   constructor(
     private accountService: AccountService,
     private loginModalService: LoginModalService,
@@ -43,6 +48,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     protected modalService: NgbModal,
     protected parseLinks: JhiParseLinks,
     protected followedUserService: FollowedUserService,
+    protected tagService: TagService,
     protected activatedRoute: ActivatedRoute
   ) {
     this.posts = [];
@@ -137,7 +143,32 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
     if (this.hasFollowedUsers) {
       this.postService.getFollowed().subscribe((res: HttpResponse<IPost[]>) => (this.posts = res.body));
+      for (const post of this.posts) {
+        console.error('posts tags:' + post.tags.length);
+      }
     }
+  }
+
+  loadPostsByTags() {
+    this.postService.query().subscribe((res: HttpResponse<IPost[]>) => {
+      this.posts = res.body;
+      console.error('all posts:' + this.posts.length);
+      const tmpPosts = [];
+      for (const post of this.posts) {
+        // console.error("postTags:" + post.tags.length);
+        if (post.tags) {
+          for (const postTag of post.tags) {
+            for (const tag of this.userTags) {
+              if (tag.name === postTag.name) {
+                tmpPosts.push(post);
+                break;
+              }
+            }
+          }
+        }
+      }
+      this.posts = tmpPosts;
+    });
   }
 
   reset() {
@@ -202,7 +233,24 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.links = this.parseLinks.parse(headers.get('link'));
     this.totalItems = parseInt(headers.get('X-Total-Count'), 10);
     for (let i = 0; i < data.length; i++) {
+      // console.error("post tags: " + data[i].user.login);
       this.posts.push(data[i]);
     }
+  }
+
+  loadFollowedUsersPosts() {
+    this.posts = null;
+    this.followedUsersPosts = true;
+    this.loadFollowed();
+  }
+
+  loadFollowedTagsPosts() {
+    this.posts = null;
+    this.followedUsersPosts = false;
+    this.tagService.findUserTags(this.account.login).subscribe(res => {
+      this.userTags = res.body;
+      console.error('User tags:' + this.userTags.length);
+      this.loadPostsByTags();
+    });
   }
 }

@@ -45,6 +45,21 @@
                         </form>
                     </div>
                 </div>
+                <br>
+                <div [ngSwitch]="followedUsersPosts">
+                    <h2 *ngSwitchCase="true">
+                        <span id="likedFiles-page-heading">Followed Users Posts</span>
+                        <button class="btn btn-primary float-right" (click)="loadFollowedTagsPosts()">
+                            <fa-icon [icon]="'music'"></fa-icon> <span>Show my followed tags posts</span>
+                        </button>
+                    </h2>
+                    <h2 *ngSwitchCase="false">
+                        <span id="myFiles-page-heading">Followed Tags Posts</span>
+                        <button class="btn btn-primary float-right" (click)="loadFollowedUsersPosts()">
+                            <fa-icon [icon]="'music'"></fa-icon> <span>Show my followed users posts</span>
+                        </button>
+                    </h2>
+                </div>
                 <br/>
                 <div class="alert alert-warning" *ngIf="posts?.length === 0">
                     <span jhiTranslate="soundgramApp.post.home.notFound">No posts found</span>
@@ -57,6 +72,7 @@
                             <th scope="col"  jhiSortBy="postContent"><span jhiTranslate="soundgramApp.post.postContent">Post Content</span> <fa-icon [icon]="'sort'"></fa-icon></th>
                             <th scope="col"  jhiSortBy="date"><span jhiTranslate="soundgramApp.post.date">Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
                             <th scope="col"  jhiSortBy="user.login"><span jhiTranslate="soundgramApp.post.user">User</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+                            <th scope="col"  ><span>Tags</span></th>
                             <th scope="col"></th>
                         </tr>
                         </thead>
@@ -66,6 +82,11 @@
                             <td>{{post.postContent}}</td>
                             <td>{{post.date | date:'medium'}}</td>
                             <td>{{post.user?.login}}</td>
+                            <td>
+                                <span *ngFor="let tag of post.tags; let last = last">
+                                    <a [routerLink]="['/tag', tag?.id, 'view' ]">{{tag.name}}</a>{{last ? '' : ', '}}
+                                </span>
+                            </td>
                             <td class="text-right">
                                 <div class="btn-group">
                                     <button type="submit"
