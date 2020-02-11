@@ -1,6 +1,16 @@
 <div class="row justify-content-center">
     <div class="col-8">
-        <div>
+
+        <h2 id="page-heading">
+            <!--<span jhiTranslate="home.name">Posts</span>-->
+            <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-post" [routerLink]="['/post/new']">
+                <fa-icon [icon]="'plus'"></fa-icon>
+                <span class="hidden-sm-down"  jhiTranslate="soundgramApp.post.home.createLabel">
+                        Create a new Post
+                    </span>
+            </button>
+        </h2>
+
             <h2>
                 <span jhiTranslate="userManagement.detail.title">User</span> [<b>{{user?.login}}</b>]  <img id="avatar" class="profile-image rounded-circle"/>
             </h2>
@@ -40,13 +50,31 @@
                                     </ul>
                                 </dd>-->
             </dl>
+                <div *ngIf="userExtra">
+                    <dl class="row-md jh-entity-details">
+                        <dt><span jhiTranslate="soundgramApp.userExtra.userLocation">User Location</span></dt>
+                        <dd>
+                            <span>{{userExtra.userLocation}}</span>
+                        </dd>
+                        <dt><span jhiTranslate="soundgramApp.userExtra.bio">Biography</span></dt>
+                        <dd>
+                            <span>{{userExtra.bio}}</span>
+                        </dd>
+                    </dl>
+
+                    <button type="button"
+                            [routerLink]="['/account/settings']"
+                            class="btn btn-primary">
+                        <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit your data</span>
+                    </button>
+                </div>
             <!--"../../"-->
             <button type="submit"
                     routerLink="/users"
                     class="btn btn-info">
                 <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
             </button>
-        </div>
+
     </div>
 
 </div>

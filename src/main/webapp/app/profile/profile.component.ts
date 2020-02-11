@@ -10,6 +10,8 @@ import { IPost } from 'app/shared/model/post.model';
 import { AudioFileService } from 'app/entities/audio-file/audio-file.service';
 import { IAudioFile } from 'app/shared/model/audio-file.model';
 import { FormBuilder, Validators } from '@angular/forms';
+import { IUserExtra } from 'app/shared/model/user-extra.model';
+import { UserExtraService } from 'app/entities/user-extra/user-extra.service';
 
 // import { Account } from "app/core/user/user.service";
 
@@ -29,6 +31,7 @@ export class ProfileComponent implements OnInit {
   success: boolean;
 
   avatar: any;
+  userExtra: IUserExtra;
 
   tagForm = this.fb.group({
     tagName: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(50), Validators.pattern('^[_.@A-Za-z0-9-]*$')]]
@@ -40,6 +43,7 @@ export class ProfileComponent implements OnInit {
     private tagService: TagService,
     private postService: PostService,
     private audioFileService: AudioFileService,
+    private userExtraService: UserExtraService,
     private fb: FormBuilder
   ) {}
 
@@ -59,6 +63,9 @@ export class ProfileComponent implements OnInit {
   identificationSuccess() {
     this.userService.find(this.account.login).subscribe(res => {
       this.user = res;
+      this.userExtraService.find(this.user.id).subscribe(extraRes => {
+        this.userExtra = extraRes.body;
+      });
     });
 
     this.loadAvatar();

@@ -5,6 +5,10 @@ import { JhiLanguageService } from 'ng-jhipster';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
 import { JhiLanguageHelper } from 'app/core/language/language.helper';
+import { UserExtraService } from 'app/entities/user-extra/user-extra.service';
+import { UserService } from 'app/core/user/user.service';
+import { IUser } from 'app/core/user/user.model';
+import { IUserExtra } from 'app/shared/model/user-extra.model';
 
 @Component({
   selector: 'jhi-settings',
@@ -25,6 +29,16 @@ export class SettingsComponent implements OnInit {
     imageUrl: []
   });
 
+  extraForm = this.fb.group({
+    id: [],
+    userLocation: [],
+    bio: [],
+    user: []
+  });
+
+  user: IUser;
+  userExtra: IUserExtra;
+
   selectedFiles: FileList;
   currentFile: File;
   currentAccount: Account;
@@ -33,16 +47,30 @@ export class SettingsComponent implements OnInit {
     private accountService: AccountService,
     private fb: FormBuilder,
     private languageService: JhiLanguageService,
-    private languageHelper: JhiLanguageHelper
+    private languageHelper: JhiLanguageHelper,
+    protected userExtraService: UserExtraService,
+    protected userService: UserService
   ) {}
 
   ngOnInit() {
     this.accountService.identity().subscribe(account => {
       this.updateForm(account);
       this.currentAccount = account;
+      this.loadExtras();
     });
+
     this.languages = this.languageHelper.getAll();
     // console.error("current selected file: " + this.currentFile);
+  }
+
+  loadExtras() {
+    this.userService.find(this.currentAccount.login).subscribe(res => {
+      this.user = res;
+      this.userExtraService.find(this.user.id).subscribe(extra => {
+        this.userExtra = extra.body;
+        this.updateExtraForm();
+      });
+    });
   }
 
   save() {
@@ -55,6 +83,7 @@ export class SettingsComponent implements OnInit {
           });
           console.error('avatarFilename: ' + res.body);
           this.saveAccountSettings();
+          this.saveExtraSettings();
         },
         error => {
           console.error('error' + error);
@@ -64,6 +93,7 @@ export class SettingsComponent implements OnInit {
       // this.selectedFiles = null;
     } else {
       this.saveAccountSettings();
+      this.saveExtraSettings();
     }
   }
 
@@ -87,6 +117,13 @@ export class SettingsComponent implements OnInit {
         this.error = 'ERROR';
       }
     );
+  }
+
+  saveExtraSettings() {
+    this.userExtra = this.extraFromForm();
+    this.userExtraService.update(this.userExtra).subscribe(extra => {
+      this.userExtra = extra.body;
+    });
   }
 
   private accountFromForm(): any {
@@ -117,7 +154,31 @@ export class SettingsComponent implements OnInit {
     });
   }
 
+  updateExtraForm(): void {
+    this.extraForm.patchValue({
+      id: this.userExtra.id,
+      userLocation: this.userExtra.userLocation,
+      bio: this.userExtra.bio,
+      user: this.userExtra.user
+    });
+  }
+
+  private extraFromForm(): any {
+    const extra = {};
+    return {
+      ...extra,
+      id: this.extraForm.get('id').value,
+      userLocation: this.extraForm.get('userLocation').value,
+      bio: this.extraForm.get('bio').value,
+      user: this.extraForm.get('user').value
+    };
+  }
+
   selectFile(event) {
     this.selectedFiles = event.target.files;
+  }
+
+  previousState() {
+    window.history.back();
   }
 }
