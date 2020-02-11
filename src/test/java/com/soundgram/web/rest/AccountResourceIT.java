@@ -8,7 +8,6 @@ import com.soundgram.repository.AuthorityRepository;
 import com.soundgram.repository.UserRepository;
 import com.soundgram.security.AuthoritiesConstants;
 import com.soundgram.service.MailService;
-import com.soundgram.service.StorageService;
 import com.soundgram.service.UserService;
 import com.soundgram.service.dto.PasswordChangeDTO;
 import com.soundgram.service.dto.UserDTO;
@@ -57,9 +56,6 @@ public class AccountResourceIT {
     private UserService userService;
 
     @Autowired
-    private StorageService storageService;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -83,10 +79,10 @@ public class AccountResourceIT {
         MockitoAnnotations.initMocks(this);
         doNothing().when(mockMailService).sendActivationEmail(any());
         AccountResource accountResource =
-            new AccountResource(userRepository, userService, mockMailService, storageService);
+            new AccountResource(userRepository, userService, mockMailService);
 
         AccountResource accountUserMockResource =
-            new AccountResource(userRepository, mockUserService, mockMailService, storageService);
+            new AccountResource(userRepository, mockUserService, mockMailService);
         this.restMvc = MockMvcBuilders.standaloneSetup(accountResource)
             .setMessageConverters(httpMessageConverters)
             .setControllerAdvice(exceptionTranslator)

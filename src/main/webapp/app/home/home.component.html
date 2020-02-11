@@ -81,7 +81,7 @@
                             <td><a [routerLink]="['/post', post.id, 'view' ]">{{post.id}}</a></td>
                             <td>{{post.postContent}}</td>
                             <td>{{post.date | date:'medium'}}</td>
-                            <td>{{post.user?.login}}</td>
+                            <td><a [routerLink]="['/', post.user.login, 'view']">{{post.user?.login}}</a></td>
                             <td>
                                 <span *ngFor="let tag of post.tags; let last = last">
                                     <a [routerLink]="['/tag', tag?.id, 'view' ]">{{tag.name}}</a>{{last ? '' : ', '}}

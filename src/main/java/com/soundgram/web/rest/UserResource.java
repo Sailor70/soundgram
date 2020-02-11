@@ -6,6 +6,7 @@ import com.soundgram.repository.UserRepository;
 import com.soundgram.repository.search.UserSearchRepository;
 import com.soundgram.security.AuthoritiesConstants;
 import com.soundgram.service.MailService;
+import com.soundgram.service.StorageService;
 import com.soundgram.service.UserService;
 import com.soundgram.service.dto.UserDTO;
 import com.soundgram.web.rest.errors.BadRequestAlertException;
@@ -19,16 +20,20 @@ import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -78,12 +83,15 @@ public class UserResource {
 
     private final UserSearchRepository userSearchRepository;
 
-    public UserResource(UserService userService, UserRepository userRepository, MailService mailService, UserSearchRepository userSearchRepository) {
+    private final StorageService storageService;
+
+    public UserResource(UserService userService, UserRepository userRepository, MailService mailService, UserSearchRepository userSearchRepository, StorageService storageService) {
 
         this.userService = userService;
         this.userRepository = userRepository;
         this.mailService = mailService;
         this.userSearchRepository = userSearchRepository;
+        this.storageService = storageService;
     }
 
     /**
@@ -145,6 +153,20 @@ public class UserResource {
             HeaderUtil.createAlert(applicationName, "userManagement.updated", userDTO.getLogin()));
     }
 
+    @PostMapping("/users/userAvatar")
+    public ResponseEntity<String> saveAvatar(@RequestParam("file") MultipartFile file, @RequestParam("id") String login) throws URISyntaxException {
+        // Long userId = Long.parseLong(id);
+        Optional<User> existingUser = userRepository.findOneByLogin(login);
+        if(existingUser.isPresent()) {
+            User user = existingUser.get();
+            log.debug("Creating image file for user of id: {}", user.getId());
+            String imageFilename = storageService.storeAvatar(file, user.getId());
+            return new ResponseEntity<>(imageFilename, HttpStatus.OK); // returns example: 4563name.mp3 (id_nazwaPliku.mp3)
+        } else {
+            return null;
+        }
+    }
+
     /**
      * {@code GET /users} : get all users.
      *
@@ -183,7 +205,7 @@ public class UserResource {
     }
 
     @GetMapping("/users-avatar/{login:" + Constants.LOGIN_REGEX + "}")
-    public ResponseEntity<String> getUserAvatarName(@PathVariable String login) {
+    public ResponseEntity<String> getUserAvatarFilename(@PathVariable String login) {
         log.debug("REST request to get Avatar file name od user : {}", login);
         Optional<User> user = userService.getUser(login);
         if(user.isPresent()) {
@@ -192,6 +214,27 @@ public class UserResource {
         } else {
             return null;
         }
+    }
+
+    @GetMapping("/users/userAvatar/{filename}")
+    public ResponseEntity<byte[]> downloadAvatar(@PathVariable String filename) {
+        log.debug("Rest request to download users avatar od name: {}", filename);
+        Resource resource = storageService.loadAvatarAsResource(filename);
+
+        byte[] templateContent = new byte[0];
+        try {
+            templateContent = FileCopyUtils.copyToByteArray(resource.getFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+/*            HttpHeaders respHeaders = new HttpHeaders();
+            respHeaders.setContentLength(templateContent.length);
+            respHeaders.setContentType(new MediaType("audio", "mpeg"));
+            respHeaders.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+            respHeaders.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + imageName);*/
+
+        return new ResponseEntity<byte[]>(templateContent, HttpStatus.OK);
     }
 
     /**

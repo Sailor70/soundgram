@@ -72,7 +72,7 @@
                 </td>
                 <td>
                     <span *ngFor="let user of audioFile.users; let last = last">
-                            {{user.login}}{{last ? '' : ', '}}
+                        <a [routerLink]="['/', user.login, 'view']">{{user.login}}{{last ? '' : ', '}}</a>
                         </span>
                 </td>
                 <td class="text-right">

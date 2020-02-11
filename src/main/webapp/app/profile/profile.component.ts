@@ -89,7 +89,7 @@ export class ProfileComponent implements OnInit {
   }
 
   loadAvatar() {
-    this.accountService.getAvatar(this.account.imageUrl).subscribe(
+    this.userService.getAvatar(this.account.imageUrl).subscribe(
       res => {
         const imageUrl = URL.createObjectURL(res);
         console.error('imageUrl: ' + imageUrl);

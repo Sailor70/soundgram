@@ -58,9 +58,9 @@ export class UserDetailComponent implements OnInit {
       this.userAudioFiles = res.body;
     });
 
-    this.userService.getAvatar(this.user.login).subscribe(avatarFileName => {
+    this.userService.getAvatarFilename(this.user.login).subscribe(avatarFileName => {
       // console.error("Avatar filename: " + avatarFileName.body)
-      this.accountService.getAvatar(avatarFileName.body).subscribe(
+      this.userService.getAvatar(avatarFileName.body).subscribe(
         res => {
           const imageUrl = URL.createObjectURL(res);
           console.error('imageUrl: ' + imageUrl);

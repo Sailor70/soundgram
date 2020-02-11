@@ -76,7 +76,7 @@ export class SettingsComponent implements OnInit {
   save() {
     if (this.selectedFiles !== undefined) {
       this.currentFile = this.selectedFiles.item(0);
-      this.accountService.saveImage(this.currentFile, this.currentAccount.login).subscribe(
+      this.userService.saveImage(this.currentFile, this.currentAccount.login).subscribe(
         res => {
           this.settingsForm.patchValue({
             imageUrl: res.body

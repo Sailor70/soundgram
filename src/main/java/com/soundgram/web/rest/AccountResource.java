@@ -54,14 +54,11 @@ public class AccountResource {
 
     private final MailService mailService;
 
-    private StorageService storageService;
-
-    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService, StorageService storageService) {
+    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService) {
 
         this.userRepository = userRepository;
         this.userService = userService;
         this.mailService = mailService;
-        this.storageService = storageService;
     }
 
     /**
@@ -121,27 +118,6 @@ public class AccountResource {
             .orElseThrow(() -> new AccountResourceException("User could not be found"));
     }
 
-    @GetMapping("/account/userImage/{filename}")
-    public ResponseEntity<byte[]> downloadAvatar(@PathVariable String filename) {
-            log.debug("Rest request to download users avatar od name: {}", filename);
-            Resource resource = storageService.loadAvatarAsResource(filename);
-
-            byte[] templateContent = new byte[0];
-            try {
-                templateContent = FileCopyUtils.copyToByteArray(resource.getFile());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-/*            HttpHeaders respHeaders = new HttpHeaders();
-            respHeaders.setContentLength(templateContent.length);
-            respHeaders.setContentType(new MediaType("audio", "mpeg"));
-            respHeaders.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-            respHeaders.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + imageName);*/
-
-            return new ResponseEntity<byte[]>(templateContent, HttpStatus.OK);
-    }
-
     /**
      * {@code POST  /account} : update the current user information.
      *
@@ -162,20 +138,6 @@ public class AccountResource {
         }
         userService.updateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
             userDTO.getLangKey(), userDTO.getImageUrl());
-    }
-
-    @PostMapping("/account/userImage")
-    public ResponseEntity<String> saveImage(@RequestParam("file") MultipartFile file, @RequestParam("id") String login) throws URISyntaxException {
-        // Long userId = Long.parseLong(id);
-        Optional<User> existingUser = userRepository.findOneByLogin(login);
-        if(existingUser.isPresent()) {
-            User user = existingUser.get();
-            log.debug("Creating image file for user of id: {}", user.getId());
-            String imageFilename = storageService.storeAvatar(file, user.getId());
-            return new ResponseEntity<>(imageFilename, HttpStatus.OK); // returns example: 4563name.mp3 (id_nazwaPliku.mp3)
-        } else {
-            return null;
-        }
     }
 
     /**

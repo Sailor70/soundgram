@@ -21,7 +21,7 @@
                 </dd>
                 <dt><span jhiTranslate="soundgramApp.post.user">User</span></dt>
                 <dd>
-                    {{post.user?.login}}
+                    <a [routerLink]="['/', post.user.login, 'view']">{{post.user.login}}</a>
                 </dd>
             </dl>
 
@@ -108,7 +108,7 @@
                 <td>{{comment.textContent}}</td>
                 <td>{{comment.date | date:'medium'}}</td>
                 <td>
-                    {{comment.user?.login}}
+                    <a [routerLink]="['/post', comment.user?.login, 'view' ]" >{{comment.user?.login}}</a>
                 </td>
                 <td>
                     <div *ngIf="comment.post">

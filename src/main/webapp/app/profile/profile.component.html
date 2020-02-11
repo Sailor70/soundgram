@@ -122,7 +122,7 @@
             <td>{{tag.name}}</td>
             <td>
                     <span *ngFor="let user of tag.users; let last = last">
-                            {{user.login}}{{last ? '' : ', '}}
+                            <a [routerLink]="['/', user.login, 'view']">{{user.login}}{{last ? '' : ', '}}</a>
                         </span>
             </td>
             <td class="text-right">
@@ -171,7 +171,7 @@
             <td>{{post.postContent}}</td>
             <td>{{post.date | date:'medium'}}</td>
             <td>
-                {{post.user?.login}}
+                <a [routerLink]="['/', post.user?.login, 'view']">{{post.user?.login}}</a>
             </td>
             <td class="text-right">
                 <div class="btn-group">
@@ -228,7 +228,7 @@
             </td>
             <td>
                     <span *ngFor="let user of audioFile.users; let last = last">
-                            {{user.login}}{{last ? '' : ', '}}
+                            <a [routerLink]="['/', user.login, 'view']">{{user.login}}{{last ? '' : ', '}}</a>
                         </span>
             </td>
             <td class="text-right">

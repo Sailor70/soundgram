@@ -7,6 +7,7 @@ import com.soundgram.repository.UserRepository;
 import com.soundgram.repository.search.UserSearchRepository;
 import com.soundgram.security.AuthoritiesConstants;
 import com.soundgram.service.MailService;
+import com.soundgram.service.StorageService;
 import com.soundgram.service.UserService;
 import com.soundgram.service.dto.UserDTO;
 import com.soundgram.service.mapper.UserMapper;
@@ -82,6 +83,9 @@ public class UserResourceIT {
     private UserService userService;
 
     @Autowired
+    private StorageService storageService;
+
+    @Autowired
     private UserMapper userMapper;
 
     @Autowired
@@ -107,7 +111,7 @@ public class UserResourceIT {
     public void setup() {
         cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE).clear();
         cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE).clear();
-        UserResource userResource = new UserResource(userService, userRepository, mailService, mockUserSearchRepository);
+        UserResource userResource = new UserResource(userService, userRepository, mailService, mockUserSearchRepository, storageService);
 
         this.restUserMockMvc = MockMvcBuilders.standaloneSetup(userResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
