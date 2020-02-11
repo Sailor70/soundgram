@@ -70,8 +70,8 @@ export class AudioFileService {
     return this.http.get<IAudioFile[]>(this.resourceUrl + '-liked', { observe: 'response' });
   }
 
-  getUserFiles(): Observable<EntityArrayResponseType> {
-    return this.http.get<IAudioFile[]>(this.resourceUrl + '-users', { observe: 'response' });
+  getUserFiles(id: number): Observable<EntityArrayResponseType> {
+    return this.http.get<IAudioFile[]>(`${this.resourceUrl + '-users'}/${id}`, { observe: 'response' });
   }
 
   query(req?: any): Observable<EntityArrayResponseType> {

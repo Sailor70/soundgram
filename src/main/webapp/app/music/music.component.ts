@@ -7,6 +7,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute } from '@angular/router';
 import { AudioFileDeleteDialogComponent } from 'app/entities/audio-file/audio-file-delete-dialog.component';
 import { HttpResponse } from '@angular/common/http';
+import { Account } from 'app/core/user/account.model';
+import { AccountService } from 'app/core/auth/account.service';
+import { UserService } from 'app/core/user/user.service';
+import { IUser } from 'app/core/user/user.model';
 
 @Component({
   selector: 'jhi-music',
@@ -20,11 +24,16 @@ export class MusicComponent implements OnInit, OnDestroy {
 
   likedAudioDisplayed = true;
 
+  user: IUser;
+  account: Account;
+
   constructor(
     protected audioFileService: AudioFileService,
     protected eventManager: JhiEventManager,
     protected modalService: NgbModal,
-    protected activatedRoute: ActivatedRoute
+    protected activatedRoute: ActivatedRoute,
+    protected accountService: AccountService,
+    protected userService: UserService
   ) {
     this.currentSearch =
       this.activatedRoute.snapshot && this.activatedRoute.snapshot.queryParams['search']
@@ -33,6 +42,12 @@ export class MusicComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.accountService.identity().subscribe((account: Account) => {
+      this.account = account;
+      this.userService.find(this.account.login).subscribe(res => {
+        this.user = res;
+      });
+    });
     this.loadLikedFiles();
     // this.loadAll();
     this.registerChangeInAudioFiles();
@@ -64,7 +79,7 @@ export class MusicComponent implements OnInit, OnDestroy {
 
   loadUserFiles() {
     this.likedAudioDisplayed = false;
-    this.audioFileService.getUserFiles().subscribe((res: HttpResponse<IAudioFile[]>) => {
+    this.audioFileService.getUserFiles(this.user.id).subscribe((res: HttpResponse<IAudioFile[]>) => {
       this.audioFiles = res.body;
       this.currentSearch = '';
     });

@@ -230,16 +230,16 @@ public class AudioFileResource {
         return likedAFs;
     }
 
-    @GetMapping("/audio-files-users")
-    public List<AudioFile> getUserAudioFiles() {
-        User currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null);
-        Long currentUserId = currentUser.getId();
-        log.debug("REST request to get Audiofiles that are owned by the user of id : {}", currentUserId);
+    @GetMapping("/audio-files-users/{userId}")
+    public List<AudioFile> getUserAudioFiles(@PathVariable Long userId) {
+        // User currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null);
+        // Long currentUserId = currentUser.getId();
+        log.debug("REST request to get Audiofiles that are owned by the user of id : {}", userId);
         List<AudioFile> allAF = audioFileRepository.findAllWithEagerRelationships();
         List<AudioFile> usersAFs = new ArrayList<AudioFile>();
         for(AudioFile af : allAF){
             Long ownerId = Long.parseLong(af.getIconPath());
-            if(ownerId.equals(currentUserId)){
+            if(ownerId.equals(userId)){
                 usersAFs.add(af);
             }
         }

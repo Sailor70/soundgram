@@ -182,6 +182,18 @@ public class UserResource {
                 .map(UserDTO::new));
     }
 
+    @GetMapping("/users-avatar/{login:" + Constants.LOGIN_REGEX + "}")
+    public ResponseEntity<String> getUserAvatarName(@PathVariable String login) {
+        log.debug("REST request to get Avatar file name od user : {}", login);
+        Optional<User> user = userService.getUser(login);
+        if(user.isPresent()) {
+            String avatarName = user.get().getImageUrl();
+            return new ResponseEntity<>(avatarName, HttpStatus.OK);
+        } else {
+            return null;
+        }
+    }
+
     /**
      * {@code DELETE /users/:login} : delete the "login" User.
      *

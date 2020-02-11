@@ -63,8 +63,14 @@ export class ProfileComponent implements OnInit {
   identificationSuccess() {
     this.userService.find(this.account.login).subscribe(res => {
       this.user = res;
+
       this.userExtraService.find(this.user.id).subscribe(extraRes => {
         this.userExtra = extraRes.body;
+      });
+
+      this.audioFileService.getUserFiles(this.user.id).subscribe(audioRes => {
+        this.userAudioFiles = audioRes.body;
+        console.error('audioFiles: ' + this.userAudioFiles.length);
       });
     });
 
@@ -80,11 +86,6 @@ export class ProfileComponent implements OnInit {
         console.error('posts error: ' + res.body);
       }
     );
-
-    this.audioFileService.getUserFiles().subscribe(res => {
-      this.userAudioFiles = res.body;
-      console.error('audioFiles: ' + this.userAudioFiles.length);
-    });
   }
 
   loadAvatar() {
