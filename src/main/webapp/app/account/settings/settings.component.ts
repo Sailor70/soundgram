@@ -43,6 +43,10 @@ export class SettingsComponent implements OnInit {
   currentFile: File;
   currentAccount: Account;
 
+  avatar: any;
+  hasImage: boolean;
+  isImageLoading: boolean;
+
   constructor(
     private accountService: AccountService,
     private fb: FormBuilder,
@@ -53,9 +57,11 @@ export class SettingsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.hasImage = false;
     this.accountService.identity().subscribe(account => {
       this.updateForm(account);
       this.currentAccount = account;
+      this.getAvatarFromService();
       this.loadExtras();
     });
 
@@ -105,6 +111,8 @@ export class SettingsComponent implements OnInit {
         this.success = 'OK';
         this.accountService.identity(true).subscribe(account => {
           this.updateForm(account);
+          this.currentAccount = account;
+          this.getAvatarFromService();
         });
         this.languageService.getCurrent().then(current => {
           if (settingsAccount.langKey !== current) {
@@ -180,5 +188,38 @@ export class SettingsComponent implements OnInit {
 
   previousState() {
     window.history.back();
+  }
+
+  getAvatarFromService() {
+    this.isImageLoading = true;
+    this.userService.getAvatarFilename(this.currentAccount.login).subscribe(avatarFileName => {
+      console.error('avatar filename: ' + avatarFileName.body);
+      this.userService.getAvatar(avatarFileName.body).subscribe(
+        data => {
+          this.createAvatarFromBlob(data);
+          this.isImageLoading = false;
+          this.hasImage = true;
+        },
+        error => {
+          this.isImageLoading = false;
+          console.error(error);
+        }
+      );
+    });
+  }
+
+  createAvatarFromBlob(image: Blob) {
+    const reader = new FileReader();
+    reader.addEventListener(
+      'load',
+      () => {
+        this.avatar = reader.result;
+      },
+      false
+    );
+
+    if (image) {
+      reader.readAsDataURL(image);
+    }
   }
 }

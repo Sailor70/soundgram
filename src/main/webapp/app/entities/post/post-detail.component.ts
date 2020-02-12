@@ -13,6 +13,7 @@ import { IUser } from 'app/core/user/user.model';
 import * as moment from 'moment';
 import { now } from 'moment';
 import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
+import { UserService } from 'app/core/user/user.service';
 
 @Component({
   selector: 'jhi-post-detail',
@@ -33,18 +34,27 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   usersComments: IComment[];
   currentUser: IUser;
 
+  avatar: any;
+  postImage: any;
+  isImageLoading: boolean;
+  account: Account;
+  hasImage: boolean;
+
   constructor(
     protected activatedRoute: ActivatedRoute,
     protected imageService: ImageService,
     protected audioFileService: AudioFileService,
-    protected commentService: CommentService
+    protected commentService: CommentService,
+    protected userService: UserService
   ) {
     this.audio = new Audio();
   }
 
   ngOnInit() {
+    this.hasImage = false;
     this.activatedRoute.data.subscribe(({ post }) => {
       this.post = post;
+      this.getAvatarFromService();
     });
 
     this.audioFileService.findByPost(this.post.id).subscribe(
@@ -63,7 +73,8 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     this.imageService.findByPost(this.post.id).subscribe(
       (res: HttpResponse<IImage>) => {
         this.image = res.body;
-        this.onLoadImageSuccess();
+        // this.onLoadImageSuccess();
+        this.getPostImageFromService();
         console.error('image id:' + this.image.id);
       },
       res => {
@@ -74,7 +85,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     this.commentService.findByPost(this.post.id).subscribe(
       (res: HttpResponse<IComment[]>) => {
         this.usersComments = res.body;
-        this.usersComments.forEach(value => console.error(value));
+        // this.usersComments.forEach(value => console.error(value));
       },
       res => {
         console.error('Comments load error: ' + res.body);
@@ -157,6 +168,70 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     this.commentService.create(this.newComment).subscribe((res: HttpResponse<IUser>) => {
       this.currentUser = res.body;
     });
+  }
+
+  getAvatarFromService() {
+    this.isImageLoading = true;
+    console.error('post user: ' + this.post.user.login);
+    this.userService.getAvatarFilename(this.post.user.login).subscribe(avatarFileName => {
+      console.error('avatar filename: ' + avatarFileName);
+      this.userService.getAvatar(avatarFileName.body).subscribe(
+        data => {
+          this.createAvatarFromBlob(data);
+          this.isImageLoading = false;
+          this.hasImage = true;
+        },
+        error => {
+          this.isImageLoading = false;
+          console.error(error);
+        }
+      );
+    });
+  }
+
+  getPostImageFromService() {
+    this.isImageLoading = true;
+    console.error('post user: ' + this.image.id);
+    this.imageService.getFile(this.image.id).subscribe(
+      data => {
+        this.createImageFromBlob(data);
+        this.isImageLoading = false;
+      },
+      error => {
+        this.isImageLoading = false;
+        console.error(error);
+      }
+    );
+  }
+
+  createImageFromBlob(image: Blob) {
+    const reader = new FileReader();
+    reader.addEventListener(
+      'load',
+      () => {
+        this.postImage = reader.result;
+      },
+      false
+    );
+
+    if (image) {
+      reader.readAsDataURL(image);
+    }
+  }
+
+  createAvatarFromBlob(image: Blob) {
+    const reader = new FileReader();
+    reader.addEventListener(
+      'load',
+      () => {
+        this.avatar = reader.result;
+      },
+      false
+    );
+
+    if (image) {
+      reader.readAsDataURL(image);
+    }
   }
 
   previousState() {

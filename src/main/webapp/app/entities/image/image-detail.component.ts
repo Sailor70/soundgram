@@ -10,8 +10,8 @@ import { ImageService } from 'app/entities/image/image.service';
 })
 export class ImageDetailComponent implements OnInit {
   image: IImage;
-  imageUrl: any;
-  img: any;
+  imageToShow: any;
+  isImageLoading: boolean;
 
   constructor(protected activatedRoute: ActivatedRoute, protected imageService: ImageService) {}
 
@@ -19,20 +19,36 @@ export class ImageDetailComponent implements OnInit {
     this.activatedRoute.data.subscribe(({ image }) => {
       this.image = image;
     });
+    this.getImageFromService();
+  }
+
+  getImageFromService() {
+    this.isImageLoading = true;
     this.imageService.getFile(this.image.id).subscribe(
-      res => {
-        const blobUrl = URL.createObjectURL(res);
-        this.imageUrl = blobUrl;
-        console.error('imageUrl: ' + this.imageUrl);
-        this.img = document.querySelector('img');
-        this.img.addEventListener('load', () => URL.revokeObjectURL(this.imageUrl));
-        document.querySelector('img').src = this.imageUrl;
-        console.error('img file: ' + this.img);
+      data => {
+        this.createImageFromBlob(data);
+        this.isImageLoading = false;
       },
-      res => {
-        console.error('Image resource error: ' + res);
+      error => {
+        this.isImageLoading = false;
+        console.error(error);
       }
     );
+  }
+
+  createImageFromBlob(image: Blob) {
+    const reader = new FileReader();
+    reader.addEventListener(
+      'load',
+      () => {
+        this.imageToShow = reader.result;
+      },
+      false
+    );
+
+    if (image) {
+      reader.readAsDataURL(image);
+    }
   }
 
   previousState() {

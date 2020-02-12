@@ -3,6 +3,13 @@
         <div class="col-md-8">
             <h2 jhiTranslate="settings.title" [translateValues]="{username: settingsForm.get('login').value}" *ngIf="settingsForm.get('login').value">User settings for [<b>{{settingsForm.get('login').value}}</b>]</h2>
 
+            <img [src]="avatar"
+                 alt="avatar"
+                 *ngIf="!isImageLoading && hasImage; else noImageFound" class="profile-image rounded-circle" style="max-width:80px;width:100%;max-height:80px;height:100%">
+            <ng-template #noImageFound>
+                <span>You Failed!</span>
+            </ng-template>
+
             <div class="alert alert-success" *ngIf="success" jhiTranslate="settings.messages.success">
                 <strong>Settings saved!</strong>
             </div>

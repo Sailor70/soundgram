@@ -22,6 +22,9 @@
                 <dt><span jhiTranslate="soundgramApp.post.user">User</span></dt>
                 <dd>
                     <a [routerLink]="['/', post.user.login, 'view']">{{post.user.login}}</a>
+                    <img [src]="avatar"
+                         alt="avatar"
+                         *ngIf="!isImageLoading && hasImage" class="profile-image rounded-circle" style="max-width:80px;width:100%;max-height:80px;height:100%">
                 </dd>
             </dl>
 
@@ -52,7 +55,12 @@
                 </button>
             </div>
 
-            <img class="row" id="img" style="max-width:400px;width:100%;max-height:500px;height:100%"/>
+            <img [src]="postImage"
+                 alt="post image"
+                 *ngIf="!isImageLoading; else noImageFound" style="max-width:400px;width:100%;max-height:500px;height:100%">
+            <ng-template #noImageFound>
+                <span>You Failed!</span>
+            </ng-template>
 
             <br>
 

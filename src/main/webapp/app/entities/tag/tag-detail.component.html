@@ -12,7 +12,7 @@
                 <dt><span jhiTranslate="soundgramApp.tag.user">User</span></dt>
                 <dd>
                     <span *ngFor="let user of tag.users; let last = last">
-                        {{user.login}}{{last ? '' : ', '}}
+                        <a [routerLink]="['/', user.login, 'view']">{{user.login}}{{last ? '' : ', '}}</a>
                     </span>
                 </dd>
             </dl>
@@ -28,6 +28,48 @@
                     class="btn btn-primary">
                 <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
             </button>
+
+            <h2>Posts that contains this tag:</h2>
+            <div class="alert alert-warning" *ngIf="posts?.length === 0">
+                <span jhiTranslate="soundgramApp.post.home.notFound">No posts found</span>
+            </div>
+            <div class="table-responsive" *ngIf="posts?.length > 0">
+                <table class="table table-striped" aria-describedby="page-heading">
+                    <thead>
+                    <tr>
+                        <th scope="col"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+                        <th scope="col"><span jhiTranslate="soundgramApp.post.postContent">Post Content</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+                        <th scope="col"><span jhiTranslate="soundgramApp.post.date">Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+                        <th scope="col"><span jhiTranslate="soundgramApp.post.user">User</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+                        <th scope="col"><span>Tags</span></th>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let post of posts ;trackBy: trackId">
+                        <td><a [routerLink]="['/post', post.id, 'view' ]">{{post.id}}</a></td>
+                        <td>{{post.postContent}}</td>
+                        <td>{{post.date | date:'medium'}}</td>
+                        <td><a [routerLink]="['/', post.user.login, 'view']">{{post.user?.login}}</a></td>
+                        <td>
+                                <span *ngFor="let tag of post.tags; let last = last">
+                                    <a [routerLink]="['/tag', tag?.id, 'view' ]">{{tag.name}}</a>{{last ? '' : ', '}}
+                                </span>
+                        </td>
+                        <td class="text-right">
+                            <div class="btn-group">
+                                <button type="submit"
+                                        [routerLink]="['/post', post.id, 'view' ]"
+                                        class="btn btn-info btn-sm">
+                                    <fa-icon [icon]="'eye'"></fa-icon>
+                                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

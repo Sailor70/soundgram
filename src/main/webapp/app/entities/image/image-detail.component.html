@@ -21,7 +21,12 @@
                 </dd>
             </dl>
 
-            <img id="img}"/>
+            <img [src]="imageToShow"
+                 alt="Place image title"
+                 *ngIf="!isImageLoading; else noImageFound" style="max-width:400px;width:100%;max-height:500px;height:100%">
+            <ng-template #noImageFound>
+                <span>You Failed!</span>
+            </ng-template>
 
             <button type="submit"
                     (click)="previousState()"

@@ -171,17 +171,30 @@
                 </ul>
             </li>
             <li ngbDropdown class="nav-item dropdown pointer" display="dynamic" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-                <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="account-menu">
-                  <!--*ngIf="!getImageUrl()" w tym spanie na dole-->
-                    <span>
+<!--                <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="account-menu">
+                  &lt;!&ndash;*ngIf="!getImageUrl()" w tym spanie na dole&ndash;&gt;
+                    <span *ngIf="!hasImage">
                     <fa-icon icon="user"></fa-icon>
                     <span jhiTranslate="global.menu.account.main">
                       Account
                     </span>
                   </span>
-<!--                    <span *ngIf="getImageUrl()">-->
-<!--                      <img [src]="getImageUrl()" class="profile-image rounded-circle" alt="Avatar">-->
-<!--                  </span>-->
+                    <span *ngIf="hasImage">
+                      <img id="navbarImage" class="profile-image rounded-circle">
+                  </span>
+                </a>-->
+                <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="account-menu">
+                    <!--*ngIf="!getImageUrl()" w tym spanie na dole-->
+                    <span *ngIf="!hasImage">
+                    <fa-icon icon="user"></fa-icon>
+                    <span *ngIf="account">
+                      {{account.login}}
+                    </span>
+                  </span>
+                   <!-- Problem z avatarem jest taki że wszystkie obrazy wyświetlają się w miejscu avatara niezależnie czy [src] czy id i jak nazwa tej zmiennej !!??-->
+                    <span *ngIf="hasImage && !isImageLoading && account">
+                      <img [src]="avatar" class="profile-image rounded-circle" alt="Avatar"> {{account.login}}
+                  </span>
                 </a>
                 <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="account-menu">
                     <li *ngSwitchCase="true">

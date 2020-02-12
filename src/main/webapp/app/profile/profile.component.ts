@@ -31,6 +31,8 @@ export class ProfileComponent implements OnInit {
   success: boolean;
 
   avatar: any;
+  hasImage: boolean;
+  isImageLoading: boolean;
   userExtra: IUserExtra;
 
   tagForm = this.fb.group({
@@ -49,6 +51,7 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit() {
     this.success = false;
+    this.hasImage = false;
     this.accountService.identity().subscribe((account: Account) => {
       this.account = account;
       console.error('user account name: ' + this.account.login);
@@ -74,7 +77,7 @@ export class ProfileComponent implements OnInit {
       });
     });
 
-    this.loadAvatar();
+    this.getAvatarFromService();
     this.refreshTags(); // load tags
 
     this.postService.getUserPosts(this.account.login).subscribe(
@@ -84,22 +87,6 @@ export class ProfileComponent implements OnInit {
       },
       res => {
         console.error('posts error: ' + res.body);
-      }
-    );
-  }
-
-  loadAvatar() {
-    this.userService.getAvatar(this.account.imageUrl).subscribe(
-      res => {
-        const imageUrl = URL.createObjectURL(res);
-        console.error('imageUrl: ' + imageUrl);
-        this.avatar = document.querySelector('img');
-        this.avatar.addEventListener('load', () => URL.revokeObjectURL(imageUrl));
-        document.querySelector('img').src = imageUrl;
-        // console.error('img file: ' + this.avatar);
-      },
-      res => {
-        console.error('Image resource error: ' + res);
       }
     );
   }
@@ -151,5 +138,38 @@ export class ProfileComponent implements OnInit {
     this.tagService.update(tag).subscribe(() => {
       this.refreshTags();
     });
+  }
+
+  getAvatarFromService() {
+    this.isImageLoading = true;
+    this.userService.getAvatarFilename(this.account.login).subscribe(avatarFileName => {
+      console.error('avatar filename: ' + avatarFileName.body);
+      this.userService.getAvatar(avatarFileName.body).subscribe(
+        data => {
+          this.createAvatarFromBlob(data);
+          this.isImageLoading = false;
+          this.hasImage = true;
+        },
+        error => {
+          this.isImageLoading = false;
+          console.error(error);
+        }
+      );
+    });
+  }
+
+  createAvatarFromBlob(image: Blob) {
+    const reader = new FileReader();
+    reader.addEventListener(
+      'load',
+      () => {
+        this.avatar = reader.result;
+      },
+      false
+    );
+
+    if (image) {
+      reader.readAsDataURL(image);
+    }
   }
 }

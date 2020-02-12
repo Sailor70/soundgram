@@ -11,6 +11,8 @@ import { LoginModalService } from 'app/core/login/login-modal.service';
 import { LoginService } from 'app/core/login/login.service';
 import { ProfileService } from 'app/layouts/profiles/profile.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { UserService } from 'app/core/user/user.service';
+import { Account } from 'app/core/user/account.model';
 
 @Component({
   selector: 'jhi-navbar',
@@ -25,6 +27,11 @@ export class NavbarComponent implements OnInit {
   modalRef: NgbModalRef;
   version: string;
 
+  account: Account;
+  hasImage: boolean;
+  avatar: any;
+  isImageLoading: boolean;
+
   constructor(
     private loginService: LoginService,
     private languageService: JhiLanguageService,
@@ -34,6 +41,7 @@ export class NavbarComponent implements OnInit {
     private loginModalService: LoginModalService,
     private profileService: ProfileService,
     private router: Router,
+    private userService: UserService,
     private sanitizer: DomSanitizer
   ) {
     this.version = VERSION ? (VERSION.toLowerCase().startsWith('v') ? VERSION : 'v' + VERSION) : '';
@@ -41,11 +49,17 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.hasImage = false;
     this.languages = this.languageHelper.getAll();
 
     this.profileService.getProfileInfo().subscribe(profileInfo => {
       this.inProduction = profileInfo.inProduction;
       this.swaggerEnabled = profileInfo.swaggerEnabled;
+    });
+
+    this.accountService.identity().subscribe((account: Account) => {
+      this.account = account;
+      this.getAvatarFromService(); // Problem z avatarem jest taki że wszystkie obrazy wyświetlają się w miejscu avatara niezależnie czy [src] czy id i jak nazwa tej zmiennej !!??
     });
   }
 
@@ -77,8 +91,41 @@ export class NavbarComponent implements OnInit {
   }
 
   getImageUrl() {
-    // return this.isAuthenticated() ? this.accountService.getImageUrl() : null;
+    return this.isAuthenticated() ? this.accountService.getImageUrl() : null;
     // console.error(this.accountService.getImageUrl());
-    return this.isAuthenticated() ? this.sanitizer.bypassSecurityTrustUrl(this.accountService.getImageUrl()) : null;
+    // return this.isAuthenticated() ? this.sanitizer.bypassSecurityTrustUrl(this.accountService.getImageUrl()) : null;
+  }
+
+  getAvatarFromService() {
+    this.isImageLoading = true;
+    this.userService.getAvatarFilename(this.account.login).subscribe(avatarFileName => {
+      // console.error("avatar filename: " + avatarFileName);
+      this.userService.getAvatar(avatarFileName.body).subscribe(
+        data => {
+          this.createAvatarFromBlob(data);
+          this.isImageLoading = false;
+          this.hasImage = true;
+        },
+        error => {
+          this.isImageLoading = false;
+          console.error(error);
+        }
+      );
+    });
+  }
+
+  createAvatarFromBlob(image: Blob) {
+    const reader = new FileReader();
+    reader.addEventListener(
+      'load',
+      () => {
+        this.avatar = reader.result;
+      },
+      false
+    );
+
+    if (image) {
+      reader.readAsDataURL(image);
+    }
   }
 }
