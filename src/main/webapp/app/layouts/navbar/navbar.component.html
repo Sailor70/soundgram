@@ -187,8 +187,8 @@
                     <!--*ngIf="!getImageUrl()" w tym spanie na dole-->
                     <span *ngIf="!hasImage">
                     <fa-icon icon="user"></fa-icon>
-                    <span *ngIf="account">
-                      {{account.login}}
+                    <span jhiTranslate="global.menu.account.main">
+                      Account
                     </span>
                   </span>
                    <!-- Problem z avatarem jest taki że wszystkie obrazy wyświetlają się w miejscu avatara niezależnie czy [src] czy id i jak nazwa tej zmiennej !!??-->

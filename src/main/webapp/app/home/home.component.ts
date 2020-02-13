@@ -26,7 +26,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   authSubscription: Subscription;
   modalRef: NgbModalRef;
 
-  posts: IPost[];
+  posts: IPost[] = [];
   eventSubscriber: Subscription;
   itemsPerPage: number;
   links: any;
@@ -239,13 +239,13 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   loadFollowedUsersPosts() {
-    this.posts = null;
+    this.posts = [];
     this.followedUsersPosts = true;
     this.loadFollowed();
   }
 
   loadFollowedTagsPosts() {
-    this.posts = null;
+    this.posts = [];
     this.followedUsersPosts = false;
     this.tagService.findUserTags(this.account.login).subscribe(res => {
       this.userTags = res.body;

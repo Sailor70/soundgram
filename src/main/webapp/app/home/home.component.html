@@ -46,11 +46,17 @@
                     </div>
                 </div>
                 <br>
+                <button class="btn btn-primary float-right" [routerLink]="['/tag']">
+                    <fa-icon [icon]="'search'"></fa-icon>
+                    <span class="hidden-sm-down">
+                        View tags
+                    </span>
+                </button>
                 <div [ngSwitch]="followedUsersPosts">
                     <h2 *ngSwitchCase="true">
                         <span id="likedFiles-page-heading">Followed Users Posts</span>
                         <button class="btn btn-primary float-right" (click)="loadFollowedTagsPosts()">
-                            <fa-icon [icon]="'music'"></fa-icon> <span>Show my followed tags posts</span>
+                            <fa-icon [icon]="'music'"></fa-icon> <span>Show posts by my tags</span>
                         </button>
                     </h2>
                     <h2 *ngSwitchCase="false">

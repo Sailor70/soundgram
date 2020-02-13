@@ -12,6 +12,7 @@ import { UserService } from 'app/core/user/user.service';
 import { IUser, User } from 'app/core/user/user.model';
 import { FollowedUserService } from 'app/entities/followed-user/followed-user.service';
 import { FollowedUser } from 'app/shared/model/followed-user.model';
+import { UserExtraService } from 'app/entities/user-extra/user-extra.service';
 
 @Component({
   selector: 'jhi-users',
@@ -46,7 +47,8 @@ export class UsersComponent implements OnInit {
     private router: Router,
     private eventManager: JhiEventManager,
     private modalService: NgbModal,
-    private followedUserService: FollowedUserService
+    private followedUserService: FollowedUserService,
+    private userExtraService: UserExtraService
   ) {
     this.itemsPerPage = ITEMS_PER_PAGE;
     this.routeData = this.activatedRoute.data
@@ -100,6 +102,15 @@ export class UsersComponent implements OnInit {
           query: this.currentSearch
         })
         .subscribe((res: HttpResponse<IUser[]>) => (this.users = res.body));
+
+      this.userExtraService.search({ query: this.currentSearch }).subscribe(res => {
+        const userExtras = res.body;
+        for (const ue of userExtras) {
+          this.userService.find(ue.user.login).subscribe(user => {
+            this.users.push(user);
+          });
+        }
+      });
       return;
     }
     this.userService
