@@ -28,9 +28,11 @@ export class NavbarComponent implements OnInit {
   version: string;
 
   account: Account;
-  hasImage: boolean;
+  hasImage = true;
   avatar: any;
   isImageLoading: boolean;
+
+  userLogged: false; // trzeba wywołać pobranie aktualnego account i avatara po akcji login() z login.service
 
   constructor(
     private loginService: LoginService,
@@ -49,17 +51,42 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.hasImage = false;
+    if (!this.avatar) {
+      this.hasImage = false;
+    }
     this.languages = this.languageHelper.getAll();
+    // this.userLogged = false;
+
+    // this.loginService.userLogged.subscribe(ifLogged => {
+    //   this.userLogged = ifLogged;
+    // });
+
+    this.accountService.identity().subscribe((account: Account) => {
+      this.account = account;
+      if (this.account) {
+        this.getAvatarFromService();
+        // console.error("get avatar");
+        // console.error(this.userLogged);
+      }
+    });
+
+    this.loginService.isLoggedIn.subscribe(res => {
+      this.userLogged = res;
+      // console.error(this.userLogged);
+      // console.error('has image ' + this.hasImage);
+      this.accountService.identity().subscribe((account: Account) => {
+        this.account = account;
+        if (this.account) {
+          this.getAvatarFromService();
+          // console.error('avatar' + this.avatar.toString());
+          // console.error(this.account.login);
+        }
+      });
+    });
 
     this.profileService.getProfileInfo().subscribe(profileInfo => {
       this.inProduction = profileInfo.inProduction;
       this.swaggerEnabled = profileInfo.swaggerEnabled;
-    });
-
-    this.accountService.identity().subscribe((account: Account) => {
-      this.account = account;
-      this.getAvatarFromService(); // Problem z avatarem jest taki że wszystkie obrazy wyświetlają się w miejscu avatara niezależnie czy [src] czy id i jak nazwa tej zmiennej !!??
     });
   }
 
@@ -77,11 +104,13 @@ export class NavbarComponent implements OnInit {
   }
 
   login() {
+    this.hasImage = true; // tymczasowo, bo nie musi mieć avatara
     this.modalRef = this.loginModalService.open();
   }
 
   logout() {
     this.collapseNavbar();
+    this.hasImage = false;
     this.loginService.logout();
     this.router.navigate(['']);
   }
@@ -99,18 +128,21 @@ export class NavbarComponent implements OnInit {
   getAvatarFromService() {
     this.isImageLoading = true;
     this.userService.getAvatarFilename(this.account.login).subscribe(avatarFileName => {
-      // console.error("avatar filename: " + avatarFileName);
-      this.userService.getAvatar(avatarFileName.body).subscribe(
-        data => {
-          this.createAvatarFromBlob(data);
-          this.isImageLoading = false;
-          this.hasImage = true;
-        },
-        error => {
-          this.isImageLoading = false;
-          console.error(error);
-        }
-      );
+      // console.error("avatar filename: " + avatarFileName.body);
+      if (avatarFileName.body.length > 1) {
+        // console.error('wykonało się');
+        this.userService.getAvatar(avatarFileName.body).subscribe(
+          data => {
+            this.createAvatarFromBlob(data);
+            this.isImageLoading = false;
+            this.hasImage = true;
+          },
+          error => {
+            this.isImageLoading = false;
+            console.error(error);
+          }
+        );
+      }
     });
   }
 

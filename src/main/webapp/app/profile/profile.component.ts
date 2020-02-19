@@ -143,18 +143,21 @@ export class ProfileComponent implements OnInit {
   getAvatarFromService() {
     this.isImageLoading = true;
     this.userService.getAvatarFilename(this.account.login).subscribe(avatarFileName => {
-      console.error('avatar filename: ' + avatarFileName.body);
-      this.userService.getAvatar(avatarFileName.body).subscribe(
-        data => {
-          this.createAvatarFromBlob(data);
-          this.isImageLoading = false;
-          this.hasImage = true;
-        },
-        error => {
-          this.isImageLoading = false;
-          console.error(error);
-        }
-      );
+      // console.error('avatar filename: ' + avatarFileName.body);
+      if (avatarFileName.body) {
+        // console.error('wykonało się');
+        this.userService.getAvatar(avatarFileName.body).subscribe(
+          data => {
+            this.createAvatarFromBlob(data);
+            this.isImageLoading = false;
+            this.hasImage = true;
+          },
+          error => {
+            this.isImageLoading = false;
+            console.error(error);
+          }
+        );
+      }
     });
   }
 

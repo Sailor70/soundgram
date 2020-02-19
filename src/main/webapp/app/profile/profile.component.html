@@ -17,7 +17,7 @@
                      alt="Place image title"
                      *ngIf="!isImageLoading && hasImage; else noImageFound" class="profile-image rounded-circle" style="max-width:80px;width:100%;max-height:80px;height:100%">
                 <ng-template #noImageFound>
-                    <span>You Failed!</span>
+                    <span>No avatar found!</span>
                 </ng-template>
             </h2>
             <dl class="row-md jh-entity-details">

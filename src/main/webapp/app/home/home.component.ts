@@ -27,7 +27,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   modalRef: NgbModalRef;
 
   posts: IPost[] = [];
-  eventSubscriber: Subscription;
+  // eventSubscriber: Subscription;
   itemsPerPage: number;
   links: any;
   page: any;
@@ -68,20 +68,27 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.accountService.identity().subscribe((account: Account) => {
       this.account = account;
-      this.followedUserService.findFollowed().subscribe(res => {
-        console.error('followed users length: ' + res.body.length);
-        if (res.body.length > 0) {
-          this.loadFollowed();
-        } else {
-          this.hasFollowedUsers = false;
-        }
-      });
+      if (this.account.activated) {
+        this.followedUserService.findFollowed().subscribe(res => {
+          console.error('followed users length: ' + res.body.length);
+          if (res.body.length > 0) {
+            this.hasFollowedUsers = true;
+            this.loadFollowed();
+            console.error('get followed ');
+          } else {
+            this.hasFollowedUsers = false;
+            console.error('has followed users false');
+          }
+        });
+      } else {
+        console.error('Please activate your account!');
+      }
     });
-    this.registerAuthenticationSuccess();
+    // this.registerAuthenticationSuccess();
 
     // this.loadAll();
     // this.loadFollowed();
-    this.registerChangeInPosts();
+    // this.registerChangeInPosts();
   }
 
   registerAuthenticationSuccess() {
@@ -102,10 +109,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.authSubscription) {
-      this.eventManager.destroy(this.authSubscription);
-    }
-    this.eventManager.destroy(this.eventSubscriber);
+    // if (this.authSubscription) {
+    //   this.eventManager.destroy(this.authSubscription);
+    // }
+    // this.eventManager.destroy(this.eventSubscriber);
   }
 
   loadAll() {
@@ -142,17 +149,19 @@ export class HomeComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.hasFollowedUsers) {
-      this.postService.getFollowed().subscribe((res: HttpResponse<IPost[]>) => (this.posts = res.body));
-      for (const post of this.posts) {
-        console.error('posts tags:' + post.tags.length);
-      }
+      this.postService.getFollowed().subscribe(res => {
+        this.posts = res.body;
+        // for (const post of this.posts) {
+        //   console.error('posts tags:' + post.tags.length);
+        // }
+      });
     }
   }
 
   loadPostsByTags() {
     this.postService.query().subscribe((res: HttpResponse<IPost[]>) => {
       this.posts = res.body;
-      console.error('all posts:' + this.posts.length);
+      // console.error('all posts:' + this.posts.length);
       const tmpPosts = [];
       for (const post of this.posts) {
         // console.error("postTags:" + post.tags.length);
@@ -213,7 +222,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   registerChangeInPosts() {
-    this.eventSubscriber = this.eventManager.subscribe('postListModification', () => this.reset());
+    // this.eventSubscriber = this.eventManager.subscribe('postListModification', () => this.reset());
   }
 
   delete(post: IPost) {
@@ -249,7 +258,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.followedUsersPosts = false;
     this.tagService.findUserTags(this.account.login).subscribe(res => {
       this.userTags = res.body;
-      console.error('User tags:' + this.userTags.length);
+      // console.error('User tags:' + this.userTags.length);
       this.loadPostsByTags();
     });
   }

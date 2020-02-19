@@ -191,7 +191,6 @@
                       Account
                     </span>
                   </span>
-                   <!-- Problem z avatarem jest taki że wszystkie obrazy wyświetlają się w miejscu avatara niezależnie czy [src] czy id i jak nazwa tej zmiennej !!??-->
                     <span *ngIf="hasImage && !isImageLoading && account">
                       <img [src]="avatar" class="profile-image rounded-circle" alt="Avatar"> {{account.login}}
                   </span>

@@ -146,6 +146,7 @@ public class PostResource {
             for (FollowedUser fl : allFU) {
                 if ( post.getUser().getId().equals(fl.getFollowedUserId()) ) {
                     followedPosts.add(post);
+                    log.debug("Post tags size: {}", post.getTags().size()); // dodanie tego powoduje przesyłanie tagów na front - w przeciwnym razie post.tags is null !(???)
                 }
             }
         }
