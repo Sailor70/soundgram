@@ -7,7 +7,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { ITag } from 'app/shared/model/tag.model';
 import { TagService } from './tag.service';
-import { TagDeleteDialogComponent } from './tag-delete-dialog.component';
+// import { TagDeleteDialogComponent } from './tag-delete-dialog.component';
 
 @Component({
   selector: 'jhi-tag',
@@ -75,8 +75,8 @@ export class TagComponent implements OnInit, OnDestroy {
     this.eventSubscriber = this.eventManager.subscribe('tagListModification', () => this.loadAll());
   }
 
-  delete(tag: ITag) {
-    const modalRef = this.modalService.open(TagDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
-    modalRef.componentInstance.tag = tag;
-  }
+  // delete(tag: ITag) {
+  //   const modalRef = this.modalService.open(TagDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
+  //   modalRef.componentInstance.tag = tag;
+  // }
 }

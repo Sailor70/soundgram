@@ -11,10 +11,10 @@ import { PostService } from 'app/entities/post/post.service';
 import { ActivatedRoute } from '@angular/router';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
-import { PostDeleteDialogComponent } from 'app/entities/post/post-delete-dialog.component';
 import { FollowedUserService } from 'app/entities/followed-user/followed-user.service';
 import { TagService } from 'app/entities/tag/tag.service';
 import { ITag } from 'app/shared/model/tag.model';
+import { LoginService } from 'app/core/login/login.service';
 
 @Component({
   selector: 'jhi-home',
@@ -36,6 +36,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   totalItems: number;
   currentSearch: string;
   hasFollowedUsers = true;
+  userLogged = false;
 
   followedUsersPosts = true;
   userTags: ITag[];
@@ -44,6 +45,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private accountService: AccountService,
     private loginModalService: LoginModalService,
     private eventManager: JhiEventManager,
+    private loginService: LoginService,
     protected postService: PostService,
     protected modalService: NgbModal,
     protected parseLinks: JhiParseLinks,
@@ -66,36 +68,41 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.identityAndGetFollowed();
+    this.registerAuthenticationSuccess();
+    this.loginService.isLoggedIn.subscribe(isLogged => {
+      this.userLogged = isLogged;
+      this.identityAndGetFollowed();
+    });
+  }
+
+  identityAndGetFollowed() {
     this.accountService.identity().subscribe((account: Account) => {
-      this.account = account;
-      if (this.account.activated) {
-        this.followedUserService.findFollowed().subscribe(res => {
-          console.error('followed users length: ' + res.body.length);
-          if (res.body.length > 0) {
-            this.hasFollowedUsers = true;
-            this.loadFollowed();
-            console.error('get followed ');
-          } else {
-            this.hasFollowedUsers = false;
-            console.error('has followed users false');
-          }
-        });
-      } else {
-        console.error('Please activate your account!');
+      if (account) {
+        this.account = account;
+        if (this.account.activated) {
+          this.followedUserService.findFollowed().subscribe(res => {
+            // console.error('followed users length: ' + res.body.length);
+            if (res.body.length > 0) {
+              this.hasFollowedUsers = true;
+              this.loadFollowed();
+              // console.error('get followed ');
+            } else {
+              this.hasFollowedUsers = false;
+              console.error('has followed users: false');
+            }
+          });
+        } else {
+          console.error('Please activate your account!');
+        }
       }
     });
-    // this.registerAuthenticationSuccess();
-
-    // this.loadAll();
-    // this.loadFollowed();
-    // this.registerChangeInPosts();
   }
 
   registerAuthenticationSuccess() {
     this.authSubscription = this.eventManager.subscribe('authenticationSuccess', () => {
       this.accountService.identity().subscribe(account => {
         this.account = account;
-        this.loadFollowed();
       });
     });
   }
@@ -109,31 +116,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // if (this.authSubscription) {
-    //   this.eventManager.destroy(this.authSubscription);
-    // }
-    // this.eventManager.destroy(this.eventSubscriber);
-  }
-
-  loadAll() {
-    if (this.currentSearch) {
-      this.postService
-        .search({
-          query: this.currentSearch,
-          page: this.page,
-          size: this.itemsPerPage,
-          sort: this.sort()
-        })
-        .subscribe((res: HttpResponse<IPost[]>) => this.paginatePosts(res.body, res.headers));
-      return;
+    if (this.authSubscription) {
+      this.eventManager.destroy(this.authSubscription);
     }
-    this.postService
-      .query({
-        page: this.page,
-        size: this.itemsPerPage,
-        sort: this.sort()
-      })
-      .subscribe((res: HttpResponse<IPost[]>) => this.paginatePosts(res.body, res.headers));
   }
 
   loadFollowed() {
@@ -217,17 +202,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.currentSearch = query;
     this.loadFollowed();
   }
+
   trackId(index: number, item: IPost) {
     return item.id;
-  }
-
-  registerChangeInPosts() {
-    // this.eventSubscriber = this.eventManager.subscribe('postListModification', () => this.reset());
-  }
-
-  delete(post: IPost) {
-    const modalRef = this.modalService.open(PostDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
-    modalRef.componentInstance.post = post;
   }
 
   sort() {
