@@ -104,6 +104,8 @@ public class PostResource {
         if (post.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        User currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null);
+        post.setUser(currentUser);
         Post result = postRepository.save(post);
         postSearchRepository.save(result);
         return ResponseEntity.ok()

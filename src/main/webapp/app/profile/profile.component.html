@@ -3,83 +3,86 @@
 
         <h2 id="page-heading">
             <!--<span jhiTranslate="home.name">Posts</span>-->
-            <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-post" [routerLink]="['/post/new']">
+            <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-post"
+                    [routerLink]="['/post/new']">
                 <fa-icon [icon]="'plus'"></fa-icon>
-                <span class="hidden-sm-down"  jhiTranslate="soundgramApp.post.home.createLabel">
+                <span class="hidden-sm-down" jhiTranslate="soundgramApp.post.home.createLabel">
                         Create a new Post
                     </span>
             </button>
         </h2>
 
-            <h2>
-                <span jhiTranslate="userManagement.detail.title">User</span> [<b>{{user?.login}}</b>]
-                <img [src]="avatar"
-                     alt="Place image title"
-                     *ngIf="!isImageLoading && hasImage; else noImageFound" class="profile-image rounded-circle" style="max-width:80px;width:100%;max-height:80px;height:100%">
-                <ng-template #noImageFound>
-                    <span>No avatar found!</span>
-                </ng-template>
-            </h2>
+        <h2>
+            <span jhiTranslate="userManagement.detail.title">User</span> [<b>{{user?.login}}</b>]
+            <img [src]="avatar"
+                 alt="Place image title"
+                 *ngIf="!isImageLoading && hasImage; else noImageFound" class="profile-image rounded-circle"
+                 style="max-width:80px;width:100%;max-height:80px;height:100%">
+            <ng-template #noImageFound>
+                <span>No avatar found!</span>
+            </ng-template>
+        </h2>
+        <dl class="row-md jh-entity-details">
+            <dt><span jhiTranslate="userManagement.login">Login</span></dt>
+            <dd>{{user?.login}}</dd>
+            <!--                <dd>-->
+            <!--                    <span>{{user.login}}</span>-->
+            <!--                    <jhi-boolean-->
+            <!--                        [value]="user.activated"-->
+            <!--                        [textTrue]="'userManagement.activated' | translate"-->
+            <!--                        [textFalse]="'userManagement.deactivated' | translate">-->
+            <!--                    </jhi-boolean>-->
+            <!--                </dd>-->
+            <dt><span jhiTranslate="userManagement.firstName">First Name</span></dt>
+            <dd>{{user?.firstName}}</dd>
+            <dt><span jhiTranslate="userManagement.lastName">Last Name</span></dt>
+            <dd>{{user?.lastName}}</dd>
+            <dt><span jhiTranslate="userManagement.email">Email</span></dt>
+            <dd>{{user?.email}}</dd>
+            <dt><span jhiTranslate="userManagement.langKey">Lang Key</span></dt>
+            <dd>{{user?.langKey}}</dd>
+            <!--                <dt><span jhiTranslate="userManagement.createdBy">Created By</span></dt>
+                            <dd>{{user.createdBy}}</dd>
+                            <dt><span jhiTranslate="userManagement.createdDate">Created Date</span></dt>
+                            <dd>{{user.createdDate | date:'dd/MM/yy HH:mm' }}</dd>-->
+            <!--                <dt><span jhiTranslate="userManagement.lastModifiedBy">Last Modified By</span></dt>
+                            <dd>{{user.lastModifiedBy}}</dd>
+                            <dt><span jhiTranslate="userManagement.lastModifiedDate">Last Modified Date</span></dt>
+                            <dd>{{user.lastModifiedDate | date:'dd/MM/yy HH:mm'}}</dd>
+                            <dt><span jhiTranslate="userManagement.profiles">Profiles</span></dt>
+                            <dd>
+                                <ul class="list-unstyled">
+                                    <li *ngFor="let authority of user.authorities">
+                                        <span class="badge badge-info">{{authority}}</span>
+                                    </li>
+                                </ul>
+                            </dd>-->
+        </dl>
+        <div *ngIf="userExtra">
             <dl class="row-md jh-entity-details">
-                <dt><span jhiTranslate="userManagement.login">Login</span></dt>
-                <dd>{{user?.login}}</dd>
-                <!--                <dd>-->
-                <!--                    <span>{{user.login}}</span>-->
-                <!--                    <jhi-boolean-->
-                <!--                        [value]="user.activated"-->
-                <!--                        [textTrue]="'userManagement.activated' | translate"-->
-                <!--                        [textFalse]="'userManagement.deactivated' | translate">-->
-                <!--                    </jhi-boolean>-->
-                <!--                </dd>-->
-                <dt><span jhiTranslate="userManagement.firstName">First Name</span></dt>
-                <dd>{{user?.firstName}}</dd>
-                <dt><span jhiTranslate="userManagement.lastName">Last Name</span></dt>
-                <dd>{{user?.lastName}}</dd>
-                <dt><span jhiTranslate="userManagement.email">Email</span></dt>
-                <dd>{{user?.email}}</dd>
-                <dt><span jhiTranslate="userManagement.langKey">Lang Key</span></dt>
-                <dd>{{user?.langKey}}</dd>
-                <!--                <dt><span jhiTranslate="userManagement.createdBy">Created By</span></dt>
-                                <dd>{{user.createdBy}}</dd>
-                                <dt><span jhiTranslate="userManagement.createdDate">Created Date</span></dt>
-                                <dd>{{user.createdDate | date:'dd/MM/yy HH:mm' }}</dd>-->
-                <!--                <dt><span jhiTranslate="userManagement.lastModifiedBy">Last Modified By</span></dt>
-                                <dd>{{user.lastModifiedBy}}</dd>
-                                <dt><span jhiTranslate="userManagement.lastModifiedDate">Last Modified Date</span></dt>
-                                <dd>{{user.lastModifiedDate | date:'dd/MM/yy HH:mm'}}</dd>
-                                <dt><span jhiTranslate="userManagement.profiles">Profiles</span></dt>
-                                <dd>
-                                    <ul class="list-unstyled">
-                                        <li *ngFor="let authority of user.authorities">
-                                            <span class="badge badge-info">{{authority}}</span>
-                                        </li>
-                                    </ul>
-                                </dd>-->
+                <dt><span jhiTranslate="soundgramApp.userExtra.userLocation">User Location</span></dt>
+                <dd>
+                    <span>{{userExtra.userLocation}}</span>
+                </dd>
+                <dt><span jhiTranslate="soundgramApp.userExtra.bio">Biography</span></dt>
+                <dd>
+                    <span>{{userExtra.bio}}</span>
+                </dd>
             </dl>
-                <div *ngIf="userExtra">
-                    <dl class="row-md jh-entity-details">
-                        <dt><span jhiTranslate="soundgramApp.userExtra.userLocation">User Location</span></dt>
-                        <dd>
-                            <span>{{userExtra.userLocation}}</span>
-                        </dd>
-                        <dt><span jhiTranslate="soundgramApp.userExtra.bio">Biography</span></dt>
-                        <dd>
-                            <span>{{userExtra.bio}}</span>
-                        </dd>
-                    </dl>
 
-                    <button type="button"
-                            [routerLink]="['/account/settings']"
-                            class="btn btn-primary">
-                        <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit your data</span>
-                    </button>
-                </div>
-            <!--"../../"-->
-            <button type="submit"
-                    routerLink="/users"
-                    class="btn btn-info">
-                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            <button type="button"
+                    [routerLink]="['/account/settings']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span
+                jhiTranslate="entity.action.edit">Edit your data</span>
             </button>
+        </div>
+        <!--"../../"-->
+        <button type="submit"
+                routerLink="/users"
+                class="btn btn-info">
+            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+        </button>
 
     </div>
 
@@ -133,22 +136,22 @@
             </td>
             <td class="text-right">
                 <div class="btn-group">
-<!--                    <button type="submit"-->
-<!--                            [routerLink]="['/tag', tag.id, 'view' ]"-->
-<!--                            class="btn btn-info btn-sm">-->
-<!--                        <fa-icon [icon]="'eye'"></fa-icon>-->
-<!--                        <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>-->
-<!--                    </button>-->
-<!--                    <button type="submit"-->
-<!--                            [routerLink]="['/tag', tag.id, 'edit']"-->
-<!--                            class="btn btn-primary btn-sm">-->
-<!--                        <fa-icon [icon]="'pencil-alt'"></fa-icon>-->
-<!--                        <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>-->
-<!--                    </button>-->
+                    <!--                    <button type="submit"-->
+                    <!--                            [routerLink]="['/tag', tag.id, 'view' ]"-->
+                    <!--                            class="btn btn-info btn-sm">-->
+                    <!--                        <fa-icon [icon]="'eye'"></fa-icon>-->
+                    <!--                        <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>-->
+                    <!--                    </button>-->
+                    <!--                    <button type="submit"-->
+                    <!--                            [routerLink]="['/tag', tag.id, 'edit']"-->
+                    <!--                            class="btn btn-primary btn-sm">-->
+                    <!--                        <fa-icon [icon]="'pencil-alt'"></fa-icon>-->
+                    <!--                        <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>-->
+                    <!--                    </button>-->
                     <button type="submit" (click)="deleteTagFromProfile(tag)"
                             class="btn btn-danger btn-sm">
                         <fa-icon [icon]="'times'"></fa-icon>
-                        <span class="d-none d-md-inline" >Delete tag from your profile</span>
+                        <span class="d-none d-md-inline">Delete tag from your profile</span>
                     </button>
                 </div>
             </td>
@@ -193,11 +196,11 @@
                         <fa-icon [icon]="'pencil-alt'"></fa-icon>
                         <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
                     </button>
-                    <!--                    <button type="submit" (click)="delete(post)"
-                                                class="btn btn-danger btn-sm">
-                                            <fa-icon [icon]="'times'"></fa-icon>
-                                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-                                        </button>-->
+                    <button type="submit" (click)="delete(post)"
+                            class="btn btn-danger btn-sm">
+                        <fa-icon [icon]="'times'"></fa-icon>
+                        <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                    </button>
                 </div>
             </td>
         </tr>

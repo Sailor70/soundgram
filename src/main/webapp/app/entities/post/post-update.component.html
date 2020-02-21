@@ -58,7 +58,7 @@
                     <ul class="tags">
                         <li *ngFor="let tag of postTags">
                             <span class="badge">{{tag.name}}</span> {{tag.id}}
-                            <button type="submit" (click)="deleteTagFromPost(tag)"
+                            <button type="button" (click)="deleteTagFromPost(tag)"
                                     class="btn btn-danger btn-sm">
                                 <fa-icon [icon]="'times'"></fa-icon>
                                 <span class="d-none d-md-inline">Delete tag from this post</span>
@@ -75,6 +75,18 @@
                                     </span>
                                 </button>-->
 
+                <div *ngIf="currentAudioFile">
+                    <button type="button"
+                            (click)="playAudio()"
+                            class="btn btn-info">
+                        <fa-icon [icon]="'play-circle'"></fa-icon>
+                    </button>
+                    <button type="button"
+                            (click)="pauseAudio()"
+                            class="btn btn-info">
+                        <fa-icon [icon]="'pause-circle'"></fa-icon>
+                    </button>
+                </div>
                 <div style="text-align:center">
                     <label>
                         <span>Dodaj plik audio: </span>
@@ -83,6 +95,11 @@
                     <!--<button [disabled]="!selectedFiles" (click)="upload()">Upload</button>-->
                 </div>
                 <br>
+                <div *ngIf="displayImage">
+                    <img [src]="displayImage"
+                         alt="post image"
+                         style="max-width:400px;width:100%;max-height:500px;height:100%">
+                </div>
                 <div style="text-align:center">
                     <label>
                         <span>Dodaj obraz: </span>

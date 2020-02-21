@@ -210,6 +210,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
       'load',
       () => {
         this.postImage = reader.result;
+        console.error('image type: ' + typeof this.postImage);
       },
       false
     );

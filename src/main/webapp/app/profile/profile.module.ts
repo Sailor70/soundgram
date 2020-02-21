@@ -4,11 +4,13 @@ import { RouterModule } from '@angular/router';
 import { SoundgramSharedModule } from '../shared/shared.module';
 
 import { PROFILE_ROUTE, ProfileComponent } from './';
+import { PostDeleteDialogComponent } from 'app/entities/post/post-delete-dialog.component';
+import { SoundgramPostModule } from 'app/entities/post/post.module';
 
 @NgModule({
-  imports: [SoundgramSharedModule, RouterModule.forRoot([PROFILE_ROUTE], { useHash: true })],
+  imports: [SoundgramSharedModule, SoundgramPostModule, RouterModule.forRoot([PROFILE_ROUTE], { useHash: true })],
   declarations: [ProfileComponent],
-  entryComponents: [],
+  entryComponents: [PostDeleteDialogComponent],
   providers: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

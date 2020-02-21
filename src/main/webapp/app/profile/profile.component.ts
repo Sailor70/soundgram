@@ -12,6 +12,8 @@ import { IAudioFile } from 'app/shared/model/audio-file.model';
 import { FormBuilder, Validators } from '@angular/forms';
 import { IUserExtra } from 'app/shared/model/user-extra.model';
 import { UserExtraService } from 'app/entities/user-extra/user-extra.service';
+import { PostDeleteDialogComponent } from 'app/entities/post/post-delete-dialog.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 // import { Account } from "app/core/user/user.service";
 
@@ -46,7 +48,8 @@ export class ProfileComponent implements OnInit {
     private postService: PostService,
     private audioFileService: AudioFileService,
     private userExtraService: UserExtraService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private modalService: NgbModal
   ) {}
 
   ngOnInit() {
@@ -174,5 +177,10 @@ export class ProfileComponent implements OnInit {
     if (image) {
       reader.readAsDataURL(image);
     }
+  }
+
+  delete(post: IPost) {
+    const modalRef = this.modalService.open(PostDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.post = post;
   }
 }

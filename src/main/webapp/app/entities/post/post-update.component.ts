@@ -18,6 +18,8 @@ import { ImageService } from 'app/entities/image/image.service';
 import { UserService } from 'app/core/user/user.service';
 import { Account } from 'app/core/user/account.model';
 import { AccountService } from 'app/core/auth/account.service';
+import { IAudioFile } from 'app/shared/model/audio-file.model';
+import { IImage } from 'app/shared/model/image.model';
 
 @Component({
   selector: 'jhi-post-update',
@@ -34,14 +36,18 @@ export class PostUpdateComponent implements OnInit, OnDestroy {
   selectedAudioFiles: FileList;
   selectedImages: FileList;
   currentAudioFile: File;
+  audio: HTMLAudioElement;
   currentImage: File;
+  displayImage: any;
   msg: any;
 
   currentPost: IPost;
   success: boolean;
-  ready = false;
   account: Account;
   // currentUser: IUser;
+  editMode = false;
+  newAudioSelected = false;
+  newImageSelected = false;
 
   editForm = this.fb.group({
     id: [],
@@ -70,9 +76,15 @@ export class PostUpdateComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.success = false;
     this.isSaving = false;
+    this.audio = new Audio();
     this.activatedRoute.data.subscribe(({ post }) => {
       this.updateForm(post);
       this.currentPost = post;
+      // console.error('tags length' + this.currentPost.tags.length);
+      if (post.id !== undefined) {
+        this.editMode = true;
+        this.loadMediaResources();
+      }
     });
     this.tagService
       .query()
@@ -110,13 +122,14 @@ export class PostUpdateComponent implements OnInit, OnDestroy {
   }
 
   save() {
-    this.currentAudioFile = this.selectedAudioFiles.item(0);
-    this.currentImage = this.selectedImages.item(0);
+    if (this.newAudioSelected) this.currentAudioFile = this.selectedAudioFiles.item(0);
+    if (this.newImageSelected) this.currentImage = this.selectedImages.item(0);
     this.isSaving = true;
-    this.createOrAssignTagToPost(); // trzeba poczekać aż to się wszystko wykona
+    this.createOrAssignTagToPost(); // dodajemy tagi do posta na koniec w onDestroy
     const post = this.createFromForm();
     // console.error('tags to add: ' + post.tags.length + ' ' + post.tags); // tego jest 0
     if (post.id !== undefined) {
+      console.error('update post (content) ' + post.postContent);
       this.subscribeToSaveResponse(this.postService.update(post));
     } else {
       this.subscribeToSaveResponse(this.postService.create(post));
@@ -129,8 +142,8 @@ export class PostUpdateComponent implements OnInit, OnDestroy {
       id: this.editForm.get(['id']).value,
       postContent: this.editForm.get(['postContent']).value,
       date: moment(new Date(now()), DATE_TIME_FORMAT), // aktualna data
-      tags: this.editForm.get(['tags']).value,
-      user: null
+      tags: [], // nie dodawać?
+      user: null // pobrany na backendzie
     };
   }
 
@@ -140,10 +153,26 @@ export class PostUpdateComponent implements OnInit, OnDestroy {
 
   protected onSaveSuccess(res: HttpResponse<IPost>) {
     this.currentPost = res.body;
-
-    this.audioFileService.create(this.currentAudioFile, this.currentPost.id).subscribe();
-    this.imageService.create(this.currentImage, this.currentPost.id).subscribe();
     console.error('currentPost: {]', this.currentPost.id);
+
+    if (this.editMode) {
+      // jeśli tryb edycji to usuwamy stare pliki i zapisujemy nowe
+      if (this.newAudioSelected) {
+        this.audioFileService.findByPost(this.currentPost.id).subscribe(audioFile => {
+          this.audioFileService.delete(audioFile.body.id);
+        });
+        this.audioFileService.create(this.currentAudioFile, this.currentPost.id).subscribe();
+      }
+      if (this.newImageSelected) {
+        this.imageService.findByPost(this.currentPost.id).subscribe(audioFile => {
+          this.imageService.delete(audioFile.body.id);
+        });
+        this.imageService.create(this.currentImage, this.currentPost.id).subscribe();
+      }
+    } else {
+      this.audioFileService.create(this.currentAudioFile, this.currentPost.id).subscribe();
+      this.imageService.create(this.currentImage, this.currentPost.id).subscribe();
+    }
 
     this.selectedAudioFiles = null;
     this.selectedImages = null;
@@ -161,27 +190,16 @@ export class PostUpdateComponent implements OnInit, OnDestroy {
     this.jhiAlertService.error(errorMessage, null, null);
   }
 
-  trackTagByName(index: number, item: ITag) {
-    return item.name;
-  }
-
-  getSelected(selectedVals: any[], option: any) {
-    if (selectedVals) {
-      for (let i = 0; i < selectedVals.length; i++) {
-        if (option.id === selectedVals[i].id) {
-          return selectedVals[i];
-        }
-      }
-    }
-    return option;
-  }
-
   selectAudioFile(event) {
     this.selectedAudioFiles = event.target.files;
+    this.newAudioSelected = true;
   }
 
   selectImage(event) {
     this.selectedImages = event.target.files;
+    // if(this.editMode) {
+    this.newImageSelected = true;
+    // }
   }
 
   makeNewTag() {
@@ -214,36 +232,90 @@ export class PostUpdateComponent implements OnInit, OnDestroy {
         this.createNewTag(tagToAdd);
       }
     }
-    this.ready = true;
-  }
-
-  assignTagToPost(tag: ITag) {
-    // if tag exists
-    tag.posts.push(this.currentPost);
-    this.tagService.update(tag).subscribe(res => {
-      this.currentPost = res.body;
-    });
   }
 
   createNewTag(tag: ITag) {
-    // create and assign post to tag
-    // tag.posts.push(this.currentPost);
     this.tagService.create(tag).subscribe(res => {
       this.tagsToAdd.push(res.body);
     });
   }
 
-  deleteTagFromPost(tag: ITag) {
-    const tagPosts = tag.posts;
-    const postIndex = tagPosts.findIndex(ut => ut.id === this.currentPost.id);
-    if (postIndex > -1) {
-      tagPosts.splice(postIndex, 1);
+  deleteTagFromPost(tagToDelete: ITag) {
+    const tagIndex = this.postTags.findIndex(ut => ut.name === tagToDelete.name);
+    if (tagIndex > -1) {
+      this.postTags.splice(tagIndex, 1);
     }
-    tag.posts = tagPosts;
-    this.tagService.update(tag).subscribe(() => {
-      this.postService.find(this.currentPost.id).subscribe(res => {
-        this.currentPost = res.body;
-      });
-    });
+  }
+
+  loadMediaResources() {
+    this.audioFileService.findByPost(this.currentPost.id).subscribe(
+      (afRes: HttpResponse<IAudioFile>) => {
+        const audioFile = afRes.body;
+        this.audioFileService.getFile(audioFile.id).subscribe(
+          res => {
+            const blobUrl = URL.createObjectURL(res);
+            this.currentAudioFile = new File([res], 'plik.mp3'); // this.blobToAudio(res, "plik.mp3");
+            this.audio.src = blobUrl;
+          },
+          (res: HttpResponse<IAudioFile>) => {
+            console.error('File resource error: ' + res);
+          }
+        );
+      },
+      res => {
+        console.error('Audio load error: ' + res.body);
+      }
+    );
+
+    this.imageService.findByPost(this.currentPost.id).subscribe(
+      (res: HttpResponse<IImage>) => {
+        const image = res.body;
+        this.getPostImageFromService(image);
+        console.error('image id:' + image.id);
+      },
+      res => {
+        console.error('Image load error: ' + res.body);
+      }
+    );
+  }
+
+  getPostImageFromService(image: IImage) {
+    this.imageService.getFile(image.id).subscribe(
+      data => {
+        this.createImageFromBlob(data);
+      },
+      error => {
+        console.error(error);
+      }
+    );
+  }
+
+  createImageFromBlob(image: Blob) {
+    const reader = new FileReader();
+    reader.addEventListener(
+      'load',
+      () => {
+        this.displayImage = reader.result;
+      },
+      false
+    );
+
+    if (image) {
+      reader.readAsDataURL(image);
+    }
+  }
+
+  playAudio() {
+    if (!this.audio.paused) {
+      this.audio.load();
+      this.audio.play();
+    } else {
+      this.audio.play();
+    }
+  }
+  pauseAudio() {
+    if (!this.audio.paused) {
+      this.audio.pause();
+    }
   }
 }
