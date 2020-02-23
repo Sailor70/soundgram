@@ -15,6 +15,7 @@ import { FollowedUserService } from 'app/entities/followed-user/followed-user.se
 import { TagService } from 'app/entities/tag/tag.service';
 import { ITag } from 'app/shared/model/tag.model';
 import { LoginService } from 'app/core/login/login.service';
+import { Moment } from 'moment';
 
 @Component({
   selector: 'jhi-home',
@@ -205,6 +206,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   trackId(index: number, item: IPost) {
     return item.id;
+  }
+
+  trackDate(date: Moment, item: IPost) {
+    return item.date;
   }
 
   sort() {
