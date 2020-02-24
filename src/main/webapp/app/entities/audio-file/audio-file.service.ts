@@ -41,6 +41,10 @@ export class AudioFileService {
     return this.http.put<IAudioFile>(this.resourceUrl + '-user', audioFile, { observe: 'response' });
   }
 
+  removeUser(audioFile: IAudioFile): Observable<EntityResponseType> {
+    return this.http.put<IAudioFile>(this.resourceUrl + '-remove-user', audioFile, { observe: 'response' });
+  }
+
   find(id: number): Observable<EntityResponseType> {
     return this.http.get<IAudioFile>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }

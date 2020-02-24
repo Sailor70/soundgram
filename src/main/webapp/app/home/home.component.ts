@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiParseLinks } from 'ng-jhipster';
@@ -16,6 +16,8 @@ import { TagService } from 'app/entities/tag/tag.service';
 import { ITag } from 'app/shared/model/tag.model';
 import { LoginService } from 'app/core/login/login.service';
 import { Moment } from 'moment';
+import { PostDetailComponent } from 'app/entities/post/post-detail.component';
+import { UserService } from 'app/core/user/user.service';
 
 @Component({
   selector: 'jhi-home',
@@ -42,6 +44,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   followedUsersPosts = true;
   userTags: ITag[];
 
+  avatars: any[];
+
+  @ViewChild(PostDetailComponent, { static: false })
+  private detailComponent: PostDetailComponent;
+
   constructor(
     private accountService: AccountService,
     private loginModalService: LoginModalService,
@@ -52,7 +59,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     protected parseLinks: JhiParseLinks,
     protected followedUserService: FollowedUserService,
     protected tagService: TagService,
-    protected activatedRoute: ActivatedRoute
+    protected activatedRoute: ActivatedRoute,
+    private userService: UserService
   ) {
     this.posts = [];
     this.itemsPerPage = ITEMS_PER_PAGE;
@@ -142,6 +150,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         // }
       });
     }
+    // this.getAvatars();
   }
 
   loadPostsByTags() {
@@ -243,5 +252,55 @@ export class HomeComponent implements OnInit, OnDestroy {
       // console.error('User tags:' + this.userTags.length);
       this.loadPostsByTags();
     });
+  }
+
+  getAvatars() {
+    for (const post of this.posts) {
+      console.error('post user: ' + post.user.login);
+      this.userService.getAvatarFilename(post.user.login).subscribe(avatarFileName => {
+        console.error('avatar filename: ' + avatarFileName);
+        this.userService.getAvatar(avatarFileName.body).subscribe(
+          data => {
+            this.createAvatarFromBlob(data);
+          },
+          error => {
+            console.error(error);
+          }
+        );
+      });
+    }
+  }
+
+  // createImageFromBlob(image: Blob) {
+  //   const reader = new FileReader();
+  //   reader.addEventListener(
+  //     'load',
+  //     () => {
+  //       this.postImage = reader.result;
+  //       console.error('image type: ' + typeof this.postImage);
+  //     },
+  //     false
+  //   );
+  //
+  //   if (image) {
+  //     reader.readAsDataURL(image);
+  //   }
+  // }
+
+  createAvatarFromBlob(image: Blob) {
+    const reader = new FileReader();
+    reader.addEventListener(
+      'load',
+      () => {
+        console.error(reader.result);
+        console.error(typeof reader.result);
+        this.avatars.push(reader.result);
+      },
+      false
+    );
+
+    if (image) {
+      reader.readAsDataURL(image);
+    }
   }
 }

@@ -173,6 +173,32 @@ public class AudioFileResource {
             .body(result);
     }
 
+    @PutMapping("/audio-files-remove-user")
+    public ResponseEntity<AudioFile> removeUserFromAudioFile(@Valid @RequestBody AudioFile audioFile) throws URISyntaxException {
+        log.debug("REST request to remove user from AudioFile : {}", audioFile);
+        if (audioFile.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        User currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null);
+        log.debug("Audio File: {}", audioFile.getId());
+        log.debug("Current user: {}", currentUser.getLogin());
+        log.debug("AudioFile users: {}", audioFile.getUsers());
+
+//        Set<User> users = audioFile.getUsers();
+//        Set<User> newUsers = new HashSet<>();
+//        for (User user : users) {
+//            if (!(user.getId().equals(currentUser.getId()))) { // && !usersIt.next().getId().equals(Long.parseLong(af.getIconPath()))
+//                newUsers.add(user);
+//            }
+//        }
+        audioFile.removeUser(currentUser);
+        AudioFile result = audioFileRepository.save(audioFile);
+        audioFileSearchRepository.save(result);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, audioFile.getId().toString()))
+            .body(result);
+    }
+
     /**
      * {@code GET  /audio-files} : get all the audioFiles.
      *

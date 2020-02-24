@@ -1,6 +1,127 @@
 <div class="row justify-content-center">
     <div class="col-8">
         <div *ngIf="post">
+
+            <div class="container posts-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card post-window mb-3">
+                            <div class="card-body">
+                                <div class="media mb-3">
+                                    <img [src]="avatar" *ngIf="!isImageLoading && hasImage"
+                                         class="d-block ui-w-60 rounded-circle" alt="">
+                                    <div class="media-body ml-3">
+                                        <a [routerLink]="['/', post.user.login, 'view']">{{post.user?.login}}</a>
+                                        <div class="text-muted small">{{post.date | date:'medium'}}</div>
+                                    </div>
+                                    <div class="media-body ml-3 mt-3">
+                                        <div *ngIf="audioFile && usersComments">
+                                            <h6 class="d-inline-block text-muted">{{audioFile.users.length}}
+                                                Likes<span>&nbsp;&nbsp;&nbsp;</span></h6>
+                                            <h6 class="d-inline-block text-muted">{{usersComments.length}}
+                                                Comments</h6>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <p class="card-text">
+                                    {{post.postContent}}
+                                </p>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <img [src]="postImage" class="ui-rect ui-bg-cover"
+                                             alt="">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group" *ngIf="audioFile">
+                                            <span>{{audioFile.title}}</span><br>
+                                            <button type="button"
+                                                    (click)="playAudio()"
+                                                    class="btn btn-info">
+                                                <fa-icon [icon]="'play-circle'"></fa-icon>
+                                            </button>
+                                            <button type="button"
+                                                    (click)="pauseAudio()"
+                                                    class="btn btn-info">
+                                                <fa-icon [icon]="'pause-circle'"></fa-icon>
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <span>Tags: </span><br>
+                                            <span *ngFor="let tag of post.tags; let last = last">
+                                    <a [routerLink]="['/tag', tag?.id, 'view' ]">{{tag.name}}</a>{{last ? '' : ', '}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="center">
+                                        <button class="btn btn-primary" (click)="toggleComment()">
+                                            <fa-icon [icon]="'pen'"></fa-icon>
+                                            <span class="hidden-sm-down">Write a comment</span>
+                                        </button>
+                                    </div>
+                                    <div class="center">
+                                        <button class="btn btn-primary" (click)="likeOrDislikeAudioFile()">
+                                            <fa-icon [icon]="'star'"></fa-icon>
+                                            <span class="hidden-sm-down">{{likeBtnText}}</span>
+                                        </button>
+                                    </div>
+                                    <div class="center">
+                                        <button type="submit"
+                                                (click)="previousState()"
+                                                class="btn btn-info">
+                                            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span
+                                            jhiTranslate="entity.action.back"> Back</span>
+                                        </button>
+                                        <button type="button"
+                                                [routerLink]="['/post', post.id, 'edit']"
+                                                class="btn btn-primary">
+                                            <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span
+                                            jhiTranslate="entity.action.edit"> Edit</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row" *ngIf="show">
+                                    <div class="card comment-card my-4">
+                                        <h6 class="card-header">Leave a Comment:</h6>
+                                        <div class="card-body">
+                                            <form>
+                                                <div class="form-group">
+                                                    <textarea [(ngModel)]="commentContent" name="txtarea" class="form-control" rows="3"></textarea>
+                                                </div>
+                                                <button class="btn btn-primary" (click)="addComment()">
+                                                    <fa-icon [icon]="'plus'"></fa-icon>
+                                                    <span class="hidden-sm-down">Submit comment</span>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br><br>
+                                <div class="table-responsive" *ngIf="usersComments?.length > 0">
+                                    <div *ngFor="let comment of usersComments">
+                                        <div class="media mb-4">
+                                            <div class="media-heading">
+                                                <!--<img [src]="userService.downloadAvatar(comment.user.login)" *ngIf="!isImageLoading && hasImage"
+                                                     class="d-block ui-w-60 rounded-circle" alt="">-->
+                                                <!--<img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">-->
+                                                <a [routerLink]="['/', comment.user.login, 'view']">{{comment.user?.login}}</a>
+                                                <div class="text-muted small">{{comment.date | date:'medium'}}</div>
+                                            </div>
+                                            <div class="media-body">{{comment.textContent}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
             <h2><span jhiTranslate="soundgramApp.post.detail.title">Post</span> {{post.id}}</h2>
             <hr>
             <jhi-alert-error></jhi-alert-error>
@@ -24,7 +145,8 @@
                     <a [routerLink]="['/', post.user.login, 'view']">{{post.user.login}}</a>
                     <img [src]="avatar"
                          alt="avatar"
-                         *ngIf="!isImageLoading && hasImage" class="profile-image rounded-circle" style="max-width:80px;width:100%;max-height:80px;height:100%">
+                         *ngIf="!isImageLoading && hasImage" class="profile-image rounded-circle"
+                         style="max-width:80px;width:100%;max-height:80px;height:100%">
                 </dd>
             </dl>
 
@@ -56,8 +178,9 @@
             </div>
 
             <img [src]="postImage"
-                 alt="post image"
-                 *ngIf="!isImageLoading; else noImageFound" style="max-width:400px;width:100%;max-height:500px;height:100%">
+                 alt=""
+                 *ngIf="!isImageLoading; else noImageFound"
+                 style="max-width:400px;width:100%;max-height:500px;height:100%">
             <ng-template #noImageFound>
                 <span>You Failed!</span>
             </ng-template>
@@ -93,48 +216,58 @@
                 </button>
             </div>
         </div>
-    </div>
 
-    <div class="alert alert-warning" *ngIf="usersComments?.length === 0">
-        <span jhiTranslate="soundgramApp.comment.home.notFound">No comments found</span>
-    </div>
-    <div class="table-responsive" *ngIf="usersComments?.length > 0">
-        <table class="table table-striped" aria-describedby="page-heading">
-            <thead>
-            <tr>
-                <th scope="col"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-                <th scope="col"><span jhiTranslate="soundgramApp.comment.textContent">Text Content</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-                <th scope="col"><span jhiTranslate="soundgramApp.comment.date">Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-                <th scope="col"><span jhiTranslate="soundgramApp.comment.user">User</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-                <th scope="col"><span jhiTranslate="soundgramApp.comment.post">Post</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-                <th scope="col"></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let comment of usersComments">
-                <td><a [routerLink]="['/comment', comment.id, 'view' ]">{{comment.id}}</a></td>
-                <td>{{comment.textContent}}</td>
-                <td>{{comment.date | date:'medium'}}</td>
-                <td>
-                    <a [routerLink]="['/post', comment.user?.login, 'view' ]" >{{comment.user?.login}}</a>
-                </td>
-                <td>
-                    <div *ngIf="comment.post">
-                        <a [routerLink]="['/post', comment.post?.id, 'view' ]" >{{comment.post?.id}}</a>
-                    </div>
-                </td>
-                <td class="text-right">
-                    <div class="btn-group">
-                        <button type="submit"
-                                [routerLink]="['/comment', comment.id, 'edit']"
-                                class="btn btn-primary btn-sm">
-                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
-                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="alert alert-warning" *ngIf="usersComments?.length === 0">
+            <span jhiTranslate="soundgramApp.comment.home.notFound">No comments found</span>
+        </div>
+        <div class="table-responsive" *ngIf="usersComments?.length > 0">
+            <table class="table table-striped" aria-describedby="page-heading">
+                <thead>
+                <tr>
+                    <th scope="col"><span jhiTranslate="global.field.id">ID</span>
+                        <fa-icon [icon]="'sort'"></fa-icon>
+                    </th>
+                    <th scope="col"><span jhiTranslate="soundgramApp.comment.textContent">Text Content</span>
+                        <fa-icon [icon]="'sort'"></fa-icon>
+                    </th>
+                    <th scope="col"><span jhiTranslate="soundgramApp.comment.date">Date</span>
+                        <fa-icon [icon]="'sort'"></fa-icon>
+                    </th>
+                    <th scope="col"><span jhiTranslate="soundgramApp.comment.user">User</span>
+                        <fa-icon [icon]="'sort'"></fa-icon>
+                    </th>
+                    <th scope="col"><span jhiTranslate="soundgramApp.comment.post">Post</span>
+                        <fa-icon [icon]="'sort'"></fa-icon>
+                    </th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let comment of usersComments">
+                    <td><a [routerLink]="['/comment', comment.id, 'view' ]">{{comment.id}}</a></td>
+                    <td>{{comment.textContent}}</td>
+                    <td>{{comment.date | date:'medium'}}</td>
+                    <td>
+                        <a [routerLink]="['/post', comment.user?.login, 'view' ]">{{comment.user?.login}}</a>
+                    </td>
+                    <td>
+                        <div *ngIf="comment.post">
+                            <a [routerLink]="['/post', comment.post?.id, 'view' ]">{{comment.post?.id}}</a>
+                        </div>
+                    </td>
+                    <td class="text-right">
+                        <div class="btn-group">
+                            <button type="submit"
+                                    [routerLink]="['/comment', comment.id, 'edit']"
+                                    class="btn btn-primary btn-sm">
+                                <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

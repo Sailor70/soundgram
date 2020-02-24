@@ -14,10 +14,12 @@ import * as moment from 'moment';
 import { now } from 'moment';
 import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 import { UserService } from 'app/core/user/user.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'jhi-post-detail',
-  templateUrl: './post-detail.component.html'
+  templateUrl: './post-detail.component.html',
+  styleUrls: ['post.scss']
 })
 export class PostDetailComponent implements OnInit, OnDestroy {
   post: IPost;
@@ -28,6 +30,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   audioFile: IAudioFile;
   fileUrl: any;
   audio: any;
+  audioBypass: any;
 
   commentContent: string;
   newComment: IComment;
@@ -40,12 +43,17 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   account: Account;
   hasImage: boolean;
 
+  show = false;
+  liked = false;
+  likeBtnText = 'Like this audio';
+
   constructor(
     protected activatedRoute: ActivatedRoute,
     protected imageService: ImageService,
     protected audioFileService: AudioFileService,
     protected commentService: CommentService,
-    protected userService: UserService
+    protected userService: UserService,
+    private sanitizer: DomSanitizer
   ) {
     this.audio = new Audio();
   }
@@ -61,6 +69,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
       (res: HttpResponse<IAudioFile>) => {
         this.audioFile = res.body;
         this.onLoadAudioFileSuccess();
+        this.checkIfLiked();
         console.error('Audio id:' + this.audioFile.id);
         // this.audioFile.users.forEach((user) => user.id);
         console.error('Audio users count:' + this.audioFile.users.length);
@@ -101,34 +110,54 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     this.audio.pause();
   }
 
-  protected onLoadImageSuccess() {
-    this.imageService.getFile(this.image.id).subscribe(
-      res => {
-        const blobUrl = URL.createObjectURL(res);
-        this.imageUrl = blobUrl;
-        console.error('imageUrl: ' + this.imageUrl);
-        this.img = document.querySelector('img');
-        this.img.addEventListener('load', () => URL.revokeObjectURL(this.imageUrl));
-        document.querySelector('img').src = this.imageUrl;
-        console.error('img file: ' + this.img);
-      },
-      res => {
-        console.error('Image resource error: ' + res);
-      }
-    );
-  }
-
   protected onLoadAudioFileSuccess() {
     this.audioFileService.getFile(this.audioFile.id).subscribe(
       res => {
         const blobUrl = URL.createObjectURL(res);
         this.fileUrl = blobUrl;
         this.audio.src = this.fileUrl;
+        this.audioBypass = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl);
       },
       (res: HttpResponse<IAudioFile>) => {
         console.error('File resource error: ' + res);
       }
     );
+  }
+
+  private checkIfLiked() {
+    this.audioFileService.getLiked().subscribe(liked => {
+      const likedAudios: IAudioFile[] = liked.body;
+      for (const la of likedAudios) {
+        if (la.id === this.audioFile.id) {
+          this.liked = true;
+          this.likeBtnText = 'Dislike this audio';
+        }
+      }
+    });
+  }
+
+  // likeAudioFile() {
+  //   // this.audioFile.users.push()
+  //   this.audioFileService.addUser(this.audioFile).subscribe((res: HttpResponse<AudioFile>) => {
+  //     this.audioFile = res.body;
+  //     this.liked = true;
+  //   });
+  // }
+
+  likeOrDislikeAudioFile() {
+    if (!this.liked) {
+      this.audioFileService.addUser(this.audioFile).subscribe((res: HttpResponse<AudioFile>) => {
+        this.audioFile = res.body;
+        this.liked = true;
+        this.likeBtnText = 'Dislike this audio';
+      });
+    } else {
+      this.audioFileService.removeUser(this.audioFile).subscribe((res: HttpResponse<AudioFile>) => {
+        this.audioFile = res.body;
+        this.liked = false;
+        this.likeBtnText = 'Like this audio';
+      });
+    }
   }
 
   playAudio() {
@@ -146,13 +175,6 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  likeAudioFile() {
-    // this.audioFile.users.push()
-    this.audioFileService.addUser(this.audioFile).subscribe((res: HttpResponse<AudioFile>) => {
-      this.audioFile = res.body;
-    });
-  }
-
   addComment() {
     this.newComment = new (class implements IComment {
       date: moment.Moment;
@@ -168,6 +190,10 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     this.commentService.create(this.newComment).subscribe((res: HttpResponse<IUser>) => {
       this.currentUser = res.body;
     });
+  }
+
+  toggleComment() {
+    this.show = !this.show;
   }
 
   getAvatarFromService() {

@@ -161,13 +161,14 @@
                 </div>
 
                 <div *ngIf="posts?.length > 0">
-                    <div *ngFor="let post of posts ;trackBy: trackDate">
+                    <div *ngFor="let post of posts ;trackBy: trackDate"> <!--let i = index-->
                         <div class="container posts-content">
                             <div class="row">
-                                <div class="col-lg-12">
+                                <div class="col-md-12">
                                     <div class="card mb-3">
                                         <div class="card-body">
                                             <div class="media mb-3">
+                                                <!--avatars[i]-->
                                                 <img src="https://bootdey.com/img/Content/avatar/avatar3.png"
                                                      class="d-block ui-w-60 rounded-circle" alt="">
                                                 <div class="media-body ml-3">
@@ -180,18 +181,21 @@
                                                 {{post.postContent}}
                                             </p>
                                             <div class="row">
-                                                <div class="col-lg-6">
+                                                <div class="col-md-6">
                                                     <a href="javascript:void(0)" class="ui-rect ui-bg-cover"
                                                        style="background-image: url('https://bootdey.com/img/Content/avatar/avatar3.png');"></a>
                                                 </div>
-                                                <div class="col-lg-6">
+                                                <div class="col-md-6">
                                                     <audio controls="controls" id="audio_player">
                                                         <source src="track.ogg" type="audio/ogg"/>
                                                         Your browser does not support the audio element.
                                                     </audio>
                                                     <span>Tags: (lub odtwarzacz tutaj a tagi poniżej) </span>
-                                                    <ul class="list-group" *ngFor="let tag of post.tags; let last = last">
-                                                        <li class="list-group-item"><a [routerLink]="['/tag', tag?.id, 'view' ]">{{tag.name}}</a>{{last ? '' : ', '}}</li>
+                                                    <ul class="list-group"
+                                                        *ngFor="let tag of post.tags; let last = last">
+                                                        <li class="list-group-item"><a
+                                                            [routerLink]="['/tag', tag?.id, 'view' ]">{{tag.name}}</a>{{last ? '' : ', '}}
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -244,7 +248,7 @@
                 <!--                    </div>-->
                 <!--                </div>-->
 
-                <!--            </div>-->
+            </div>
 
                 <div *ngSwitchCase="false">
                     <h1 class="display-4" jhiTranslate="home.title">Welcome to Soundgram!</h1>
@@ -270,7 +274,6 @@
                         account</a>.
 
                 </div>
-            </div>
 
             <!--        <p jhiTranslate="home.question">
                         If you have any question on JHipster:
