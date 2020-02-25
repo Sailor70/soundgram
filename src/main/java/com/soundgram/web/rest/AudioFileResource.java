@@ -28,12 +28,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -43,6 +44,7 @@ import java.sql.Blob;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import java.util.zip.ZipOutputStream;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -272,88 +274,78 @@ public class AudioFileResource {
         return usersAFs;
     }
 
-    @GetMapping("/audio-files-download/{id}")
-    public ResponseEntity<byte[]> downloadAudioFile(@PathVariable Long id) {
+//    @GetMapping("/audio-files-download/{id}")
+//    public ResponseEntity<byte[]> downloadAudioFile(@PathVariable Long id) {
+//        Optional<AudioFile> audioFile = audioFileRepository.findOneWithEagerRelationships(id);
+//        if (audioFile.isPresent()) {
+//            AudioFile af = audioFile.get();
+//            String title = af.getTitle();
+//            Long fileOwnerId = Long.parseLong(af.getIconPath()); // przechowuje id właściciela pliku
+////            Set<User> users = af.getUsers();
+////            Long firstUserId = users.iterator().next().getId(); // the owner of file
+//            Resource resource = storageService.loadAudioAsResource(title, fileOwnerId);
+//
+//            byte[] templateContent = new byte[0];
+//            try {
+//                templateContent = FileCopyUtils.copyToByteArray(resource.getFile());
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            HttpHeaders respHeaders = new HttpHeaders();
+//            respHeaders.setContentLength(templateContent.length);
+//            respHeaders.setContentType(new MediaType("audio", "mpeg"));
+//            respHeaders.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+//            respHeaders.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + title);
+//
+//            return new ResponseEntity<byte[]>(templateContent, respHeaders, HttpStatus.OK);
+//
+//        } else {
+//            log.debug("Nie ma w bazie takiego pliku o id: {}", id);
+//            return new ResponseEntity<byte[]>(null, null, HttpStatus.OK);
+//        }
+//    }
+
+    @GetMapping(value = "/audio-files-download/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<StreamingResponseBody> download(@PathVariable Long id, final HttpServletResponse response) throws IOException {
         Optional<AudioFile> audioFile = audioFileRepository.findOneWithEagerRelationships(id);
+        // ServletOutputStream stream = null;
         if (audioFile.isPresent()) {
             AudioFile af = audioFile.get();
             String title = af.getTitle();
-            Long fileOwnerId = Long.parseLong(af.getIconPath());
-//            Set<User> users = af.getUsers();
-//            Long firstUserId = users.iterator().next().getId(); // the owner of file
+            Long fileOwnerId = Long.parseLong(af.getIconPath()); // przechowuje id właściciela pliku
             Resource resource = storageService.loadAudioAsResource(title, fileOwnerId);
-
-            byte[] templateContent = new byte[0];
+            File mp3 = null;
             try {
-                templateContent = FileCopyUtils.copyToByteArray(resource.getFile());
+                mp3 = resource.getFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            HttpHeaders respHeaders = new HttpHeaders();
-            respHeaders.setContentLength(templateContent.length);
-            respHeaders.setContentType(new MediaType("audio", "mpeg"));
-            respHeaders.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-            respHeaders.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + title);
-
-            return new ResponseEntity<byte[]>(templateContent, respHeaders, HttpStatus.OK);
-
-        } else {
-            log.debug("Nie ma w bazie takiego pliku o id: {}", id);
-            return new ResponseEntity<byte[]>(null, null, HttpStatus.OK);
+            response.setContentType("audio/mpeg");
+            response.setHeader(
+                "Content-Disposition",
+                "attachment;filename=" + title);
+            response.setContentLength((int) mp3.length());
+            // FileInputStream input = new FileInputStream(mp3);
+            File finalMp = mp3;
+            StreamingResponseBody streamRS = out -> {
+                ServletOutputStream stream = response.getOutputStream();
+                FileInputStream input = new FileInputStream(finalMp);
+                BufferedInputStream buf = new BufferedInputStream(input);
+                int readBytes = 0;
+                //read from the file; write to the ServletOutputStream
+                while ((readBytes = buf.read()) != -1)
+                    stream.write(readBytes);
+                if (stream != null)
+                    stream.close();
+                if (buf != null)
+                    buf.close();
+                log.info("steaming response {} ", stream);
+            };
+            return new ResponseEntity(streamRS, HttpStatus.OK);
         }
+        return new ResponseEntity(null, HttpStatus.OK);
     }
-
-/*    @GetMapping("/audio-files-download/{id}")
-    public ResponseEntity<InputStreamResource> downloadAudioFile(@PathVariable Long id) {
-        Optional<AudioFile> audioFile = audioFileRepository.findOneWithEagerRelationships(id);
-        // AudioFile af = new AudioFile();
-        //Resource resource;
-        if(audioFile.isPresent()) {
-            AudioFile af = audioFile.get();
-            String title = af.getTitle();
-            Resource resource = storageService.loadAsResource(title);
-
-            long r = 0;
-            InputStream is=null;
-
-            try {
-                is = resource.getInputStream();
-                r = resource.contentLength();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return ResponseEntity.ok().contentLength(r)
-                .contentType(MediaType.parseMediaType("audio/mpeg"))
-                .body(new InputStreamResource(is));
-        }
-        else {
-            log.debug("Nie ma w bazie takiego pliku o id: {}", id);
-            return ResponseEntity.ok().body(null);
-        }
-    }*/
-
-/*    @GetMapping("/audio-files-download/{id}")
-    public ResponseEntity<Resource> downloadAudioFile(@PathVariable Long id) {
-        Optional<AudioFile> audioFile = audioFileRepository.findOneWithEagerRelationships(id);
-        AudioFile af = new AudioFile();
-        Resource resource;
-        if(audioFile.isPresent()) {
-            af = audioFile.get();
-            String title = af.getTitle();
-            resource = storageService.loadAsResource(title);
-
-            return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                    "attachment; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
-        }
-        else {
-            log.debug("Nie ma w bazie takiego pliku o id: {}", id);
-            return ResponseEntity.ok().body(null);
-        }
-    }*/
 
     /**
      * {@code DELETE  /audio-files/:id} : delete the "id" audioFile.
