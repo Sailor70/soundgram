@@ -119,7 +119,7 @@ public class AudioFileResource {
             audioFile.setAudioPath(audioPath.toString()); // to jest niepotrzebne właściwie
             audioFile.setPost(post); //
             audioFile.setTitle(file.getOriginalFilename()); // audioPath.getFileName().toString()
-            audioFile.setIconPath(currentUser.getId().toString()); // to na później zostawiamy
+            audioFile.setIconPath(currentUser.getId().toString()); // przechowuje id ownera pliku
 
             AudioFile result = audioFileRepository.save(audioFile);
             audioFileSearchRepository.save(result);
@@ -228,7 +228,7 @@ public class AudioFileResource {
     public ResponseEntity<AudioFile> getAudioFileByPost(@PathVariable Long id) {
         log.debug("REST request to get AudioFile that belongs to post of id : {}", id);
         Optional<AudioFile> audioFile = audioFileRepository.findAudioFileByPostId(id);
-        if(audioFile.isPresent()){
+        if (audioFile.isPresent()) {
             log.debug("AudioFile users : {}", audioFile.get().getUsers()); // trzeba użyć get() bo inaczej nie zwraca listy userów
         }
 /*        if(audioFile.isPresent()){
@@ -245,7 +245,7 @@ public class AudioFileResource {
         log.debug("REST request to get Audiofiles liked by the user of login : {}", currentUserId);
         List<AudioFile> allAF = audioFileRepository.findAllWithEagerRelationships();
         List<AudioFile> likedAFs = new ArrayList<>();
-        for(AudioFile af : allAF){
+        for (AudioFile af : allAF) {
             Set<User> users = af.getUsers();
             for (User user : users) {
                 if (user.getId().equals(currentUserId)) { // && !usersIt.next().getId().equals(Long.parseLong(af.getIconPath()))
@@ -263,9 +263,9 @@ public class AudioFileResource {
         log.debug("REST request to get Audiofiles that are owned by the user of id : {}", userId);
         List<AudioFile> allAF = audioFileRepository.findAllWithEagerRelationships();
         List<AudioFile> usersAFs = new ArrayList<AudioFile>();
-        for(AudioFile af : allAF){
+        for (AudioFile af : allAF) {
             Long ownerId = Long.parseLong(af.getIconPath());
-            if(ownerId.equals(userId)){
+            if (ownerId.equals(userId)) {
                 usersAFs.add(af);
             }
         }

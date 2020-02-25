@@ -24,6 +24,7 @@ export class TagDetailComponent implements OnInit {
 
   loadTagPosts() {
     this.postService.query().subscribe(res => {
+      this.posts = [];
       const allPosts = res.body;
       for (const post of allPosts) {
         if (post.tags) {

@@ -111,6 +111,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
       this.account = account;
       this.userService.find(this.account.login).subscribe(res => {
         this.currentUser = res;
+        console.error('current user: ' + this.currentUser.login);
       });
     });
   }

@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
+import { Injectable, NgModule } from '@angular/core';
+import { Resolve, ActivatedRouteSnapshot, Routes, RouterModule } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
 import { UsersComponent } from './users.component';
@@ -51,3 +51,9 @@ export const USERS_ROUTE: Routes = [
     }
   }
 ];
+
+@NgModule({
+  imports: [RouterModule.forChild(USERS_ROUTE)],
+  exports: [RouterModule]
+})
+export class RoutingUsers {}

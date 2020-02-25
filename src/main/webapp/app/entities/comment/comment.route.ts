@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, ModuleWithProviders } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot, Routes, RouterModule } from '@angular/router';
 import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -71,3 +71,5 @@ export const commentRoute: Routes = [
     canActivate: [UserRouteAccessService]
   }
 ];
+
+export const routingComments: ModuleWithProviders = RouterModule.forChild(commentRoute);

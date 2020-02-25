@@ -82,12 +82,15 @@
                                             <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span
                                             jhiTranslate="entity.action.back"> Back</span>
                                         </button>
-                                        <button type="button"
-                                                [routerLink]="['/post', post.id, 'edit']"
-                                                class="btn btn-primary" [hidden]="currentUser.login !== post.user.login">
-                                            <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span
-                                            jhiTranslate="entity.action.edit"> Edit</span>
-                                        </button>
+                                        <div *ngIf="currentUser">
+                                            <button type="button"
+                                                    [routerLink]="['/post', post.id, 'edit']"
+                                                    class="btn btn-primary"
+                                                    [hidden]="currentUser.login !== post.user.login">
+                                                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span
+                                                jhiTranslate="entity.action.edit"> Edit</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row" *ngIf="showCommentWindow">
@@ -121,19 +124,22 @@
                                             <div class="col-md-6">
                                                 <span>{{comment.textContent}}</span>
                                             </div>
-                                            <div *ngIf="currentUser" class="col-md-3" [hidden]="currentUser.login !== comment.user.login">
-                                                <button type="submit"
-                                                        [routerLink]="['/comment', comment.id, 'edit']"
-                                                        class="btn btn-primary btn-sm">
-                                                    <fa-icon [icon]="'pencil-alt'"></fa-icon>
-                                                    <span class="d-none d-md-inline"
-                                                          jhiTranslate="entity.action.edit">Edit</span>
-                                                </button>
-                                                <button type="submit" (click)="deleteComment(comment)"
-                                                        class="btn btn-danger btn-sm">
-                                                    <fa-icon [icon]="'times'"></fa-icon>
-                                                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-                                                </button>
+                                            <div *ngIf="currentUser" class="col-md-3">
+                                                <div [hidden]="currentUser.login !== comment.user.login">
+                                                    <button type="submit"
+                                                            [routerLink]="['/comment', comment.id, 'edit']"
+                                                            class="btn btn-primary btn-sm">
+                                                        <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                                                        <span class="d-none d-md-inline"
+                                                              jhiTranslate="entity.action.edit">Edit</span>
+                                                    </button>
+                                                    <button type="submit" (click)="deleteComment(comment)"
+                                                            class="btn btn-danger btn-sm">
+                                                        <fa-icon [icon]="'times'"></fa-icon>
+                                                        <span class="d-none d-md-inline"
+                                                              jhiTranslate="entity.action.delete">Delete</span>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
 <!--                                        <div class="media mb-4">-->
