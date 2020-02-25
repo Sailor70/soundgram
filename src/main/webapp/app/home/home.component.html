@@ -1,12 +1,45 @@
-<div class="row">
-    <div class="col-md-3">
-        <span class="instruments img-fluid rounded"></span>
+<div [ngSwitch]="isAuthenticated()">
+    <!---------------------------------------------------Welcome (login)--------------------------------------------------------------->
+    <div class="row" *ngSwitchCase="false">
+        <div class="col-md-4">
+            <span class="instruments img-fluid rounded"></span>
+        </div>
+
+        <div class="col-md-8">
+
+            <h1 class="display-4" jhiTranslate="home.title">Welcome to Soundgram!</h1>
+            <p class="lead" jhiTranslate="home.subtitle">This is a place for music</p>
+
+            <div class="alert alert-primary">
+
+                <span jhiTranslate="global.messages.info.authenticated.prefix">To get started, please </span>
+                <!--jhiTranslate="global.messages.info.authenticated.prefixer"-->
+                <a href="" (click)="login(); false">
+                    <fa-icon [icon]="'sign-in-alt'"></fa-icon>
+                    <strong jhiTranslate="global.messages.info.authenticated.link">Sign In</strong>
+                </a>
+
+            </div>
+            <div class="alert alert-primary">
+                <!--<span jhiTranslate="global.messages.info.register.noaccount">You don't have an account yet?</span>&nbsp;
+                <a class="alert-link" routerLink="account/register" jhiTranslate="global.messages.info.register.link">Register a new account</a>-->
+
+                <span
+                    jhiTranslate="global.messages.info.register.noaccount">You don't have an account yet?</span>
+                <a routerLink="account/register" jhiTranslate="global.messages.info.register.link">Register a
+                    new
+                    account</a>.
+
+            </div>
+        </div>
     </div>
-    <div class="col-md-9">
 
-        <div [ngSwitch]="isAuthenticated()">
+    <!---------------------------------------------------Home---------------------------------------------------------------->
 
-            <h2 id="page-heading" *ngSwitchCase="true">
+    <div class="row" *ngSwitchCase="true">
+
+        <div class="col-md-12">
+            <h2 id="page-heading">
                 <span jhiTranslate="home.name">Posts</span>
                 <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-post"
                         [routerLink]="['/post/new']">
@@ -17,279 +50,235 @@
                 </button>
             </h2>
 
-            <div class="alert alert-success" *ngSwitchCase="true">
+<!--            <div class="alert alert-success">
                 <span id="home-logged-message" *ngIf="account" jhiTranslate="home.logged.message"
                       [translateValues]="{username: account.login}"> You are logged in as user "{{account.login}}
                     ". </span>
-                <!--
+                &lt;!&ndash;
                                 <div class="col-3 col-xs-2 text-right">
                                     <a [routerLink]="['/post/new']" class="btn btn-primary m-0 mb-1 text-white">Create new Post</a>
-                                </div>-->
+                                </div>&ndash;&gt;
 
-            </div>
+            </div>-->
 
-            <div *ngSwitchCase="true">
-                <jhi-alert-error></jhi-alert-error>
-                <jhi-alert></jhi-alert>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <form name="searchForm" class="form-inline">
-                            <div class="input-group w-100 mt-3">
-                                <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch"
-                                       name="currentSearch"
-                                       placeholder="{{ 'soundgramApp.post.home.search' | translate }}">
-                                <button class="input-group-append btn btn-info" (click)="search(currentSearch)">
-                                    <fa-icon [icon]="'search'"></fa-icon>
-                                </button>
-                                <button class="input-group-append btn btn-danger" (click)="clear()"
-                                        *ngIf="currentSearch">
-                                    <fa-icon [icon]="'trash-alt'"></fa-icon>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+            <jhi-alert-error></jhi-alert-error>
+            <jhi-alert></jhi-alert>
+            <div class="row">
+                <div class="col-sm-12">
+                    <form name="searchForm" class="form-inline">
+                        <div class="input-group w-100 mt-3">
+                            <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch"
+                                   name="currentSearch"
+                                   placeholder="{{ 'soundgramApp.post.home.search' | translate }}">
+                            <button class="input-group-append btn btn-info" (click)="search(currentSearch)">
+                                <fa-icon [icon]="'search'"></fa-icon>
+                            </button>
+                            <button class="input-group-append btn btn-danger" (click)="clear()"
+                                    *ngIf="currentSearch">
+                                <fa-icon [icon]="'trash-alt'"></fa-icon>
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                <br>
-                <button class="btn btn-primary float-right" [routerLink]="['/tag']">
-                    <fa-icon [icon]="'search'"></fa-icon>
-                    <span class="hidden-sm-down">
+            </div>
+            <br>
+            <button class="btn btn-primary float-right" [routerLink]="['/tag']">
+                <fa-icon [icon]="'search'"></fa-icon>
+                <span class="hidden-sm-down">
                         View tags
                     </span>
-                </button>
-                <div [ngSwitch]="followedUsersPosts">
-                    <h2 *ngSwitchCase="true">
-                        <span id="likedFiles-page-heading">Followed Users Posts</span>
-                        <button class="btn btn-primary float-right" (click)="loadFollowedTagsPosts()">
-                            <fa-icon [icon]="'music'"></fa-icon>
-                            <span>Show posts by my tags</span>
-                        </button>
-                    </h2>
-                    <h2 *ngSwitchCase="false">
-                        <span id="myFiles-page-heading">Followed Tags Posts</span>
-                        <button class="btn btn-primary float-right" (click)="loadFollowedUsersPosts()">
-                            <fa-icon [icon]="'music'"></fa-icon>
-                            <span>Show my followed users posts</span>
-                        </button>
-                    </h2>
-                </div>
-                <!--                <div class="btn-group">
-                                    <div [ngSwitch]="followedUsersPosts">
-                                        <h2 *ngSwitchCase="true">
-                                            <span id="likedFiles-page-heading">Followed Users Posts</span>
-                                            <button class="btn btn-primary float-right" (click)="loadFollowedTagsPosts()">
-                                                <fa-icon [icon]="'music'"></fa-icon>
-                                                <span>Show posts by my tags</span>
-                                            </button>
-                                        </h2>
-                                        <h2 *ngSwitchCase="false">
-                                            <span id="myFiles-page-heading">Followed Tags Posts</span>
-                                            <button class="btn btn-primary float-right" (click)="loadFollowedUsersPosts()">
-                                                <fa-icon [icon]="'music'"></fa-icon>
-                                                <span>Show my followed users posts</span>
-                                            </button>
-                                        </h2>
-                                    </div>
-                                    <button class="btn btn-primary float-right" [routerLink]="['/tag']">
-                                        <fa-icon [icon]="'search'"></fa-icon>
-                                        <span class="hidden-sm-down">
-                                        View tags
-                                    </span>
-                                    </button>
-                                </div>-->
-                <br/>
-                <div class="alert alert-warning" *ngIf="posts?.length === 0">
-                    <span jhiTranslate="soundgramApp.post.home.notFound">No posts found</span>
-                </div>
+            </button>
+            <div [ngSwitch]="followedUsersPosts">
+                <h2 *ngSwitchCase="true">
+                    <span id="likedFiles-page-heading">Followed Users Posts</span>
+                    <button class="btn btn-primary float-right" (click)="loadFollowedTagsPosts()">
+                        <fa-icon [icon]="'music'"></fa-icon>
+                        <span>Show posts by my tags</span>
+                    </button>
+                </h2>
+                <h2 *ngSwitchCase="false">
+                    <span id="myFiles-page-heading">Followed Tags Posts</span>
+                    <button class="btn btn-primary float-right" (click)="loadFollowedUsersPosts()">
+                        <fa-icon [icon]="'music'"></fa-icon>
+                        <span>Show my followed users posts</span>
+                    </button>
+                </h2>
+            </div>
+            <!--                <div class="btn-group">
+                                <div [ngSwitch]="followedUsersPosts">
+                                    <h2 *ngSwitchCase="true">
+                                        <span id="likedFiles-page-heading">Followed Users Posts</span>
+                                        <button class="btn btn-primary float-right" (click)="loadFollowedTagsPosts()">
+                                            <fa-icon [icon]="'music'"></fa-icon>
+                                            <span>Show posts by my tags</span>
+                                        </button>
+                                    </h2>
+                                    <h2 *ngSwitchCase="false">
+                                        <span id="myFiles-page-heading">Followed Tags Posts</span>
+                                        <button class="btn btn-primary float-right" (click)="loadFollowedUsersPosts()">
+                                            <fa-icon [icon]="'music'"></fa-icon>
+                                            <span>Show my followed users posts</span>
+                                        </button>
+                                    </h2>
+                                </div>
+                                <button class="btn btn-primary float-right" [routerLink]="['/tag']">
+                                    <fa-icon [icon]="'search'"></fa-icon>
+                                    <span class="hidden-sm-down">
+                                    View tags
+                                </span>
+                                </button>
+                            </div>-->
+            <br/>
+            <div class="alert alert-warning" *ngIf="posts?.length === 0">
+                <span jhiTranslate="soundgramApp.post.home.notFound">No posts found</span>
+            </div>
 
-                <div class="table-responsive" *ngIf="posts?.length > 0">
-                    <table class="table table-striped" aria-describedby="page-heading">
-                        <thead>
-                        <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="reset.bind(this)">
-                            <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span>
-                                <fa-icon [icon]="'sort'"></fa-icon>
-                            </th>
-                            <th scope="col" jhiSortBy="postContent"><span jhiTranslate="soundgramApp.post.postContent">Post Content</span>
-                                <fa-icon [icon]="'sort'"></fa-icon>
-                            </th>
-                            <th scope="col" jhiSortBy="date"><span jhiTranslate="soundgramApp.post.date">Date</span>
-                                <fa-icon [icon]="'sort'"></fa-icon>
-                            </th>
-                            <th scope="col" jhiSortBy="user.login"><span
-                                jhiTranslate="soundgramApp.post.user">User</span>
-                                <fa-icon [icon]="'sort'"></fa-icon>
-                            </th>
-                            <th scope="col"><span>Tags</span></th>
-                            <th scope="col"></th>
-                        </tr>
-                        </thead>
-                        <tbody infinite-scroll (scrolled)="loadPage(page + 1)"
-                               [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
-                        <tr *ngFor="let post of posts ;trackBy: trackId">
-                            <td><a [routerLink]="['/post', post.id, 'view' ]">{{post.id}}</a></td>
-                            <td>{{post.postContent}}</td>
-                            <td>{{post.date | date:'medium'}}</td>
-                            <td><a [routerLink]="['/', post.user.login, 'view']">{{post.user?.login}}</a></td>
-                            <td>
+            <div class="table-responsive" *ngIf="posts?.length > 0">
+                <table class="table table-striped" aria-describedby="page-heading">
+                    <thead>
+                    <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="reset.bind(this)">
+                        <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span>
+                            <fa-icon [icon]="'sort'"></fa-icon>
+                        </th>
+                        <th scope="col" jhiSortBy="postContent"><span jhiTranslate="soundgramApp.post.postContent">Post Content</span>
+                            <fa-icon [icon]="'sort'"></fa-icon>
+                        </th>
+                        <th scope="col" jhiSortBy="date"><span jhiTranslate="soundgramApp.post.date">Date</span>
+                            <fa-icon [icon]="'sort'"></fa-icon>
+                        </th>
+                        <th scope="col" jhiSortBy="user.login"><span
+                            jhiTranslate="soundgramApp.post.user">User</span>
+                            <fa-icon [icon]="'sort'"></fa-icon>
+                        </th>
+                        <th scope="col"><span>Tags</span></th>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody infinite-scroll (scrolled)="loadPage(page + 1)"
+                           [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
+                    <tr *ngFor="let post of posts ;trackBy: trackId">
+                        <td><a [routerLink]="['/post', post.id, 'view' ]">{{post.id}}</a></td>
+                        <td>{{post.postContent}}</td>
+                        <td>{{post.date | date:'medium'}}</td>
+                        <td><a [routerLink]="['/', post.user.login, 'view']">{{post.user?.login}}</a></td>
+                        <td>
                                 <span *ngFor="let tag of post.tags; let last = last">
                                     <a [routerLink]="['/tag', tag?.id, 'view' ]">{{tag.name}}</a>{{last ? '' : ', '}}
                                 </span>
-                            </td>
-                            <td class="text-right">
-                                <div class="btn-group">
-                                    <button type="submit"
-                                            [routerLink]="['/post', post.id, 'view' ]"
-                                            class="btn btn-info btn-sm">
-                                        <fa-icon [icon]="'eye'"></fa-icon>
-                                        <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-                                    </button>
-                                    <!--                                    <button type="submit"
-                                                                                [routerLink]="['/post', post.id, 'edit']"
-                                                                                class="btn btn-primary btn-sm">
-                                                                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
-                                                                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-                                                                        </button>
-                                                                        <button type="submit" (click)="delete(post)"
-                                                                                class="btn btn-danger btn-sm">
-                                                                            <fa-icon [icon]="'times'"></fa-icon>
-                                                                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-                                                                        </button>-->
-                                </div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+                        </td>
+                        <td class="text-right">
+                            <div class="btn-group">
+                                <button type="submit"
+                                        [routerLink]="['/post', post.id, 'view' ]"
+                                        class="btn btn-info btn-sm">
+                                    <fa-icon [icon]="'eye'"></fa-icon>
+                                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                                </button>
+                                <!--                                    <button type="submit"
+                                                                            [routerLink]="['/post', post.id, 'edit']"
+                                                                            class="btn btn-primary btn-sm">
+                                                                        <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                                                                        <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                                                                    </button>
+                                                                    <button type="submit" (click)="delete(post)"
+                                                                            class="btn btn-danger btn-sm">
+                                                                        <fa-icon [icon]="'times'"></fa-icon>
+                                                                        <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                                                                    </button>-->
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 
-                <div *ngIf="posts?.length > 0">
-                    <div *ngFor="let post of posts ;trackBy: trackDate"> <!--let i = index-->
-                        <div class="container posts-content">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="card mb-3">
-                                        <div class="card-body">
-                                            <div class="media mb-3">
-                                                <!--avatars[i]-->
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar3.png"
-                                                     class="d-block ui-w-60 rounded-circle" alt="">
-                                                <div class="media-body ml-3">
-                                                    <a [routerLink]="['/', post.user.login, 'view']">{{post.user?.login}}</a>
-                                                    <div class="text-muted small">{{post.date | date:'medium'}}</div>
-                                                </div>
-                                            </div>
-
-                                            <p class="card-text">
-                                                {{post.postContent}}
-                                            </p>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <a href="javascript:void(0)" class="ui-rect ui-bg-cover"
-                                                       style="background-image: url('https://bootdey.com/img/Content/avatar/avatar3.png');"></a>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <audio controls="controls" id="audio_player">
-                                                        <source src="track.ogg" type="audio/ogg"/>
-                                                        Your browser does not support the audio element.
-                                                    </audio>
-                                                    <span>Tags: (lub odtwarzacz tutaj a tagi poniżej) </span>
-                                                    <ul class="list-group"
-                                                        *ngFor="let tag of post.tags; let last = last">
-                                                        <li class="list-group-item"><a
-                                                            [routerLink]="['/tag', tag?.id, 'view' ]">{{tag.name}}</a>{{last ? '' : ', '}}
-                                                        </li>
-                                                    </ul>
-                                                </div>
+            <div *ngIf="posts?.length > 0">
+                <div *ngFor="let post of posts ;trackBy: trackDate"> <!--let i = index-->
+                    <div class="container posts-content">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="media mb-3">
+                                            <!--avatars[i]-->
+                                            <img src="https://bootdey.com/img/Content/avatar/avatar3.png"
+                                                 class="d-block ui-w-60 rounded-circle" alt="">
+                                            <div class="media-body ml-3">
+                                                <a [routerLink]="['/', post.user.login, 'view']">{{post.user?.login}}</a>
+                                                <div class="text-muted small">{{post.date | date:'medium'}}</div>
                                             </div>
                                         </div>
-                                        <div class="card-footer">
-                                            <a href="javascript:void(0)" class="d-inline-block text-muted">
-                                                <strong></strong> Likes
-                                            </a>
-                                            <a href="javascript:void(0)" class="d-inline-block text-muted ml-3">
-                                                <strong>12</strong> Comments
-                                            </a>
-                                            <a [routerLink]="['/post', post.id, 'view' ]"
-                                               class="d-inline-block text-muted ml-3">View post detail</a>
+
+                                        <p class="card-text">
+                                            {{post.postContent}}
+                                        </p>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <a href="javascript:void(0)" class="ui-rect ui-bg-cover"
+                                                   style="background-image: url('https://bootdey.com/img/Content/avatar/avatar3.png');"></a>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <audio controls="controls" id="audio_player">
+                                                    <source src="track.ogg" type="audio/ogg"/>
+                                                    Your browser does not support the audio element.
+                                                </audio>
+                                                <span>Tags: (lub odtwarzacz tutaj a tagi poniżej) </span>
+                                                <ul class="list-group"
+                                                    *ngFor="let tag of post.tags; let last = last">
+                                                    <li class="list-group-item"><a
+                                                        [routerLink]="['/tag', tag?.id, 'view' ]">{{tag.name}}</a>{{last ? '' : ', '}}
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <a href="javascript:void(0)" class="d-inline-block text-muted">
+                                            <strong></strong> Likes
+                                        </a>
+                                        <a href="javascript:void(0)" class="d-inline-block text-muted ml-3">
+                                            <strong>12</strong> Comments
+                                        </a>
+                                        <a [routerLink]="['/post', post.id, 'view' ]"
+                                           class="d-inline-block text-muted ml-3">View post detail</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!--                <div class="col text-center">-->
-                <!--                    <div class="landing-panel mx-auto">-->
-                <!--                        <h3 class="section-title">Sign-Up</h3>-->
-                <!--                        <h3>Name</h3>-->
-                <!--                        <input type="text" maxlength="40"/>-->
-
-                <!--                        <div role="alert">-->
-                <!--                                            <span class="error">-->
-                <!--                                            Not valid Username! <br/>Use: 0-9a-zA-Z_.- </span>-->
-                <!--                        </div>-->
-
-                <!--                        <h3>Email</h3>-->
-                <!--                        <input type="email" required/>-->
-
-                <!--                        <div role="alert">-->
-                <!--                                            <span class="error">-->
-                <!--                                            Not valid email!</span>-->
-                <!--                        </div>-->
-
-                <!--                        <h3>Password</h3>-->
-                <!--                        <input type="password"/> <br>-->
-
-                <!--                        <div role="alert">-->
-                <!--                                            <span class="error">-->
-                <!--                                            Not valid password! <br/>Use: 6>chars, 1digit </span>-->
-                <!--                        </div>-->
-
-                <!--                        <button class="cta-button" ng-click="createUser(newUser)">Create account</button>-->
-                <!--                    </div>-->
-                <!--                </div>-->
-
             </div>
 
-                <div *ngSwitchCase="false">
-                    <h1 class="display-4" jhiTranslate="home.title">Welcome to Soundgram!</h1>
-                    <p class="lead" jhiTranslate="home.subtitle">This is a place for music</p>
-                </div>
+            <!--                <div class="col text-center">-->
+            <!--                    <div class="landing-panel mx-auto">-->
+            <!--                        <h3 class="section-title">Sign-Up</h3>-->
+            <!--                        <h3>Name</h3>-->
+            <!--                        <input type="text" maxlength="40"/>-->
 
-                <div class="alert alert-primary" *ngSwitchCase="false">
+            <!--                        <div role="alert">-->
+            <!--                                            <span class="error">-->
+            <!--                                            Not valid Username! <br/>Use: 0-9a-zA-Z_.- </span>-->
+            <!--                        </div>-->
 
-                    <span jhiTranslate="global.messages.info.authenticated.prefix">To get started, please </span>
-                    <!--jhiTranslate="global.messages.info.authenticated.prefixer"-->
-                    <a href="" (click)="login(); false">
-                        <fa-icon [icon]="'sign-in-alt'"></fa-icon>
-                        <strong jhiTranslate="global.messages.info.authenticated.link">Sign In</strong>
-                    </a>
+            <!--                        <h3>Email</h3>-->
+            <!--                        <input type="email" required/>-->
 
-                </div>
-                <div class="alert alert-primary" *ngSwitchCase="false">
-                    <!--<span jhiTranslate="global.messages.info.register.noaccount">You don't have an account yet?</span>&nbsp;
-                    <a class="alert-link" routerLink="account/register" jhiTranslate="global.messages.info.register.link">Register a new account</a>-->
+            <!--                        <div role="alert">-->
+            <!--                                            <span class="error">-->
+            <!--                                            Not valid email!</span>-->
+            <!--                        </div>-->
 
-                    <span jhiTranslate="global.messages.info.register.noaccount">You don't have an account yet?</span>
-                    <a routerLink="account/register" jhiTranslate="global.messages.info.register.link">Register a new
-                        account</a>.
+            <!--                        <h3>Password</h3>-->
+            <!--                        <input type="password"/> <br>-->
 
-                </div>
+            <!--                        <div role="alert">-->
+            <!--                                            <span class="error">-->
+            <!--                                            Not valid password! <br/>Use: 6>chars, 1digit </span>-->
+            <!--                        </div>-->
 
-            <!--        <p jhiTranslate="home.question">
-                        If you have any question on JHipster:
-                    </p>
+            <!--                        <button class="cta-button" ng-click="createUser(newUser)">Create account</button>-->
+            <!--                    </div>-->
+            <!--                </div>--></div>
 
-                    <ul>
-                        <li><a href="https://www.jhipster.tech/" target="_blank" rel="noopener noreferrer" jhiTranslate="home.link.homepage">JHipster homepage</a></li>
-                        <li><a href="http://stackoverflow.com/tags/jhipster/info" target="_blank" rel="noopener noreferrer" jhiTranslate="home.link.stackoverflow">JHipster on Stack Overflow</a></li>
-                        <li><a href="https://github.com/jhipster/generator-jhipster/issues?state=open" target="_blank" rel="noopener noreferrer" jhiTranslate="home.link.bugtracker">JHipster bug tracker</a></li>
-                        <li><a href="https://gitter.im/jhipster/generator-jhipster" target="_blank" rel="noopener noreferrer" jhiTranslate="home.link.chat">JHipster public chat room</a></li>
-                        <li><a href="https://twitter.com/jhipster" target="_blank" rel="noopener noreferrer" jhiTranslate="home.link.follow">follow @jhipster on Twitter</a></li>
-                    </ul>
-
-                    <p>
-                        <span jhiTranslate="home.like">If you like JHipster, don't forget to give us a star on</span> <a href="https://github.com/jhipster/generator-jhipster" target="_blank" rel="noopener noreferrer" jhiTranslate="home.github">GitHub</a>!
-                    </p> -->
-        </div>
     </div>
 </div>

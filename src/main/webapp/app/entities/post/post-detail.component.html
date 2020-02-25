@@ -65,8 +65,14 @@
                                     </div>
                                     <div class="center">
                                         <button class="btn btn-primary" (click)="likeOrDislikeAudioFile()">
-                                            <fa-icon [icon]="'star'"></fa-icon>
-                                            <span class="hidden-sm-down">{{likeBtnText}}</span>
+                                            <div *ngIf="liked">
+                                                <fa-icon [icon]="'heart-broken'"></fa-icon>
+                                                <span class="hidden-sm-down">{{likeBtnText}}</span>
+                                            </div>
+                                            <div *ngIf="!liked">
+                                                <fa-icon [icon]="'star'"></fa-icon>
+                                                <span class="hidden-sm-down">{{likeBtnText}}</span>
+                                            </div>
                                         </button>
                                     </div>
                                     <div class="center">
@@ -78,19 +84,20 @@
                                         </button>
                                         <button type="button"
                                                 [routerLink]="['/post', post.id, 'edit']"
-                                                class="btn btn-primary">
+                                                class="btn btn-primary" [hidden]="currentUser.login !== post.user.login">
                                             <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span
                                             jhiTranslate="entity.action.edit"> Edit</span>
                                         </button>
                                     </div>
                                 </div>
-                                <div class="row" *ngIf="show">
+                                <div class="row" *ngIf="showCommentWindow">
                                     <div class="card comment-card my-4">
                                         <h6 class="card-header">Leave a Comment:</h6>
                                         <div class="card-body">
                                             <form>
                                                 <div class="form-group">
-                                                    <textarea [(ngModel)]="commentContent" name="txtarea" class="form-control" rows="3"></textarea>
+                                                    <textarea [(ngModel)]="commentContent" name="txtarea"
+                                                              class="form-control" rows="3"></textarea>
                                                 </div>
                                                 <button class="btn btn-primary" (click)="addComment()">
                                                     <fa-icon [icon]="'plus'"></fa-icon>
@@ -103,16 +110,50 @@
                                 <br><br>
                                 <div class="table-responsive" *ngIf="usersComments?.length > 0">
                                     <div *ngFor="let comment of usersComments">
-                                        <div class="media mb-4">
-                                            <div class="media-heading">
+                                        <div class="row mb-2">
+                                            <div class="col-md-3">
                                                 <!--<img [src]="userService.downloadAvatar(comment.user.login)" *ngIf="!isImageLoading && hasImage"
                                                      class="d-block ui-w-60 rounded-circle" alt="">-->
                                                 <!--<img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">-->
                                                 <a [routerLink]="['/', comment.user.login, 'view']">{{comment.user?.login}}</a>
                                                 <div class="text-muted small">{{comment.date | date:'medium'}}</div>
                                             </div>
-                                            <div class="media-body">{{comment.textContent}}</div>
+                                            <div class="col-md-6">
+                                                <span>{{comment.textContent}}</span>
+                                            </div>
+                                            <div *ngIf="currentUser" class="col-md-3" [hidden]="currentUser.login !== comment.user.login">
+                                                <button type="submit"
+                                                        [routerLink]="['/comment', comment.id, 'edit']"
+                                                        class="btn btn-primary btn-sm">
+                                                    <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                                                    <span class="d-none d-md-inline"
+                                                          jhiTranslate="entity.action.edit">Edit</span>
+                                                </button>
+                                                <button type="submit" (click)="deleteComment(comment)"
+                                                        class="btn btn-danger btn-sm">
+                                                    <fa-icon [icon]="'times'"></fa-icon>
+                                                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                                                </button>
+                                            </div>
                                         </div>
+<!--                                        <div class="media mb-4">-->
+<!--                                            <div class="media-heading">-->
+<!--                                                &lt;!&ndash;<img [src]="userService.downloadAvatar(comment.user.login)" *ngIf="!isImageLoading && hasImage"-->
+<!--                                                     class="d-block ui-w-60 rounded-circle" alt="">&ndash;&gt;-->
+<!--                                                &lt;!&ndash;<img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">&ndash;&gt;-->
+<!--                                                <a [routerLink]="['/', comment.user.login, 'view']">{{comment.user?.login}}</a>-->
+<!--                                                <div class="text-muted small">{{comment.date | date:'medium'}}</div>-->
+<!--                                            </div>-->
+<!--                                            <div class="media-body">{{comment.textContent}}</div>-->
+<!--                                            <button type="submit"-->
+<!--                                                    [routerLink]="['/comment', comment.id, 'edit']"-->
+<!--                                                    class="btn btn-primary btn-sm"-->
+<!--                                                    [disabled]="currentUser.login === comment.user.login">-->
+<!--                                                <fa-icon [icon]="'pencil-alt'"></fa-icon>-->
+<!--                                                <span class="d-none d-md-inline"-->
+<!--                                                      jhiTranslate="entity.action.edit">Edit</span>-->
+<!--                                            </button>-->
+<!--                                        </div>-->
                                     </div>
                                 </div>
                             </div>
@@ -169,7 +210,7 @@
                     <fa-icon [icon]="'pause-circle'"></fa-icon>
                 </button>
 
-                <button class="btn btn-primary" (click)="likeAudioFile()">
+                <button class="btn btn-primary" (click)="likeOrDislikeAudioFile()">
                     <fa-icon [icon]="'star'"></fa-icon>
                     <span class="hidden-sm-down">
                         Like this Audio

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
@@ -12,7 +12,11 @@ import { CommentService } from './comment.service';
 export class CommentDeleteDialogComponent {
   comment: IComment;
 
-  constructor(protected commentService: CommentService, public activeModal: NgbActiveModal, protected eventManager: JhiEventManager) {}
+  @Output() isDeleted: EventEmitter<any> = new EventEmitter();
+
+  constructor(protected commentService: CommentService, public activeModal: NgbActiveModal, protected eventManager: JhiEventManager) {
+    this.isDeleted.next(false);
+  }
 
   clear() {
     this.activeModal.dismiss('cancel');
@@ -24,6 +28,7 @@ export class CommentDeleteDialogComponent {
         name: 'commentListModification',
         content: 'Deleted an comment'
       });
+      this.isDeleted.next(true);
       this.activeModal.dismiss(true);
     });
   }

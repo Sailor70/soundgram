@@ -15,6 +15,10 @@ import { now } from 'moment';
 import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 import { UserService } from 'app/core/user/user.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Account } from 'app/core/user/account.model';
+import { AccountService } from 'app/core/auth/account.service';
+import { CommentDeleteDialogComponent } from 'app/entities/comment/comment-delete-dialog.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'jhi-post-detail',
@@ -43,7 +47,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   account: Account;
   hasImage: boolean;
 
-  show = false;
+  showCommentWindow = false;
   liked = false;
   likeBtnText = 'Like this audio';
 
@@ -53,7 +57,9 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     protected audioFileService: AudioFileService,
     protected commentService: CommentService,
     protected userService: UserService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private accountService: AccountService,
+    private modalService: NgbModal
   ) {
     this.audio = new Audio();
   }
@@ -101,9 +107,12 @@ export class PostDetailComponent implements OnInit, OnDestroy {
       }
     );
 
-    // this.principal.identity().then(account => {
-    //   this.currentUser = account;
-    // });
+    this.accountService.identity().subscribe((account: Account) => {
+      this.account = account;
+      this.userService.find(this.account.login).subscribe(res => {
+        this.currentUser = res;
+      });
+    });
   }
 
   ngOnDestroy(): void {
@@ -187,13 +196,24 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     this.newComment.textContent = this.commentContent;
     this.newComment.user = null; // spróbować pobrać usera na frontendzie bo teraz idzie ze spring security
     this.newComment.date = moment(new Date(now()), DATE_TIME_FORMAT);
-    this.commentService.create(this.newComment).subscribe((res: HttpResponse<IUser>) => {
-      this.currentUser = res.body;
+    this.commentService.create(this.newComment).subscribe(() => {
+      // this.currentUser = res.body;
+      this.showCommentWindow = false;
+      this.commentContent = '';
+      this.ngOnInit();
     });
   }
 
   toggleComment() {
-    this.show = !this.show;
+    this.showCommentWindow = !this.showCommentWindow;
+  }
+
+  deleteComment(comment: IComment) {
+    const modalRef = this.modalService.open(CommentDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.comment = comment;
+    modalRef.componentInstance.isDeleted.subscribe(() => {
+      this.ngOnInit();
+    });
   }
 
   getAvatarFromService() {
