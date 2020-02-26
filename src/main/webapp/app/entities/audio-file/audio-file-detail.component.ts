@@ -30,6 +30,7 @@ export class AudioFileDetailComponent implements OnInit, OnDestroy {
         const blobUrl = URL.createObjectURL(res);
         this.fileUrl = blobUrl;
         this.audio.src = this.fileUrl;
+        console.error('file url: ' + this.fileUrl);
         // console.error('File resource title: ' + res.headers.get('filename'));
         // console.error('File name: ' + res.headers.getAttributeNames());
       },
