@@ -2,13 +2,15 @@
     <h2 *ngSwitchCase="true">
         <span id="likedFiles-page-heading">Liked audio files</span>
         <button class="btn btn-primary float-right" (click)="loadUserFiles()">
-            <fa-icon [icon]="'music'"></fa-icon> <span>Show my audio files</span>
+            <fa-icon [icon]="'music'"></fa-icon>
+            <span>Show my audio files</span>
         </button>
     </h2>
     <h2 *ngSwitchCase="false">
         <span id="myFiles-page-heading">My audio files</span>
         <button class="btn btn-primary float-right" (click)="loadLikedFiles()">
-            <fa-icon [icon]="'music'"></fa-icon> <span>Show liked audio files</span>
+            <fa-icon [icon]="'music'"></fa-icon>
+            <span>Show liked audio files</span>
         </button>
     </h2>
     <jhi-alert-error></jhi-alert-error>
@@ -17,7 +19,8 @@
         <div class="col-sm-12">
             <form name="searchForm" class="form-inline">
                 <div class="input-group w-100 mt-3">
-                    <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'soundgramApp.audioFile.home.search' | translate }}">
+                    <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch"
+                           name="currentSearch" placeholder="{{ 'soundgramApp.audioFile.home.search' | translate }}">
                     <button class="input-group-append btn btn-info" (click)="search(currentSearch)">
                         <fa-icon [icon]="'search'"></fa-icon>
                     </button>
@@ -36,12 +39,12 @@
         <table class="table table-striped" aria-describedby="page-heading">
             <thead>
             <tr>
-                <th scope="col" ><span jhiTranslate="global.field.id">ID</span></th>
-                <th scope="col" ><span jhiTranslate="soundgramApp.audioFile.audioPath">Audio Path</span></th>
-                <th scope="col" ><span jhiTranslate="soundgramApp.audioFile.title">Title</span></th>
-                <th scope="col" ><span jhiTranslate="soundgramApp.audioFile.iconPath">Icon Path</span></th>
-                <th scope="col" ><span jhiTranslate="soundgramApp.audioFile.post">Post</span></th>
-                <th scope="col" ><span jhiTranslate="soundgramApp.audioFile.user">User</span></th>
+                <th scope="col"><span jhiTranslate="global.field.id">ID</span></th>
+                <th scope="col"><span jhiTranslate="soundgramApp.audioFile.audioPath">Audio Path</span></th>
+                <th scope="col"><span jhiTranslate="soundgramApp.audioFile.title">Title</span></th>
+                <th scope="col"><span jhiTranslate="soundgramApp.audioFile.iconPath">Icon Path</span></th>
+                <th scope="col"><span jhiTranslate="soundgramApp.audioFile.post">Post</span></th>
+                <th scope="col"><span jhiTranslate="soundgramApp.audioFile.user">User</span></th>
                 <th scope="col"></th>
             </tr>
             </thead>
@@ -53,7 +56,7 @@
                 <td>{{audioFile.iconPath}}</td>
                 <td>
                     <div *ngIf="audioFile.post">
-                        <a [routerLink]="['/post', audioFile.post?.id, 'view' ]" >{{audioFile.post?.id}}</a>
+                        <a [routerLink]="['/post', audioFile.post?.id, 'view' ]">{{audioFile.post?.id}}</a>
                     </div>
                 </td>
                 <td>
@@ -85,16 +88,25 @@
 <div class="media-footer">
     <div *ngIf="audioFiles" class="container">
         <div class="row slidecontainer">
-            {{ state?.readableCurrentTime }}
-            <input type="range" class="slider" id="myRange" [max]="state?.duration" step="1" [value]="state?.currentTime" (click)="onSliderChangeEnd($event)" [disabled]="state?.error || currentFile === undefined">
-            {{ state?.readableDuration }}
+            <div class="col-md-12" style="text-align: center">
+                <span>{{currentFile.title}}</span>
+            </div>
+            <input #slide type="range" class="slider" min="0" [max]="state?.duration" step="0.1"
+                   [value]="state.currentTime ? state.currentTime : 0" (change)="onSliderChangeEnd(slide)">
+            <div class="col-md-6" style="text-align: left">
+                {{ state?.readableCurrentTime }}
+            </div>
+            <div class="col-md-6" style="text-align: right">
+                {{ state?.readableDuration }}
+            </div>
         </div>
         <div class="row center">
             <button type="button" class="btn btn-info center" [disabled]="isFirstPlaying()" (click)="previous()">
                 <fa-icon [icon]="'step-backward'"></fa-icon>
             </button>
 
-            <button type="button" class="btn btn-info center" (click)="play()" [disabled]="state?.error" *ngIf="!state?.playing">
+            <button type="button" class="btn btn-info center" (click)="play()" [disabled]="state?.error"
+                    *ngIf="!state?.playing">
                 <fa-icon [icon]="'play'"></fa-icon>
             </button>
 
@@ -106,30 +118,6 @@
                 <fa-icon [icon]="'step-forward'"></fa-icon>
             </button>
         </div>
-
-<!--        <mat-toolbar-row>
-            {{ state?.readableCurrentTime }}
-            <mat-slider class="time-slider" min="0" [max]="state?.duration" step="1" [value]="state?.currentTime" (input)="onSliderChangeEnd($event)" [disabled]="state?.error || currentFile.index === undefined"></mat-slider>
-            {{ state?.readableDuration }}
-        </mat-toolbar-row>
-
-        <mat-toolbar-row class="media-action-bar">
-            <button mat-button [disabled]="isFirstPlaying()" (click)="previous()">
-                <mat-icon mat-list-icon>skip_previous</mat-icon>
-            </button>
-
-            <button mat-button (click)="play()" [disabled]="state?.error" *ngIf="!state?.playing">
-                <mat-icon mat-list-icon>play_circle_filled</mat-icon>
-            </button>
-
-            <button mat-button (click)="pause()" *ngIf="state?.playing">
-                <mat-icon mat-list-icon>pause</mat-icon>
-            </button>
-
-            <button  mat-button [disabled]="isLastPlaying()" (click)="next()">
-                <mat-icon mat-list-icon>skip_next</mat-icon>
-            </button>
-        </mat-toolbar-row>-->
     </div>
 </div>
 

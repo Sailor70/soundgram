@@ -18,15 +18,20 @@ export class AudioService {
     duration: undefined,
     currentTime: undefined,
     canplay: false,
-    error: false
+    error: false,
+    playClicked: false // automatyczne odtwarzanie dopiero po pierwszym kliknięciu play. zatrzymanie po przeładowaniu listy utworów
   };
+
+  private stateChange: BehaviorSubject<StreamState> = new BehaviorSubject(this.state);
 
   private streamObservable(url) {
     return new Observable(observer => {
       // Play audio
       this.audioObj.src = url;
       this.audioObj.load();
-      this.audioObj.play();
+      if (this.state.playClicked) {
+        this.audioObj.play();
+      }
 
       const handler = (event: Event) => {
         this.updateStateEvents(event);
@@ -78,12 +83,10 @@ export class AudioService {
     this.audioObj.currentTime = seconds;
   }
 
-  formatTime(time: number, format: string = 'HH:mm:ss') {
+  formatTime(time: number, format = 'HH:mm:ss') {
     const momentTime = time * 1000;
     return moment.utc(momentTime).format(format);
   }
-
-  private stateChange: BehaviorSubject<StreamState> = new BehaviorSubject(this.state);
 
   private updateStateEvents(event: Event): void {
     switch (event.type) {
@@ -118,7 +121,8 @@ export class AudioService {
       duration: undefined,
       currentTime: undefined,
       canplay: false,
-      error: false
+      error: false,
+      playClicked: this.state.playClicked
     };
   }
 

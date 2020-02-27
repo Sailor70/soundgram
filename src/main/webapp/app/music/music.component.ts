@@ -28,11 +28,8 @@ export class MusicComponent implements OnInit, OnDestroy {
   user: IUser;
   account: Account;
 
-  // files: IAudioObject[] = [];
   state: StreamState;
   currentFile: IAudioFile;
-  currentTime: number;
-  playClicked = false;
 
   constructor(
     protected audioFileService: AudioFileService,
@@ -71,6 +68,9 @@ export class MusicComponent implements OnInit, OnDestroy {
         })
         .subscribe((res: HttpResponse<IAudioFile[]>) => {
           this.audioFiles = res.body;
+          if (this.state) {
+            this.state.playClicked = false; // zatrzymanie auto odtwarzania po zmianie listy odtwarzania
+          }
           this.initFileAndService();
         });
       return;
@@ -82,6 +82,9 @@ export class MusicComponent implements OnInit, OnDestroy {
   }
 
   loadLikedFiles() {
+    if (this.state) {
+      this.state.playClicked = false; // zatrzymanie auto odtwarzania po zmianie listy odtwarzania
+    }
     this.likedAudioDisplayed = true;
     this.audioFileService.getLiked().subscribe((res: HttpResponse<IAudioFile[]>) => {
       this.audioFiles = res.body;
@@ -91,6 +94,9 @@ export class MusicComponent implements OnInit, OnDestroy {
   }
 
   loadUserFiles() {
+    if (this.state) {
+      this.state.playClicked = false; // zatrzymanie auto odtwarzania po zmianie listy odtwarzania
+    }
     this.likedAudioDisplayed = false;
     this.audioFileService.getUserFiles(this.user.id).subscribe((res: HttpResponse<IAudioFile[]>) => {
       this.audioFiles = res.body;
@@ -140,9 +146,6 @@ export class MusicComponent implements OnInit, OnDestroy {
         this.audioService.playStream(blobUrl).subscribe(() => {
           // listening for fun here
         });
-        if (!this.playClicked) {
-          this.audioService.pause();
-        }
       },
       (res: HttpResponse<IAudioFile>) => {
         console.error('File resource error: ' + res);
@@ -152,9 +155,14 @@ export class MusicComponent implements OnInit, OnDestroy {
 
   initFileAndService() {
     this.getFileAndPassToService(this.audioFiles[0].id);
+    if (this.state) {
+      // if audioFiles list change ( my/liked/search audio )
+      this.audioService.stop();
+    }
     this.currentFile = this.audioFiles[0];
     this.audioService.getState().subscribe(state => {
       this.state = state;
+      // console.error('State cr time: ' + this.state.currentTime);
     });
   }
 
@@ -168,12 +176,12 @@ export class MusicComponent implements OnInit, OnDestroy {
   }
 
   play() {
-    this.playClicked = true;
+    this.state.playClicked = true;
     this.audioService.play();
   }
 
   playThisAudio(audio: IAudioFile) {
-    this.playClicked = true;
+    this.state.playClicked = true;
     const audioFileId = audio.id;
     this.currentFile = audio;
     this.openFile(audioFileId);
@@ -184,9 +192,11 @@ export class MusicComponent implements OnInit, OnDestroy {
   }
 
   next() {
+    // if(this.currentFile.id !== this.audioFiles[this.audioFiles.length - 1].id) {// jeśli ostatni plik jest odtwarzany to nie szukamy następnego -> isLastPlaying();
     const audioFileId = this.findAufioFileId('n');
     this.currentFile = this.audioFiles.find(x => x.id === audioFileId);
     this.openFile(audioFileId);
+    // }
   }
 
   previous() {
@@ -196,11 +206,12 @@ export class MusicComponent implements OnInit, OnDestroy {
   }
 
   isFirstPlaying() {
-    return this.currentFile.id === this.audioFiles[0];
+    return this.currentFile.id === this.audioFiles[0].id;
   }
 
   isLastPlaying() {
-    return this.currentFile.id === this.audioFiles[this.audioFiles.length - 1];
+    // console.error('is last playing: ' + this.currentFile.id === this.audioFiles[this.audioFiles.length - 1]);
+    return this.currentFile.id === this.audioFiles[this.audioFiles.length - 1].id;
   }
 
   onSliderChangeEnd(change) {
@@ -222,12 +233,6 @@ export class MusicComponent implements OnInit, OnDestroy {
       console.error('previous file id: ' + previous.id);
       return previous.id;
     } else {
-      // for(let i = this.audioFiles.length; i>=0 ; i--) { // iteruje wstecz w celu znalezienia następnego elementu
-      //   if(this.audioFiles[i].id === this.currentFile){
-      //     break;
-      //   }
-      //   previous = af;
-      // }
       for (let i = 0; i < this.audioFiles.length; i++) {
         if (this.audioFiles[i].id === this.currentFile.id) {
           next = this.audioFiles[i + 1];
