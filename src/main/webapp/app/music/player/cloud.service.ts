@@ -26,21 +26,17 @@ export class CloudService {
       artist: 'The Beatles'
     }
   ];*/
-  private files: IAudioObject[];
+  files: IAudioObject[] = [];
+  blobUrl: any = '';
 
   constructor(private audioFileService: AudioFileService) {}
 
-  getFiles(iAudioFiles: IAudioFile[]) {
+  getFiles(iAudioFiles: IAudioFile[]): any {
     for (const file of iAudioFiles) {
+      console.error('file id: ' + file.id);
       this.audioFileService.getFile(file.id).subscribe(
         res => {
-          const blobUrl = URL.createObjectURL(res);
-          this.files.push({
-            ...new AudioObject(),
-            url: blobUrl,
-            title: file.title,
-            user: file.iconPath // user id
-          });
+          this.blobUrl = URL.createObjectURL(res);
           // console.error('File resource title: ' + res.headers.get('filename'));
           // console.error('File name: ' + res.headers.getAttributeNames());
         },
@@ -48,6 +44,17 @@ export class CloudService {
           console.error('File resource error: ' + res);
         }
       );
+      console.error('blobURL: ' + this.blobUrl);
+      this.files.push({
+        ...new AudioObject(),
+        url: this.blobUrl,
+        title: file.title,
+        user: file.iconPath // user id
+      });
+      console.error('Files length: ' + this.files.length);
+      console.error('File: ' + this.files[0].user);
+      console.error('File: ' + this.files[0].url);
+      console.error('File: ' + this.files[0].title);
     }
     return of(this.files);
   }

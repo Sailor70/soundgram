@@ -28,9 +28,11 @@ export class MusicComponent implements OnInit, OnDestroy {
   user: IUser;
   account: Account;
 
-  files: Array<any> = [];
+  // files: IAudioObject[] = [];
   state: StreamState;
-  currentFile: any = {};
+  currentFile: IAudioFile;
+  currentTime: number;
+  playClicked = false;
 
   constructor(
     protected audioFileService: AudioFileService,
@@ -46,10 +48,6 @@ export class MusicComponent implements OnInit, OnDestroy {
       this.activatedRoute.snapshot && this.activatedRoute.snapshot.queryParams['search']
         ? this.activatedRoute.snapshot.queryParams['search']
         : '';
-
-    this.audioService.getState().subscribe(state => {
-      this.state = state;
-    });
   }
 
   ngOnInit() {
@@ -71,7 +69,10 @@ export class MusicComponent implements OnInit, OnDestroy {
         .search({
           query: this.currentSearch
         })
-        .subscribe((res: HttpResponse<IAudioFile[]>) => (this.audioFiles = res.body));
+        .subscribe((res: HttpResponse<IAudioFile[]>) => {
+          this.audioFiles = res.body;
+          this.initFileAndService();
+        });
       return;
     }
     this.audioFileService.query().subscribe((res: HttpResponse<IAudioFile[]>) => {
@@ -84,10 +85,8 @@ export class MusicComponent implements OnInit, OnDestroy {
     this.likedAudioDisplayed = true;
     this.audioFileService.getLiked().subscribe((res: HttpResponse<IAudioFile[]>) => {
       this.audioFiles = res.body;
-      this.cloudService.getFiles(this.audioFiles).subscribe(files => {
-        this.files = files;
-      });
       this.currentSearch = '';
+      this.initFileAndService();
     });
   }
 
@@ -95,10 +94,8 @@ export class MusicComponent implements OnInit, OnDestroy {
     this.likedAudioDisplayed = false;
     this.audioFileService.getUserFiles(this.user.id).subscribe((res: HttpResponse<IAudioFile[]>) => {
       this.audioFiles = res.body;
-      this.cloudService.getFiles(this.audioFiles).subscribe(files => {
-        this.files = files;
-      });
       this.currentSearch = '';
+      this.initFileAndService();
     });
   }
 
@@ -118,6 +115,7 @@ export class MusicComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     // console.error('destroyed!');
     this.eventManager.destroy(this.eventSubscriber);
+    this.audioService.stop();
   }
 
   trackId(index: number, item: IAudioFile) {
@@ -135,18 +133,34 @@ export class MusicComponent implements OnInit, OnDestroy {
 
   /* ------------------------------------------------Player------------------------------------------------------- */
 
-  playThisAudio(audio: IAudioFile) {}
+  getFileAndPassToService(id: number) {
+    this.audioFileService.getFile(id).subscribe(
+      res => {
+        const blobUrl = URL.createObjectURL(res);
+        this.audioService.playStream(blobUrl).subscribe(() => {
+          // listening for fun here
+        });
+        if (!this.playClicked) {
+          this.audioService.pause();
+        }
+      },
+      (res: HttpResponse<IAudioFile>) => {
+        console.error('File resource error: ' + res);
+      }
+    );
+  }
 
-  playStream(url) {
-    this.audioService.playStream(url).subscribe(events => {
-      // listening for fun here
+  initFileAndService() {
+    this.getFileAndPassToService(this.audioFiles[0].id);
+    this.currentFile = this.audioFiles[0];
+    this.audioService.getState().subscribe(state => {
+      this.state = state;
     });
   }
 
-  openFile(file, index) {
-    this.currentFile = { index, file };
+  openFile(audioFileId: number) {
     this.audioService.stop();
-    this.playStream(file.url);
+    this.getFileAndPassToService(audioFileId);
   }
 
   pause() {
@@ -154,7 +168,15 @@ export class MusicComponent implements OnInit, OnDestroy {
   }
 
   play() {
+    this.playClicked = true;
     this.audioService.play();
+  }
+
+  playThisAudio(audio: IAudioFile) {
+    this.playClicked = true;
+    const audioFileId = audio.id;
+    this.currentFile = audio;
+    this.openFile(audioFileId);
   }
 
   stop() {
@@ -162,26 +184,58 @@ export class MusicComponent implements OnInit, OnDestroy {
   }
 
   next() {
-    const index = this.currentFile.index + 1;
-    const file = this.files[index];
-    this.openFile(file, index);
+    const audioFileId = this.findAufioFileId('n');
+    this.currentFile = this.audioFiles.find(x => x.id === audioFileId);
+    this.openFile(audioFileId);
   }
 
   previous() {
-    const index = this.currentFile.index - 1;
-    const file = this.files[index];
-    this.openFile(file, index);
+    const audioFileId = this.findAufioFileId('p');
+    this.currentFile = this.audioFiles.find(x => x.id === audioFileId);
+    this.openFile(audioFileId);
   }
 
   isFirstPlaying() {
-    return this.currentFile.index === 0;
+    return this.currentFile.id === this.audioFiles[0];
   }
 
   isLastPlaying() {
-    return this.currentFile.index === this.files.length - 1;
+    return this.currentFile.id === this.audioFiles[this.audioFiles.length - 1];
   }
 
   onSliderChangeEnd(change) {
+    console.error('Change: ' + change.value);
     this.audioService.seekTo(change.value);
+  }
+
+  findAufioFileId(which: string): any {
+    let previous: IAudioFile = this.audioFiles[0];
+    let next: IAudioFile = this.audioFiles[0];
+    if (which === 'p') {
+      // previous file on list
+      for (const af of this.audioFiles) {
+        if (af.id === this.currentFile.id) {
+          break;
+        }
+        previous = af;
+      }
+      console.error('previous file id: ' + previous.id);
+      return previous.id;
+    } else {
+      // for(let i = this.audioFiles.length; i>=0 ; i--) { // iteruje wstecz w celu znalezienia następnego elementu
+      //   if(this.audioFiles[i].id === this.currentFile){
+      //     break;
+      //   }
+      //   previous = af;
+      // }
+      for (let i = 0; i < this.audioFiles.length; i++) {
+        if (this.audioFiles[i].id === this.currentFile.id) {
+          next = this.audioFiles[i + 1];
+          break;
+        }
+      }
+      console.error('next file id: ' + next.id);
+      return next.id;
+    }
   }
 }

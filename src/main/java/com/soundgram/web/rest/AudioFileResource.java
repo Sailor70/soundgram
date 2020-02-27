@@ -309,6 +309,7 @@ public class AudioFileResource {
     @GetMapping(value = "/audio-files-download/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StreamingResponseBody> download(@PathVariable Long id, final HttpServletResponse response) throws IOException {
         Optional<AudioFile> audioFile = audioFileRepository.findOneWithEagerRelationships(id);
+        log.debug("REST request to downlad audioFile of id: " + id);
         // ServletOutputStream stream = null;
         if (audioFile.isPresent()) {
             AudioFile af = audioFile.get();

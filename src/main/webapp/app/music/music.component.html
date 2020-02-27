@@ -83,10 +83,10 @@
 </div>
 <br>
 <div class="media-footer">
-    <div class="container">
+    <div *ngIf="audioFiles" class="container">
         <div class="row slidecontainer">
             {{ state?.readableCurrentTime }}
-            <input type="range" min="1" max="100" value="50" class="slider" id="myRange" [max]="state?.duration" step="1" [value]="state?.currentTime" (input)="onSliderChangeEnd($event)" [disabled]="state?.error || currentFile.index === undefined">
+            <input type="range" class="slider" id="myRange" [max]="state?.duration" step="1" [value]="state?.currentTime" (click)="onSliderChangeEnd($event)" [disabled]="state?.error || currentFile === undefined">
             {{ state?.readableDuration }}
         </div>
         <div class="row center">
