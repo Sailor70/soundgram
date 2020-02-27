@@ -19,22 +19,24 @@ import { Account } from 'app/core/user/account.model';
 import { AccountService } from 'app/core/auth/account.service';
 import { CommentDeleteDialogComponent } from 'app/entities/comment/comment-delete-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AudioService } from 'app/music/player/audio-service';
+import { StreamState } from 'app/music/player/stream-state.model';
 
 @Component({
   selector: 'jhi-post-detail',
   templateUrl: './post-detail.component.html',
-  styleUrls: ['post.scss']
+  styleUrls: ['post.scss'],
+  providers: [AudioService]
 })
 export class PostDetailComponent implements OnInit, OnDestroy {
   post: IPost;
   image: IImage;
-  imageUrl: any;
-  img: any;
+  postImage: any;
+  // imageUrl: any;
+  // img: any;
 
   audioFile: IAudioFile;
-  fileUrl: any;
-  audio: any;
-  audioBypass: any;
+  state: StreamState;
 
   commentContent: string;
   newComment: IComment;
@@ -42,7 +44,6 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   currentUser: IUser;
 
   avatar: any;
-  postImage: any;
   isImageLoading: boolean;
   account: Account;
   hasImage: boolean;
@@ -59,10 +60,9 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     protected userService: UserService,
     private sanitizer: DomSanitizer,
     private accountService: AccountService,
-    private modalService: NgbModal
-  ) {
-    this.audio = new Audio();
-  }
+    private modalService: NgbModal,
+    private audioService: AudioService
+  ) {}
 
   ngOnInit() {
     this.hasImage = false;
@@ -74,7 +74,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     this.audioFileService.findByPost(this.post.id).subscribe(
       (res: HttpResponse<IAudioFile>) => {
         this.audioFile = res.body;
-        this.onLoadAudioFileSuccess();
+        this.initAudioFileAndService();
         this.checkIfLiked();
         console.error('Audio id:' + this.audioFile.id);
         // this.audioFile.users.forEach((user) => user.id);
@@ -117,21 +117,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.audio.pause();
-  }
-
-  protected onLoadAudioFileSuccess() {
-    this.audioFileService.getFile(this.audioFile.id).subscribe(
-      res => {
-        const blobUrl = URL.createObjectURL(res);
-        this.fileUrl = blobUrl;
-        this.audio.src = this.fileUrl;
-        this.audioBypass = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl);
-      },
-      (res: HttpResponse<IAudioFile>) => {
-        console.error('File resource error: ' + res);
-      }
-    );
+    this.audioService.stop();
   }
 
   private checkIfLiked() {
@@ -146,14 +132,6 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  // likeAudioFile() {
-  //   // this.audioFile.users.push()
-  //   this.audioFileService.addUser(this.audioFile).subscribe((res: HttpResponse<AudioFile>) => {
-  //     this.audioFile = res.body;
-  //     this.liked = true;
-  //   });
-  // }
-
   likeOrDislikeAudioFile() {
     if (!this.liked) {
       this.audioFileService.addUser(this.audioFile).subscribe((res: HttpResponse<AudioFile>) => {
@@ -167,21 +145,6 @@ export class PostDetailComponent implements OnInit, OnDestroy {
         this.liked = false;
         this.likeBtnText = 'Like this audio';
       });
-    }
-  }
-
-  playAudio() {
-    if (!this.audio.paused) {
-      this.audio.load();
-      this.audio.play();
-    } else {
-      this.audio.play();
-    }
-  }
-
-  pauseAudio() {
-    if (!this.audio.paused) {
-      this.audio.pause();
     }
   }
 
@@ -284,5 +247,43 @@ export class PostDetailComponent implements OnInit, OnDestroy {
 
   previousState() {
     window.history.back();
+  }
+
+  /* ----------------------------------------------player--------------------------------------------- */
+
+  initAudioFileAndService() {
+    this.getFileAndPassToService(this.audioFile.id);
+    this.audioService.getState().subscribe(state => {
+      this.state = state;
+      // console.error('State cr time: ' + this.state.currentTime);
+    });
+  }
+
+  getFileAndPassToService(id: number) {
+    this.audioFileService.getFile(id).subscribe(
+      res => {
+        const blobUrl = URL.createObjectURL(res);
+        this.audioService.playStream(blobUrl).subscribe(() => {
+          // listening for fun here
+        });
+      },
+      (res: HttpResponse<IAudioFile>) => {
+        console.error('File resource error: ' + res);
+      }
+    );
+  }
+
+  pause() {
+    this.audioService.pause();
+  }
+
+  play() {
+    // this.state.playClicked = true;
+    this.audioService.play();
+  }
+
+  onSliderChangeEnd(change) {
+    console.error('Change: ' + change.value);
+    this.audioService.seekTo(change.value);
   }
 }

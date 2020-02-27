@@ -12,13 +12,13 @@ import { AccountService } from 'app/core/auth/account.service';
 import { UserService } from 'app/core/user/user.service';
 import { IUser } from 'app/core/user/user.model';
 import { StreamState } from 'app/music/player/stream-state.model';
-import { CloudService } from 'app/music/player/cloud.service';
 import { AudioService } from 'app/music/player/audio-service';
 
 @Component({
   selector: 'jhi-music',
   templateUrl: './music.component.html',
-  styleUrls: ['music.component.scss']
+  styleUrls: ['music.component.scss'],
+  providers: [AudioService]
 })
 export class MusicComponent implements OnInit, OnDestroy {
   audioFiles: IAudioFile[];
@@ -38,8 +38,7 @@ export class MusicComponent implements OnInit, OnDestroy {
     protected activatedRoute: ActivatedRoute,
     protected accountService: AccountService,
     protected userService: UserService,
-    private audioService: AudioService,
-    private cloudService: CloudService
+    private audioService: AudioService
   ) {
     this.currentSearch =
       this.activatedRoute.snapshot && this.activatedRoute.snapshot.queryParams['search']
