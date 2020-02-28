@@ -169,10 +169,25 @@ public class FollowedUserResource {
     public ResponseEntity<Void> deleteFollowedUserId(@PathVariable Long id) {
         log.debug("REST request to delete FollowedUser with followedUserId : {}", id);
         User user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null);
-        followedUserRepository.deleteFollowedUserByFollowedUserIdAndUser(id, user);
         if(followedUserRepository.findFollowedUserByFollowedUserIdAndUser(id, user).isPresent()) {
+            log.debug("deleting followed user of id " + id + "and user " + user.getLogin());
             FollowedUser followedUser = followedUserRepository.findFollowedUserByFollowedUserIdAndUser(id, user).get();
+            followedUserRepository.deleteFollowedUserByFollowedUserIdAndUser(id, user);
             followedUserSearchRepository.deleteById(followedUser.getId());
+        }
+        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
+    }
+
+    // when user account is deleted this endpoint deletes all appearances of this user id in followed users table
+    @DeleteMapping("/followed-users-delete-user/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        log.debug("REST request to delete user (from followedUsers) : {}", id);
+        Optional<User> user = userRepository.findOneById(id);
+        if(user.isPresent()) {
+            followedUserRepository.deleteFollowedUserByUser(user.get());
+            followedUserRepository.deleteFollowedUserByFollowedUserId(id);
+            followedUserSearchRepository.deleteFollowedUserByUser(user.get());
+            followedUserSearchRepository.deleteFollowedUserByFollowedUserId(id);
         }
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }

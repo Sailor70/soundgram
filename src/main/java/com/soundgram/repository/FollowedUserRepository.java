@@ -24,4 +24,12 @@ public interface FollowedUserRepository extends JpaRepository<FollowedUser, Long
     @Modifying
     void deleteFollowedUserByFollowedUserIdAndUser(Long followedUserId, User user);
 
+    @Transactional
+    @Modifying
+    void deleteFollowedUserByUser(User user);
+
+    @Transactional
+    @Modifying
+    void deleteFollowedUserByFollowedUserId(Long followedUserId);
+
 }

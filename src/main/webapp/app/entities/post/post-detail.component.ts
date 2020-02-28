@@ -21,6 +21,7 @@ import { CommentDeleteDialogComponent } from 'app/entities/comment/comment-delet
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AudioService } from 'app/music/player/audio-service';
 import { StreamState } from 'app/music/player/stream-state.model';
+import { AvatarService } from 'app/shared/services/avatar.service';
 
 @Component({
   selector: 'jhi-post-detail',
@@ -32,8 +33,6 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   post: IPost;
   image: IImage;
   postImage: any;
-  // imageUrl: any;
-  // img: any;
 
   audioFile: IAudioFile;
   state: StreamState;
@@ -51,6 +50,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   showCommentWindow = false;
   liked = false;
   likeBtnText = 'Like this audio';
+  commentsAvatars: any[] = [];
 
   constructor(
     protected activatedRoute: ActivatedRoute,
@@ -61,7 +61,8 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private accountService: AccountService,
     private modalService: NgbModal,
-    private audioService: AudioService
+    private audioService: AudioService,
+    private avatarService: AvatarService
   ) {}
 
   ngOnInit() {
@@ -101,6 +102,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
       (res: HttpResponse<IComment[]>) => {
         this.usersComments = res.body;
         // this.usersComments.forEach(value => console.error(value));
+        this.getCommentsAvatars();
       },
       res => {
         console.error('Comments load error: ' + res.body);
@@ -114,6 +116,14 @@ export class PostDetailComponent implements OnInit, OnDestroy {
         console.error('current user: ' + this.currentUser.login);
       });
     });
+  }
+
+  getCommentsAvatars() {
+    const usersOfComments: IUser[] = [];
+    for (const userComment of this.usersComments) {
+      usersOfComments.push(userComment.user);
+    }
+    this.commentsAvatars = this.avatarService.getAvatarsForUserList(usersOfComments);
   }
 
   ngOnDestroy(): void {
