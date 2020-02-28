@@ -74,25 +74,6 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  transition() {
-    this.router.navigate(['./'], {
-      relativeTo: this.activatedRoute.parent,
-      queryParams: {
-        page: this.page,
-        sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-      }
-    });
-    this.loadAll();
-  }
-
-  // loadPage(page: number) {
-  //   page;
-  //   // if (page !== this.previousPage) {
-  //   //   this.previousPage = page;
-  //   //   this.transition();
-  //   // }
-  // }
-
   loadAll() {
     this.allUsersDisplayed = true;
     // console.error("load alles");
@@ -143,9 +124,8 @@ export class UsersComponent implements OnInit {
 
   followUser(id: number) {
     this.followedUserService.createWithId(id).subscribe(
-      res => {
+      () => {
         // eventManager wyświetla alerty na zielono lub czerwono
-        res; // tak dla sprawy nieużytego res
         this.eventManager.broadcast({
           name: 'followedUserListModification',
           content: 'Follow user with id '
@@ -163,18 +143,10 @@ export class UsersComponent implements OnInit {
         name: 'followedUserListModification',
         content: 'Deleted an followedUser'
       });
+      this.loadFollowed();
       // this.activeModal.dismiss(true);
     });
-    this.loadFollowed();
     // location.reload();
-  }
-
-  sort() {
-    const result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
-    if (this.predicate !== 'id') {
-      result.push('id');
-    }
-    return result;
   }
 
   registerChangeInUsers() {
@@ -189,10 +161,6 @@ export class UsersComponent implements OnInit {
 
   private onError(error) {
     this.alertService.error(error.error, error.message, null);
-  }
-
-  trackIdentity(index, item: User) {
-    return item.id;
   }
 
   search(query) {

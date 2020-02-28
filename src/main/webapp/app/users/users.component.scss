@@ -1,1 +1,19 @@
 /* users.component.scss */
+
+.users-section {
+  margin-top: 15px;
+}
+
+.center {
+  margin: auto;
+}
+.table-window {
+  border-radius: 10px;
+  border: 2px solid #522b72;
+  background-color: #ffffff;
+  min-width: 500px;
+  max-width: 1200px;
+  // min-width: 200px;
+  color: #000000;
+  margin: auto;
+}

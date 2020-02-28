@@ -193,7 +193,7 @@
             </div>
 
 
-            <h2><span jhiTranslate="soundgramApp.post.detail.title">Post</span> {{post.id}}</h2>
+ <!--           <h2><span jhiTranslate="soundgramApp.post.detail.title">Post</span> {{post.id}}</h2>
             <hr>
             <jhi-alert-error></jhi-alert-error>
             <dl class="row-md jh-entity-details">
@@ -260,17 +260,17 @@
 
             <div class="form-group row">
                 <label class="form-control-label">Write a comment</label><br>
-                <!--                <input id="name" name="name" required type="text" [ngModel]="commentContent" #name="ngModel">-->
+                &lt;!&ndash;                <input id="name" name="name" required type="text" [ngModel]="commentContent" #name="ngModel">&ndash;&gt;
                 <input [(ngModel)]="commentContent"/>
 
-                <!--                <div *ngIf="name.errors.required">-->
+                &lt;!&ndash;                <div *ngIf="name.errors.required">&ndash;&gt;
                 <button class="btn btn-primary" (click)="addComment()">
                     <fa-icon [icon]="'plus'"></fa-icon>
                     <span class="hidden-sm-down">
                         Submit comment
                     </span>
                 </button>
-                <!--                </div>-->
+                &lt;!&ndash;                </div>&ndash;&gt;
             </div>
 
             <div class="form-group row">
@@ -338,7 +338,7 @@
                     </td>
                 </tr>
                 </tbody>
-            </table>
+            </table>-->
         </div>
     </div>
 </div>
