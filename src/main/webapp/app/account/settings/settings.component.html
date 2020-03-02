@@ -5,16 +5,13 @@
 
             <img [src]="avatar"
                  alt="avatar"
-                 *ngIf="!isImageLoading && hasImage; else noImageFound" class="profile-image rounded-circle" style="max-width:80px;width:100%;max-height:80px;height:100%">
-            <ng-template #noImageFound>
-                <span>You Failed!</span>
-            </ng-template>
+                 *ngIf="!isImageLoading && hasImage" class="profile-image rounded-circle" style="max-width:80px;width:100%;max-height:80px;height:100%">
 
             <div class="alert alert-success" *ngIf="success" jhiTranslate="settings.messages.success">
                 <strong>Settings saved!</strong>
             </div>
 
-            <jhi-alert-error></jhi-alert-error>
+<!--            <jhi-alert-error></jhi-alert-error>-->
 
             <form name="form" role="form" (ngSubmit)="save()" [formGroup]="settingsForm" *ngIf="settingsForm.get('login').value" novalidate>
 
@@ -98,12 +95,6 @@
 
             <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="extraForm">
                 <div>
-                    <jhi-alert-error></jhi-alert-error>
-                    <!--                <div class="form-group" [hidden]="!editForm.get('id').value">
-                                        <label for="id" jhiTranslate="global.field.id">ID</label>
-                                        <input type="text" class="form-control" id="id" name="id" formControlName="id"
-                                            readonly />
-                                    </div>-->
                     <div class="form-group">
                         <label class="form-control-label" jhiTranslate="soundgramApp.userExtra.userLocation" for="field_userLocation">User Location</label>
                         <input type="text" class="form-control" name="userLocation" id="field_userLocation"

@@ -66,6 +66,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.commentsAvatars = null;
     this.hasImage = false;
     this.activatedRoute.data.subscribe(({ post }) => {
       this.post = post;
@@ -119,11 +120,15 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   }
 
   getCommentsAvatars() {
+    this.commentsAvatars = [];
     const usersOfComments: IUser[] = [];
     for (const userComment of this.usersComments) {
       usersOfComments.push(userComment.user);
     }
     this.commentsAvatars = this.avatarService.getAvatarsForUserList(usersOfComments);
+    for (const avatar of this.commentsAvatars) {
+      console.error('avatar url ' + avatar.toString());
+    }
   }
 
   ngOnDestroy(): void {

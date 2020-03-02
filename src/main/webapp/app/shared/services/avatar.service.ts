@@ -9,8 +9,9 @@ export class AvatarService {
 
   getAvatarsForUserList(users: IUser[]): any {
     for (const user of users) {
+      console.error('avatar user login:' + user.login);
       this.userService.getAvatarFilename(user.login).subscribe(avatarFileName => {
-        console.error('avatar filename: ' + avatarFileName);
+        console.error('avatar filename: ' + avatarFileName.body);
         this.userService.getAvatar(avatarFileName.body).subscribe(
           data => {
             this.createAvatarFromBlob(data);
@@ -21,6 +22,7 @@ export class AvatarService {
         );
       });
     }
+    // console.error('this.avatars: ' + +this.avatars[0].toString());
     return this.avatars;
   }
 

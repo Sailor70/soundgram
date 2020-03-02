@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ITag } from 'app/shared/model/tag.model';
 import { PostService } from 'app/entities/post/post.service';
 import { IPost } from 'app/shared/model/post.model';
+import { TagService } from 'app/entities/tag/tag.service';
 
 @Component({
   selector: 'jhi-tag-detail',
@@ -13,7 +14,7 @@ export class TagDetailComponent implements OnInit {
   tag: ITag;
   posts: IPost[] = [];
 
-  constructor(protected activatedRoute: ActivatedRoute, protected postService: PostService) {}
+  constructor(protected activatedRoute: ActivatedRoute, private postService: PostService, private tagService: TagService) {}
 
   ngOnInit() {
     this.activatedRoute.data.subscribe(({ tag }) => {
@@ -36,6 +37,12 @@ export class TagDetailComponent implements OnInit {
           }
         }
       }
+    });
+  }
+
+  followThisTag() {
+    this.tagService.addUserToTag(this.tag).subscribe(res => {
+      this.tag = res.body;
     });
   }
 

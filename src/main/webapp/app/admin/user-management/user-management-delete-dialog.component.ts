@@ -40,9 +40,10 @@ export class UserManagementDeleteDialogComponent {
   }
 
   confirmDelete(login) {
+    // aktualnie działa usuwanie nowo utworzonego usera
     this.userService.find(login).subscribe(user => {
       this.user = user;
-      this.deleteUserData();
+      this.deleteUser();
     });
   }
 

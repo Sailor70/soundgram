@@ -106,6 +106,7 @@ export class ProfileComponent implements OnInit {
       .get(['tagName'])
       .value.toString()
       .toLowerCase();
+    this.tagForm.get(['tagName']).setValue('');
     let tagToAdd = null;
     for (const tag of this.allTags) {
       if (tag.name === newTagName) {

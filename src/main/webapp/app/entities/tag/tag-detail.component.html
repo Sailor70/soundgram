@@ -29,6 +29,12 @@
                 <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
             </button>
 
+            <button type="button"
+                    (click)="followThisTag()"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'forward'"></fa-icon>&nbsp;<span>Add tag to followed</span>
+            </button>
+
             <h2>Posts that contains this tag:</h2>
             <div class="alert alert-warning" *ngIf="posts?.length === 0">
                 <span jhiTranslate="soundgramApp.post.home.notFound">No posts found</span>
