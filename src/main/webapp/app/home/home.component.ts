@@ -18,6 +18,7 @@ import { LoginService } from 'app/core/login/login.service';
 import { Moment } from 'moment';
 import { PostDetailComponent } from 'app/entities/post/post-detail.component';
 import { UserService } from 'app/core/user/user.service';
+import { PostWindowService } from 'app/shared/services/post-window.service';
 
 @Component({
   selector: 'jhi-home',
@@ -60,7 +61,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     protected followedUserService: FollowedUserService,
     protected tagService: TagService,
     protected activatedRoute: ActivatedRoute,
-    private userService: UserService
+    private userService: UserService,
+    private postWindowService: PostWindowService
   ) {
     this.posts = [];
     this.itemsPerPage = ITEMS_PER_PAGE;
@@ -145,6 +147,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.hasFollowedUsers) {
       this.postService.getFollowed().subscribe(res => {
         this.posts = res.body;
+        this.postWindowService.getPostObjects(this.posts);
         // for (const post of this.posts) {
         //   console.error('posts tags:' + post.tags.length);
         // }

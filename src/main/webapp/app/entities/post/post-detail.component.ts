@@ -50,7 +50,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   showCommentWindow = false;
   liked = false;
   likeBtnText = 'Like this audio';
-  commentsAvatars: any[] = [];
+  commentsAvatars: { comment: IComment; avatar: any }[] = [];
 
   constructor(
     protected activatedRoute: ActivatedRoute,
@@ -121,13 +121,13 @@ export class PostDetailComponent implements OnInit, OnDestroy {
 
   getCommentsAvatars() {
     this.commentsAvatars = [];
-    const usersOfComments: IUser[] = [];
-    for (const userComment of this.usersComments) {
-      usersOfComments.push(userComment.user);
-    }
-    this.commentsAvatars = this.avatarService.getAvatarsForUserList(usersOfComments);
-    for (const avatar of this.commentsAvatars) {
-      console.error('avatar url ' + avatar.toString());
+    // const usersOfComments: IUser[] = [];
+    // for (const userComment of this.usersComments) {
+    //   usersOfComments.push(userComment.user);
+    // }
+    this.commentsAvatars = this.avatarService.getAvatarsForCommentList(this.usersComments);
+    for (const commentAvatar of this.commentsAvatars) {
+      console.error('comment user ' + commentAvatar.comment.user + ' avatar ' + commentAvatar.avatar);
     }
   }
 

@@ -135,28 +135,60 @@
                                     </div>
                                 </div>
                                 <br><br>
-                                <div class="table-responsive" *ngIf="usersComments?.length > 0 && commentsAvatars">
-                                    <div *ngFor="let comment of usersComments; let i = index" [attr.data-index]="i">
+<!--                                <div class="table-responsive" *ngIf="usersComments?.length > 0 && commentsAvatars">-->
+<!--                                    <div *ngFor="let comment of usersComments; let i = index" [attr.data-index]="i">-->
+<!--                                        <div class="row mb-2">-->
+<!--                                            <div class="col-md-3">-->
+<!--                                                <img [src]="commentsAvatars[i]"-->
+<!--                                                     class="d-block ui-w-60 rounded-circle" alt="">-->
+<!--                                                <a [routerLink]="['/', comment.user.login, 'view']">{{comment.user?.login}}</a>-->
+<!--                                                <div class="text-muted small">{{comment.date | date:'medium'}}</div>-->
+<!--                                            </div>-->
+<!--                                            <div class="col-md-6">-->
+<!--                                                <span>{{comment.textContent}}</span>-->
+<!--                                            </div>-->
+<!--                                            <div *ngIf="currentUser" class="col-md-3">-->
+<!--                                                <div [hidden]="currentUser.login !== comment.user.login">-->
+<!--                                                    <button type="submit"-->
+<!--                                                            [routerLink]="['/comment', comment.id, 'edit']"-->
+<!--                                                            class="btn btn-primary btn-sm">-->
+<!--                                                        <fa-icon [icon]="'pencil-alt'"></fa-icon>-->
+<!--                                                        <span class="d-none d-md-inline"-->
+<!--                                                              jhiTranslate="entity.action.edit">Edit</span>-->
+<!--                                                    </button>-->
+<!--                                                    <button type="submit" (click)="deleteComment(comment)"-->
+<!--                                                            class="btn btn-danger btn-sm">-->
+<!--                                                        <fa-icon [icon]="'times'"></fa-icon>-->
+<!--                                                        <span class="d-none d-md-inline"-->
+<!--                                                              jhiTranslate="entity.action.delete">Delete</span>-->
+<!--                                                    </button>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+                                <div class="table-responsive" *ngIf="commentsAvatars?.length > 0">
+                                    <div *ngFor="let commentAvatar of commentsAvatars">
                                         <div class="row mb-2">
                                             <div class="col-md-3">
-                                                <img [src]="commentsAvatars[i]"
+                                                <img [src]="commentAvatar.avatar"
                                                      class="d-block ui-w-60 rounded-circle" alt="">
-                                                <a [routerLink]="['/', comment.user.login, 'view']">{{comment.user?.login}}</a>
-                                                <div class="text-muted small">{{comment.date | date:'medium'}}</div>
+                                                <a [routerLink]="['/', commentAvatar.comment.user.login, 'view']">{{commentAvatar.comment.user.login}}</a>
+                                                <div class="text-muted small">{{commentAvatar.comment.date | date:'medium'}}</div>
                                             </div>
                                             <div class="col-md-6">
-                                                <span>{{comment.textContent}}</span>
+                                                <span>{{commentAvatar.comment.textContent}}</span>
                                             </div>
                                             <div *ngIf="currentUser" class="col-md-3">
-                                                <div [hidden]="currentUser.login !== comment.user.login">
+                                                <div [hidden]="currentUser.login !== commentAvatar.comment.user.login">
                                                     <button type="submit"
-                                                            [routerLink]="['/comment', comment.id, 'edit']"
+                                                            [routerLink]="['/comment', commentAvatar.comment.id, 'edit']"
                                                             class="btn btn-primary btn-sm">
                                                         <fa-icon [icon]="'pencil-alt'"></fa-icon>
                                                         <span class="d-none d-md-inline"
                                                               jhiTranslate="entity.action.edit">Edit</span>
                                                     </button>
-                                                    <button type="submit" (click)="deleteComment(comment)"
+                                                    <button type="submit" (click)="deleteComment(commentAvatar.comment)"
                                                             class="btn btn-danger btn-sm">
                                                         <fa-icon [icon]="'times'"></fa-icon>
                                                         <span class="d-none d-md-inline"
@@ -167,39 +199,6 @@
                                         </div>
                                     </div>
                                 </div>
-<!--                                <div class="table-responsive" *ngIf="usersComments?.length > 0">
-                                    <div *ngFor="let comment of usersComments">
-                                        <div class="row mb-2">
-                                            <div class="col-md-3">
-                                                &lt;!&ndash;<img [src]="userService.downloadAvatar(comment.user.login)" *ngIf="!isImageLoading && hasImage"
-                                                     class="d-block ui-w-60 rounded-circle" alt="">&ndash;&gt;
-                                                &lt;!&ndash;<img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">&ndash;&gt;
-                                                <a [routerLink]="['/', comment.user.login, 'view']">{{comment.user?.login}}</a>
-                                                <div class="text-muted small">{{comment.date | date:'medium'}}</div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <span>{{comment.textContent}}</span>
-                                            </div>
-                                            <div *ngIf="currentUser" class="col-md-3">
-                                                <div [hidden]="currentUser.login !== comment.user.login">
-                                                    <button type="submit"
-                                                            [routerLink]="['/comment', comment.id, 'edit']"
-                                                            class="btn btn-primary btn-sm">
-                                                        <fa-icon [icon]="'pencil-alt'"></fa-icon>
-                                                        <span class="d-none d-md-inline"
-                                                              jhiTranslate="entity.action.edit">Edit</span>
-                                                    </button>
-                                                    <button type="submit" (click)="deleteComment(comment)"
-                                                            class="btn btn-danger btn-sm">
-                                                        <fa-icon [icon]="'times'"></fa-icon>
-                                                        <span class="d-none d-md-inline"
-                                                              jhiTranslate="entity.action.delete">Delete</span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>-->
                             </div>
                         </div>
                     </div>

@@ -7,6 +7,8 @@ import { Account } from 'app/core/user/account.model';
 
 export interface IPostObject {
   post: IPost;
+  userAvatar: any;
+
   image: IImage;
   postImage: any;
   // imageUrl: any;
@@ -20,7 +22,6 @@ export interface IPostObject {
   usersComments: IComment[];
   commentsAvatars: any[];
 
-  avatar: any;
   isImageLoading: boolean;
   account: Account;
   hasImage: boolean;
