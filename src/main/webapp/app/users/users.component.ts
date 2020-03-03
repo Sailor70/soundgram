@@ -13,6 +13,7 @@ import { IUser, User } from 'app/core/user/user.model';
 import { FollowedUserService } from 'app/entities/followed-user/followed-user.service';
 import { FollowedUser } from 'app/shared/model/followed-user.model';
 import { UserExtraService } from 'app/entities/user-extra/user-extra.service';
+import { AvatarService } from 'app/shared/services/avatar.service';
 
 @Component({
   selector: 'jhi-users',
@@ -38,6 +39,8 @@ export class UsersComponent implements OnInit {
   allUsersDisplayed = true;
   currentSearch: string;
 
+  usersAvatars: { user: IUser; avatar: any }[] = [];
+
   constructor(
     private userService: UserService,
     private alertService: JhiAlertService,
@@ -48,7 +51,8 @@ export class UsersComponent implements OnInit {
     private eventManager: JhiEventManager,
     private modalService: NgbModal,
     private followedUserService: FollowedUserService,
-    private userExtraService: UserExtraService
+    private userExtraService: UserExtraService,
+    private avatarService: AvatarService
   ) {
     this.itemsPerPage = ITEMS_PER_PAGE;
     this.routeData = this.activatedRoute.data
@@ -67,6 +71,7 @@ export class UsersComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.usersAvatars = null;
     this.accountService.identity().subscribe(account => {
       this.currentAccount = account;
       this.loadAll();
@@ -91,6 +96,7 @@ export class UsersComponent implements OnInit {
             this.users.push(user);
           });
         }
+        this.usersAvatars = this.avatarService.getAvatarsForUserList(this.users);
       });
       return;
     }
@@ -120,6 +126,7 @@ export class UsersComponent implements OnInit {
         }
       }
     }
+    this.usersAvatars = this.avatarService.getAvatarsForUserList(this.users);
   }
 
   followUser(id: number) {
@@ -157,6 +164,7 @@ export class UsersComponent implements OnInit {
     this.links = this.parseLinks.parse(headers.get('link'));
     this.totalItems = headers.get('X-Total-Count');
     this.users = data;
+    this.usersAvatars = this.avatarService.getAvatarsForUserList(this.users);
   }
 
   private onError(error) {

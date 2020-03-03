@@ -17,3 +17,14 @@
   color: #000000;
   margin: auto;
 }
+
+.ui-w-60 {
+  width: 60px !important;
+  height: auto;
+}
+
+@media only screen and (max-width: 900px) {
+  .narrow-hide {
+    display: none;
+  }
+}

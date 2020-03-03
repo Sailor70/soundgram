@@ -8,6 +8,10 @@ import { Account } from 'app/core/user/account.model';
 export interface IPostObject {
   post: IPost;
   userAvatar: any;
+  audioFile: IAudioFile;
+  audioSrc: any;
+  /* post: IPost;
+  userAvatar: any;
 
   image: IImage;
   postImage: any;
@@ -27,7 +31,7 @@ export interface IPostObject {
   hasImage: boolean;
 
   showCommentWindow: boolean;
-  liked: boolean;
+  liked: boolean;*/
 }
 
 // export class PostObject implements IPostObject {

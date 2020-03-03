@@ -28,7 +28,7 @@
     </div>
     <jhi-alert></jhi-alert>
     <div class="users-section">
-        <div class="table-responsive table-window" *ngIf="users">
+        <div class="table-responsive table-window" *ngIf="usersAvatars">
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -38,39 +38,40 @@
                     <th scope="col"><span jhiTranslate="userManagement.login">Login</span>
                         <fa-icon [icon]="'user'"></fa-icon>
                     </th>
-                    <th scope="col"><span>FirstName</span></th>
-                    <th scope="col"><span>LastName</span></th>
+                    <th class="narrow-hide" scope="col"><span>FirstName</span></th>
+                    <th class="narrow-hide" scope="col"><span>LastName</span></th>
                     <th scope="col"><span jhiTranslate="userManagement.email">Email</span>
                         <fa-icon [icon]="'at'"></fa-icon>
                     </th>
                     <th scope="col"></th>
                 </tr>
                 </thead>
-                <tbody *ngIf="users">
-                <tr *ngFor="let user of users">
-                    <td>Avatar</td>
-                    <td><a [routerLink]="['/', user.login, 'view']">{{user.login}}</a></td>
-                    <td>{{user.firstName}}</td>
-                    <td>{{user.lastName}}</td>
-                    <td><a href="mailto:{{user.email}}">{{user.email}}</a></td>
+                <tbody>
+                <tr *ngFor="let user of usersAvatars">
+                    <td><div *ngIf="user.avatar"><a [routerLink]="['/', user.user.login, 'view']">
+                        <img [src]="user.avatar" class="d-block ui-w-60 rounded-circle" alt=""></a></div></td>
+                    <td><a [routerLink]="['/', user.user.login, 'view']">{{user.user.login}}</a></td>
+                    <td class="narrow-hide"><div *ngIf="user.user.firstName">{{user.user.firstName}}</div></td>
+                    <td class="narrow-hide"><div *ngIf="user.user.lastName">{{user.user.lastName}}</div></td>
+                    <td><a href="mailto:{{user.user.email}}">{{user.user.email}}</a></td>
                     <td class="text-right">
                         <div class="btn-group">
                             <button type="submit"
-                                    [routerLink]="['/', user.login, 'view']"
+                                    [routerLink]="['/', user.user.login, 'view']"
                                     class="btn btn-secondary btn-sm">
                                 <fa-icon [icon]="'eye'"></fa-icon>
                                 <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
                             </button>
                             <div *ngSwitchCase="true">
-                                <button type="button" (click)="followUser(user.id)"
-                                        class="btn btn-primary btn-sm" [disabled]="currentAccount.login === user.login">
+                                <button type="button" (click)="followUser(user.user.id)"
+                                        class="btn btn-primary btn-sm" [disabled]="currentAccount.login === user.user.login">
                                     <fa-icon [icon]="'user-plus'"></fa-icon>
                                     <span class="d-none d-md-inline" jhiTranslate="entity.action.follow">Follow</span>
                                 </button>
                             </div>
                             <div *ngSwitchCase="false">
-                                <button type="button" (click)="unfollowUser(user.id)"
-                                        class="btn btn-primary btn-sm" [disabled]="currentAccount.login === user.login">
+                                <button type="button" (click)="unfollowUser(user.user.id)"
+                                        class="btn btn-primary btn-sm" [disabled]="currentAccount.login === user.user.login">
                                     <fa-icon [icon]="'user-minus'"></fa-icon>
                                     <span class="d-none d-md-inline"
                                           jhiTranslate="entity.action.unfollow">Unfollow</span>

@@ -19,6 +19,7 @@ import { Moment } from 'moment';
 import { PostDetailComponent } from 'app/entities/post/post-detail.component';
 import { UserService } from 'app/core/user/user.service';
 import { PostWindowService } from 'app/shared/services/post-window.service';
+import { IPostObject } from 'app/shared/post-object.model';
 
 @Component({
   selector: 'jhi-home',
@@ -46,6 +47,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   userTags: ITag[];
 
   avatars: any[];
+  postObject: IPostObject;
 
   @ViewChild(PostDetailComponent, { static: false })
   private detailComponent: PostDetailComponent;
@@ -147,7 +149,23 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.hasFollowedUsers) {
       this.postService.getFollowed().subscribe(res => {
         this.posts = res.body;
-        this.postWindowService.getPostObjects(this.posts);
+        this.postWindowService.getPostObject(this.posts[0]).subscribe({
+          next: value => {
+            console.error(value);
+            this.postObject = value;
+            console.error('post object: ' + this.postObject.post.user.login);
+          },
+          complete: () => console.error('This is how it ends!')
+        });
+        // .subscribe( postObject => {
+        //   console.error('get post object: ' + postObject.user.login);
+        //   this.postObject = postObject;
+        // });
+        // console.error('get post object: ' + this.postWindowService.getPostObject(this.posts[0]));
+        // this.postWindowService.getPostObject(this.posts[0]).then( (postObject) => {
+        //   this.postObject = postObject;
+        //   console.error('post object user avatar: ' + this.postObject.userAvatar);
+        // }).catch( e => { console.error('error wystąpił: ' + e)});
         // for (const post of this.posts) {
         //   console.error('posts tags:' + post.tags.length);
         // }
