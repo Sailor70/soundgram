@@ -50,16 +50,16 @@
                 </button>
             </h2>
 
-<!--            <div class="alert alert-success">
-                <span id="home-logged-message" *ngIf="account" jhiTranslate="home.logged.message"
-                      [translateValues]="{username: account.login}"> You are logged in as user "{{account.login}}
-                    ". </span>
-                &lt;!&ndash;
-                                <div class="col-3 col-xs-2 text-right">
-                                    <a [routerLink]="['/post/new']" class="btn btn-primary m-0 mb-1 text-white">Create new Post</a>
-                                </div>&ndash;&gt;
+            <!--            <div class="alert alert-success">
+                            <span id="home-logged-message" *ngIf="account" jhiTranslate="home.logged.message"
+                                  [translateValues]="{username: account.login}"> You are logged in as user "{{account.login}}
+                                ". </span>
+                            &lt;!&ndash;
+                                            <div class="col-3 col-xs-2 text-right">
+                                                <a [routerLink]="['/post/new']" class="btn btn-primary m-0 mb-1 text-white">Create new Post</a>
+                                            </div>&ndash;&gt;
 
-            </div>-->
+                        </div>-->
 
             <jhi-alert-error></jhi-alert-error>
             <jhi-alert></jhi-alert>
@@ -104,36 +104,13 @@
                     </button>
                 </h2>
             </div>
-            <!--                <div class="btn-group">
-                                <div [ngSwitch]="followedUsersPosts">
-                                    <h2 *ngSwitchCase="true">
-                                        <span id="likedFiles-page-heading">Followed Users Posts</span>
-                                        <button class="btn btn-primary float-right" (click)="loadFollowedTagsPosts()">
-                                            <fa-icon [icon]="'music'"></fa-icon>
-                                            <span>Show posts by my tags</span>
-                                        </button>
-                                    </h2>
-                                    <h2 *ngSwitchCase="false">
-                                        <span id="myFiles-page-heading">Followed Tags Posts</span>
-                                        <button class="btn btn-primary float-right" (click)="loadFollowedUsersPosts()">
-                                            <fa-icon [icon]="'music'"></fa-icon>
-                                            <span>Show my followed users posts</span>
-                                        </button>
-                                    </h2>
-                                </div>
-                                <button class="btn btn-primary float-right" [routerLink]="['/tag']">
-                                    <fa-icon [icon]="'search'"></fa-icon>
-                                    <span class="hidden-sm-down">
-                                    View tags
-                                </span>
-                                </button>
-                            </div>-->
+
             <br/>
             <div class="alert alert-warning" *ngIf="posts?.length === 0">
                 <span jhiTranslate="soundgramApp.post.home.notFound">No posts found</span>
             </div>
 
-            <div class="table-responsive" *ngIf="posts?.length > 0">
+            <!--<div class="table-responsive" *ngIf="posts?.length > 0">
                 <table class="table table-striped" aria-describedby="page-heading">
                     <thead>
                     <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="reset.bind(this)">
@@ -174,7 +151,7 @@
                                     <fa-icon [icon]="'eye'"></fa-icon>
                                     <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
                                 </button>
-                                <!--                                    <button type="submit"
+                                &lt;!&ndash;                                    <button type="submit"
                                                                             [routerLink]="['/post', post.id, 'edit']"
                                                                             class="btn btn-primary btn-sm">
                                                                         <fa-icon [icon]="'pencil-alt'"></fa-icon>
@@ -184,63 +161,181 @@
                                                                             class="btn btn-danger btn-sm">
                                                                         <fa-icon [icon]="'times'"></fa-icon>
                                                                         <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-                                                                    </button>-->
+                                                                    </button>&ndash;&gt;
                             </div>
                         </td>
                     </tr>
                     </tbody>
                 </table>
-            </div>
+            </div>-->
 
-            <div *ngIf="posts?.length > 0">
-                <div *ngFor="let post of posts ;trackBy: trackDate"> <!--let i = index-->
+            <div *ngIf="postObjects?.length == posts.length">
+                <div *ngFor="let postObject of postObjects">
                     <div class="container posts-content">
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="card mb-3">
+                                <div class="card post-window mb-3">
                                     <div class="card-body">
                                         <div class="media mb-3">
-                                            <!--avatars[i]-->
-                                            <img src="https://bootdey.com/img/Content/avatar/avatar3.png"
+                                            <img [src]="postObject.userAvatar" *ngIf="postObject.userAvatar"
                                                  class="d-block ui-w-60 rounded-circle" alt="">
                                             <div class="media-body ml-3">
-                                                <a [routerLink]="['/', post.user.login, 'view']">{{post.user?.login}}</a>
-                                                <div class="text-muted small">{{post.date | date:'medium'}}</div>
+                                                <a [routerLink]="['/', postObject.post.user.login, 'view']">{{postObject.post.user.login}}</a>
+                                                <div class="text-muted small">{{postObject.post.date | date:'medium'}}</div>
                                             </div>
+                                            <div class="media-body ml-3 mt-3">
+                                                <div *ngIf="postObject.audioFile && postObject.commentsAvatars">
+                                                    <h6 class="d-inline-block text-muted">{{postObject.audioFile.users.length}}
+                                                        Likes<span>&nbsp;&nbsp;&nbsp;</span></h6>
+                                                    <h6 class="d-inline-block text-muted">{{postObject.commentsAvatars.length}}
+                                                        Comments</h6>
+                                                </div>
+                                            </div>
+
                                         </div>
 
                                         <p class="card-text">
-                                            {{post.postContent}}
+                                            {{postObject.post.postContent}}
                                         </p>
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <a href="javascript:void(0)" class="ui-rect ui-bg-cover"
-                                                   style="background-image: url('https://bootdey.com/img/Content/avatar/avatar3.png');"></a>
+                                                <img [src]="postObject.imageSrc" class="ui-rect ui-bg-cover"
+                                                     alt="">
                                             </div>
                                             <div class="col-md-6">
-                                                <audio controls="controls" id="audio_player">
-                                                    <source src="track.ogg" type="audio/ogg"/>
-                                                    Your browser does not support the audio element.
-                                                </audio>
-                                                <span>Tags: (lub odtwarzacz tutaj a tagi poniżej) </span>
-                                                <ul class="list-group"
-                                                    *ngFor="let tag of post.tags; let last = last">
-                                                    <li class="list-group-item"><a
-                                                        [routerLink]="['/tag', tag?.id, 'view' ]">{{tag.name}}</a>{{last ? '' : ', '}}
-                                                    </li>
-                                                </ul>
+                                                <div *ngIf="postObject.audioFile" class="container">
+                                                    <div class="row slidecontainer">
+                                                        <div class="col-md-12" style="text-align: center">
+                                                            <span>{{postObject.audioFile.title}}</span>
+                                                        </div>
+                                                        <input #slide type="range" class="slider" min="0">
+<!--                                                               [max]="state?.duration" step="0.1"-->
+<!--                                                               [value]="state.currentTime ? state.currentTime : 0"-->
+<!--                                                               (change)="onSliderChangeEnd(slide)">-->
+                                                        <div class="col-md-6" style="text-align: left">
+<!--                                                            {{ state?.readableCurrentTime }}-->
+                                                        </div>
+                                                        <div class="col-md-6" style="text-align: right">
+<!--                                                            {{ state?.readableDuration }}-->
+                                                        </div>
+                                                    </div>
+                                                    <div class="row center">
+                                                        <button type="button" class="btn btn-info center">
+<!--                                                                (click)="play()" [disabled]="state?.error"-->
+<!--                                                                *ngIf="!state?.playing">-->
+                                                            <fa-icon [icon]="'play'"></fa-icon>
+                                                        </button>
+                                                        <button type="button" class="btn btn-info center">
+<!--                                                                (click)="pause()" *ngIf="state?.playing">-->
+                                                            <fa-icon [icon]="'pause'"></fa-icon>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <span>Tags: </span><br>
+                                                    <span *ngFor="let tag of postObject.post.tags; let last = last">
+                                    <a [routerLink]="['/tag', tag?.id, 'view' ]">{{tag.name}}</a>{{last ? '' : ', '}}</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="card-footer">
-                                        <a href="javascript:void(0)" class="d-inline-block text-muted">
-                                            <strong></strong> Likes
-                                        </a>
-                                        <a href="javascript:void(0)" class="d-inline-block text-muted ml-3">
-                                            <strong>12</strong> Comments
-                                        </a>
-                                        <a [routerLink]="['/post', post.id, 'view' ]"
-                                           class="d-inline-block text-muted ml-3">View post detail</a>
+                                        <div class="row">
+                                            <div class="center">
+                                          <!--      <button class="btn btn-primary" (click)="toggleComment()">
+                                                    <fa-icon [icon]="'pen'"></fa-icon>
+                                                    <span class="hidden-sm-down">Write a comment</span>
+                                                </button>-->
+                                                <button type="submit"
+                                                        [routerLink]="['/post', postObject.post.id, 'view' ]"
+                                                        class="btn btn-info btn-sm">
+                                                    <fa-icon [icon]="'eye'"></fa-icon>
+                                                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View post details</span>
+                                                </button>
+                                            </div>
+                                            <div class="center">
+                                                <button class="btn btn-primary"> <!--(click)="likeOrDislikeAudioFile()">-->
+<!--                                                    <div *ngIf="liked">-->
+<!--                                                        <fa-icon [icon]="'heart-broken'"></fa-icon>-->
+<!--                                                        <span class="hidden-sm-down">{{likeBtnText}}</span>-->
+<!--                                                    </div>-->
+                                                    <div>
+                                                        <fa-icon [icon]="'star'"></fa-icon>
+                                                        <span class="hidden-sm-down">Like this audio</span>
+                                                    </div>
+                                                </button>
+                                            </div>
+<!--                                            <div class="center">-->
+<!--                                                <button type="submit"-->
+<!--                                                        (click)="previousState()"-->
+<!--                                                        class="btn btn-info">-->
+<!--                                                    <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span-->
+<!--                                                    jhiTranslate="entity.action.back"> Back</span>-->
+<!--                                                </button>-->
+<!--                                                <div *ngIf="currentUser">-->
+<!--                                                    <button type="button"-->
+<!--                                                            [routerLink]="['/post', post.id, 'edit']"-->
+<!--                                                            class="btn btn-primary"-->
+<!--                                                            [hidden]="currentUser.login !== post.user.login">-->
+<!--                                                        <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span-->
+<!--                                                        jhiTranslate="entity.action.edit"> Edit</span>-->
+<!--                                                    </button>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+                                        </div>
+<!--                                        <div class="row" *ngIf="showCommentWindow">-->
+<!--                                            <div class="card comment-card my-4">-->
+<!--                                                <h6 class="card-header">Leave a Comment:</h6>-->
+<!--                                                <div class="card-body">-->
+<!--                                                    <form>-->
+<!--                                                        <div class="form-group">-->
+<!--                                                    <textarea [(ngModel)]="commentContent" name="txtarea"-->
+<!--                                                              class="form-control" rows="3"></textarea>-->
+<!--                                                        </div>-->
+<!--                                                        <button class="btn btn-primary" (click)="addComment()">-->
+<!--                                                            <fa-icon [icon]="'plus'"></fa-icon>-->
+<!--                                                            <span class="hidden-sm-down">Submit comment</span>-->
+<!--                                                        </button>-->
+<!--                                                    </form>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+                                        <br><br>
+                                        <div class="table-responsive" *ngIf="postObject.commentsAvatars.length > 0">
+                                            <div *ngFor="let commentAvatar of postObject.commentsAvatars">
+                                                <div class="row mb-2">
+                                                    <div class="col-md-3">
+                                                        <img [src]="commentAvatar.avatar"
+                                                             class="d-block ui-w-60 rounded-circle" alt="">
+                                                        <a [routerLink]="['/', commentAvatar.comment.user.login, 'view']">{{commentAvatar.comment.user.login}}</a>
+                                                        <div
+                                                            class="text-muted small">{{commentAvatar.comment.date | date:'medium'}}</div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <span>{{commentAvatar.comment.textContent}}</span>
+                                                    </div>
+<!--                                                    <div *ngIf="currentUser" class="col-md-3">-->
+<!--                                                        <div-->
+<!--                                                            [hidden]="currentUser.login !== commentAvatar.comment.user.login">-->
+<!--                                                            <button type="submit"-->
+<!--                                                                    [routerLink]="['/comment', commentAvatar.comment.id, 'edit']"-->
+<!--                                                                    class="btn btn-primary btn-sm">-->
+<!--                                                                <fa-icon [icon]="'pencil-alt'"></fa-icon>-->
+<!--                                                                <span class="d-none d-md-inline"-->
+<!--                                                                      jhiTranslate="entity.action.edit">Edit</span>-->
+<!--                                                            </button>-->
+<!--                                                            <button type="submit"-->
+<!--                                                                    (click)="deleteComment(commentAvatar.comment)"-->
+<!--                                                                    class="btn btn-danger btn-sm">-->
+<!--                                                                <fa-icon [icon]="'times'"></fa-icon>-->
+<!--                                                                <span class="d-none d-md-inline"-->
+<!--                                                                      jhiTranslate="entity.action.delete">Delete</span>-->
+<!--                                                            </button>-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -248,37 +343,6 @@
                     </div>
                 </div>
             </div>
-
-            <!--                <div class="col text-center">-->
-            <!--                    <div class="landing-panel mx-auto">-->
-            <!--                        <h3 class="section-title">Sign-Up</h3>-->
-            <!--                        <h3>Name</h3>-->
-            <!--                        <input type="text" maxlength="40"/>-->
-
-            <!--                        <div role="alert">-->
-            <!--                                            <span class="error">-->
-            <!--                                            Not valid Username! <br/>Use: 0-9a-zA-Z_.- </span>-->
-            <!--                        </div>-->
-
-            <!--                        <h3>Email</h3>-->
-            <!--                        <input type="email" required/>-->
-
-            <!--                        <div role="alert">-->
-            <!--                                            <span class="error">-->
-            <!--                                            Not valid email!</span>-->
-            <!--                        </div>-->
-
-            <!--                        <h3>Password</h3>-->
-            <!--                        <input type="password"/> <br>-->
-
-            <!--                        <div role="alert">-->
-            <!--                                            <span class="error">-->
-            <!--                                            Not valid password! <br/>Use: 6>chars, 1digit </span>-->
-            <!--                        </div>-->
-
-            <!--                        <button class="cta-button" ng-click="createUser(newUser)">Create account</button>-->
-            <!--                    </div>-->
-            <!--                </div>--></div>
-
+        </div>
     </div>
 </div>

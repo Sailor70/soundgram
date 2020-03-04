@@ -24,7 +24,8 @@ import { IPostObject } from 'app/shared/post-object.model';
 @Component({
   selector: 'jhi-home',
   templateUrl: './home.component.html',
-  styleUrls: ['home.scss']
+  styleUrls: ['home.scss'],
+  providers: [PostWindowService] // jedna instancja servisu na zadeklarowany provider ( home me swoją instance tego serwisu )
 })
 export class HomeComponent implements OnInit, OnDestroy {
   account: Account;
@@ -47,7 +48,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   userTags: ITag[];
 
   avatars: any[];
-  postObject: IPostObject;
+  postObjects: IPostObject[] = [];
 
   @ViewChild(PostDetailComponent, { static: false })
   private detailComponent: PostDetailComponent;
@@ -81,6 +82,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.postObjects = null;
     this.identityAndGetFollowed();
     this.registerAuthenticationSuccess();
     this.loginService.isLoggedIn.subscribe(isLogged => {
@@ -149,29 +151,59 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.hasFollowedUsers) {
       this.postService.getFollowed().subscribe(res => {
         this.posts = res.body;
-        this.postWindowService.getPostObject(this.posts[0]).subscribe({
-          next: value => {
-            console.error(value);
-            this.postObject = value;
-            console.error('post object: ' + this.postObject.post.user.login);
-          },
-          complete: () => console.error('This is how it ends!')
-        });
-        // .subscribe( postObject => {
-        //   console.error('get post object: ' + postObject.user.login);
-        //   this.postObject = postObject;
+        // this.postWindowService.getPostObject(this.posts[0]).subscribe({
+        //   next: value => {
+        //     console.error(value.audioSrc);
+        //     this.postObject = value;
+        //     // console.error('post object: ' + this.postObject.post.user.login);
+        //   },
+        //   complete: () => console.error('This is how it ends!')
         // });
-        // console.error('get post object: ' + this.postWindowService.getPostObject(this.posts[0]));
-        // this.postWindowService.getPostObject(this.posts[0]).then( (postObject) => {
-        //   this.postObject = postObject;
-        //   console.error('post object user avatar: ' + this.postObject.userAvatar);
-        // }).catch( e => { console.error('error wystąpił: ' + e)});
-        // for (const post of this.posts) {
-        //   console.error('posts tags:' + post.tags.length);
-        // }
+        this.getPostObjectFromService();
       });
     }
     // this.getAvatars();
+  }
+
+  getPostObjectFromService() {
+    this.postObjects = [];
+    for (let i = 0; i < this.posts.length; i++) {
+      // console.error('post user login: ' + post.user.login);
+      this.postWindowService.getPostObject(this.posts[i]).subscribe({
+        next: value => {
+          // console.error('comment avatar user login: ' + value.commentsAvatars[0].comment.user.login);
+          console.error('post commentAvatars length: ' + value.commentsAvatars.length + ' i : ' + i);
+          this.postObjects.push(value);
+          console.error('post object user: ' + this.postObjects[i].post.user.login);
+        }
+        // complete: () => console.error('This is how it ends!')
+      });
+    }
+    // this.checkPostObjectValues();
+  }
+
+  checkPostObjectValues() {
+    console.error('check postObject values!');
+    // for(const postObject of this.postObject) {
+    const postObject: IPostObject = this.postObjects[1];
+
+    console.error(
+      'Post user: ' +
+        postObject.post.user +
+        '\nuser avatar length: ' +
+        postObject.userAvatar.length +
+        '\naudioFile title ' +
+        postObject.audioFile.title +
+        '\naudioFIle length ' +
+        postObject.audioSrc.length +
+        '\nimageSrc length ' +
+        postObject.imageSrc.length +
+        '\n0 comment user ' +
+        postObject.commentsAvatars[0].comment.user.login +
+        '\navatar length ' +
+        postObject.commentsAvatars[0].avatar.length
+    );
+    // }
   }
 
   loadPostsByTags() {
@@ -273,55 +305,5 @@ export class HomeComponent implements OnInit, OnDestroy {
       // console.error('User tags:' + this.userTags.length);
       this.loadPostsByTags();
     });
-  }
-
-  getAvatars() {
-    for (const post of this.posts) {
-      console.error('post user: ' + post.user.login);
-      this.userService.getAvatarFilename(post.user.login).subscribe(avatarFileName => {
-        console.error('avatar filename: ' + avatarFileName);
-        this.userService.getAvatar(avatarFileName.body).subscribe(
-          data => {
-            this.createAvatarFromBlob(data);
-          },
-          error => {
-            console.error(error);
-          }
-        );
-      });
-    }
-  }
-
-  // createImageFromBlob(image: Blob) {
-  //   const reader = new FileReader();
-  //   reader.addEventListener(
-  //     'load',
-  //     () => {
-  //       this.postImage = reader.result;
-  //       console.error('image type: ' + typeof this.postImage);
-  //     },
-  //     false
-  //   );
-  //
-  //   if (image) {
-  //     reader.readAsDataURL(image);
-  //   }
-  // }
-
-  createAvatarFromBlob(image: Blob) {
-    const reader = new FileReader();
-    reader.addEventListener(
-      'load',
-      () => {
-        console.error(reader.result);
-        console.error(typeof reader.result);
-        this.avatars.push(reader.result);
-      },
-      false
-    );
-
-    if (image) {
-      reader.readAsDataURL(image);
-    }
   }
 }

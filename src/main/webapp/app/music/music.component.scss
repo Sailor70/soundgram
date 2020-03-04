@@ -2,6 +2,10 @@
   width: 100%; /* Width of the outside container */
 }
 
+.music-section {
+  margin-top: 15px;
+}
+
 .center {
   margin: auto;
 }
@@ -43,4 +47,39 @@
   height: 25px; /* Slider handle height */
   background: #522b72; /* Green background */
   cursor: pointer; /* Cursor on hover */
+}
+
+.table-window {
+  border-radius: 10px;
+  border: 2px solid #522b72;
+  background-color: #ffffff;
+  min-width: 400px;
+  max-width: 900px;
+  // max-height: 500px;
+  // min-width: 200px;
+  color: #000000;
+  margin: auto;
+}
+
+.ui-w-60 {
+  width: 60px !important;
+  height: auto;
+}
+
+.content {
+  padding: 5pt;
+  // border: 1px dashed rgb(200, 0, 0);
+}
+
+.player {
+  padding: 5pt;
+  background-color: #ffffff;
+  position: sticky;
+  bottom: 0;
+}
+
+@media only screen and (max-width: 570px) {
+  .narrow-hide {
+    display: none;
+  }
 }

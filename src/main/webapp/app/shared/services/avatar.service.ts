@@ -31,13 +31,41 @@ export class AvatarService {
   //   return this.avatars;
   // }
 
+  getAvatarsForCommentListPromise(comments: IComment[]) {
+    return new Promise((resolve, reject) => {
+      // this.commentsAvatars = [];
+      this.comments = comments;
+      for (const comment of comments) {
+        this.userService.getAvatarFilename(comment.user.login).subscribe(avatarFileName => {
+          // console.error('avatar user login:' + comment.user.login);
+          // console.error('avatar filename: ' + avatarFileName.body);
+          if (avatarFileName !== '') {
+            this.userService.getAvatar(avatarFileName.body).subscribe(
+              data => {
+                this.createAvatarFromBlob(data, comment);
+              },
+              error => {
+                reject(error);
+                console.error('Probably no avatar: ' + error);
+              }
+            );
+          } else {
+            this.commentsAvatars.push({ comment, avatar: null });
+          }
+        });
+      }
+      console.error('commentsAvatars length in avatar service: ' + this.commentsAvatars.length);
+      resolve(this.commentsAvatars);
+    });
+  }
+
   getAvatarsForCommentList(comments: IComment[]): any {
     this.commentsAvatars = [];
     this.comments = comments;
     for (const comment of comments) {
       this.userService.getAvatarFilename(comment.user.login).subscribe(avatarFileName => {
-        console.error('avatar user login:' + comment.user.login);
-        console.error('avatar filename: ' + avatarFileName.body);
+        // console.error('avatar user login:' + comment.user.login);
+        // console.error('avatar filename: ' + avatarFileName.body);
         if (avatarFileName !== '') {
           this.userService.getAvatar(avatarFileName.body).subscribe(
             data => {

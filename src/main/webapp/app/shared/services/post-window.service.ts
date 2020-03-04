@@ -7,6 +7,11 @@ import { IPostObject } from 'app/shared/post-object.model';
 import { forkJoin, Observable, of } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 import { IAudioFile } from 'app/shared/model/audio-file.model';
+import { IImage } from 'app/shared/model/image.model';
+import { ImageService } from 'app/entities/image/image.service';
+import { IComment } from 'app/shared/model/comment.model';
+import { AvatarService } from 'app/shared/services/avatar.service';
+import { CommentService } from 'app/entities/comment/comment.service';
 // import { IComment } from 'app/shared/model/comment.model';
 // import { IPostObject } from 'app/shared/post-object.model';
 
@@ -14,23 +19,39 @@ import { IAudioFile } from 'app/shared/model/audio-file.model';
 export class PostWindowService {
   post: IPost;
   postObject: IPostObject; // { post: IPost, userAvatar: any, audioFile: IAudioFile, audioSrc: any };
-  dataComplete = false;
   audioFile: IAudioFile = null;
   audioSrc: any = null;
   avatarSrc: any;
+  image: IImage;
+  imageSrc: any;
+  commentsAvatars: { comment: IComment; avatar: any }[] = [];
+  usersComments: IComment[];
 
-  constructor(private audioFileService: AudioFileService, private postService: PostService, private userService: UserService) {}
+  constructor(
+    private audioFileService: AudioFileService,
+    private postService: PostService,
+    private userService: UserService,
+    private imageService: ImageService,
+    private avatarService: AvatarService,
+    private commentService: CommentService
+  ) {}
 
   getPostObject(post: IPost): Observable<any> {
     this.post = post;
-    this.postObject = { post: null, userAvatar: null, audioSrc: null, audioFile: null };
+    // this.postObject = {post: null, userAvatar: null, audioSrc: null, audioFile: null};
     // this.getAudioFile().then(r => );
     // this.getUserAvatar();
     return forkJoin({
       post: of(post),
       userAvatar: this.getUserAvatar(),
-      audioSrc: this.getAudioFile(),
-      audioFile: of(null, this.audioFile)
+      audioFile: this.getAudioFile(),
+      audioSrc: new Promise(resolve =>
+        setTimeout(() => {
+          resolve(this.audioSrc);
+        }, 1000)
+      ), // waiting for variable to initialize ( lub ustawić fork join dopiero po probraniu audioSrc)
+      imageSrc: this.getImageSrc(),
+      commentsAvatars: this.getPostComments()
     });
   }
 
@@ -43,6 +64,99 @@ export class PostWindowService {
 
   printResults() {
     console.error('post: ' + this.postObject.post.user + 'user avatar: ' + this.postObject.userAvatar);
+  }
+
+  getPostComments() {
+    return new Promise((resolve, reject) => {
+      this.commentService.findByPost(this.post.id).subscribe(usersComments => {
+        this.usersComments = usersComments.body;
+        // this.usersComments.forEach(value => console.error(value));
+        this.commentsAvatars = [];
+        for (const comment of usersComments.body) {
+          this.userService.getAvatarFilename(comment.user.login).subscribe(avatarFileName => {
+            if (avatarFileName !== '') {
+              this.userService.getAvatar(avatarFileName.body).subscribe(
+                image => {
+                  const reader = new FileReader();
+                  reader.addEventListener(
+                    'load',
+                    () => {
+                      this.commentsAvatars.push({ comment, avatar: reader.result });
+                    },
+                    false
+                  );
+                  if (image) {
+                    reader.readAsDataURL(image);
+                  }
+                },
+                error => {
+                  reject(error);
+                  console.error('Probably no avatar: ' + error);
+                }
+              );
+            } else {
+              this.commentsAvatars.push({ comment, avatar: null });
+            }
+          });
+        }
+        console.error('commentsAvatars length in avatar service: ' + this.commentsAvatars.length);
+        resolve(this.commentsAvatars);
+      });
+    });
+  }
+
+  /*  getPostComments() {
+      return new Promise((resolve, reject) => {
+        this.commentService.findByPost(this.post.id).subscribe(
+          (res: HttpResponse<IComment[]>) => {
+            this.usersComments = res.body;
+            // this.usersComments.forEach(value => console.error(value));
+            this.commentsAvatars = [];
+            this.avatarService.getAvatarsForCommentListPromise(res.body).then( (commentsAvatars) => {
+              console.error('comments avatars length: ' + commentsAvatars);
+              resolve(commentsAvatars);
+            });
+          },
+          res => {
+            console.error('Comments load error: ' + res.body);
+            reject(res);
+          }
+        );
+      });
+    }*/
+
+  getImageSrc() {
+    return new Promise((resolve, reject) => {
+      this.imageService.findByPost(this.post.id).subscribe(
+        (res: HttpResponse<IImage>) => {
+          this.image = res.body;
+          this.imageService.getFile(res.body.id).subscribe(
+            image => {
+              const reader = new FileReader();
+              reader.addEventListener(
+                'load',
+                () => {
+                  this.imageSrc = reader.result;
+                  resolve(reader.result);
+                },
+                false
+              );
+              if (image) {
+                reader.readAsDataURL(image);
+              }
+            },
+            error => {
+              console.error(error);
+              reject(error);
+            }
+          );
+        },
+        res => {
+          console.error('Image load error: ' + res.body);
+          reject(res);
+        }
+      );
+    });
   }
 
   getUserAvatar() {
@@ -62,7 +176,6 @@ export class PostWindowService {
               },
               false
             );
-
             if (data) {
               reader.readAsDataURL(data);
             }
@@ -81,17 +194,11 @@ export class PostWindowService {
       this.audioFileService.findByPost(this.post.id).subscribe(
         (audioFile: HttpResponse<IAudioFile>) => {
           this.audioFile = audioFile.body;
-          this.audioFileService.getFile(audioFile.body.id).subscribe(
-            res => {
-              // const blobUrl = URL.createObjectURL(res);
-              this.audioSrc = URL.createObjectURL(res);
-              resolve(URL.createObjectURL(res));
-            },
-            res => {
-              console.error('File resource error: ' + res);
-              reject(res);
-            }
-          );
+          this.getAudioFileSource().then(audioSrc => {
+            this.audioSrc = audioSrc;
+            // console.error('this.audioSrc: ' + this.audioSrc);
+            resolve(audioFile.body);
+          });
         },
         res => {
           console.error('Audio load error: ' + res.body);
@@ -101,63 +208,22 @@ export class PostWindowService {
     });
   }
 
-  /*  getPostObjects(posts: IPost[]): any {
-      this.postObject = [];
-      this.posts = posts;
-      // this.postObject.length = this.posts.length;
-      this.initPostObject();
-      for (let i = 0; i < posts.length; i++) {
-        // this.postObject[i].post = this.posts[i];
-        // this.postArray[i].post = posts[i];
-        this.getUserAvatar(posts[i], i);
-      }
-      this.printResults();
-    }
-
-    printResults() {
-      for (let i = 0; i < this.posts.length; i++) {
-        //  console.error('post: ' + this.postArray[i].post.user);
-        console.error('post: ' + this.postObject[i].post.user.login + 'user avatar: ' + this.postObject[i].userAvatar);
-      }
-    }
-
-    initPostObject() {
-      // this.postArray.length = this.posts.length;
-      // console.error('array length: ' + this.postArray.length);
-      for (let i = 0; i < this.posts.length; i++) {
-        this.postObject.push( { post: this.posts[i] , userAvatar: null } );
-      }
-    }
-
-    getUserAvatar(post: IPost, i: number) {
-      this.userService.getAvatarFilename(post.user.login).subscribe(avatarFileName => {
-        // console.error('avatar user login:' + post.user.login);
-        // console.error('avatar filename: ' + avatarFileName.body);
-        this.userService.getAvatar(avatarFileName.body).subscribe(
-          data => {
-            this.createAvatarFromBlob(data, i);
-          },
-          error => {
-            console.error(error);
-          }
-        );
-      });
-    }
-
-    private createAvatarFromBlob(image: Blob, i: number) {
-      const reader = new FileReader();
-      reader.addEventListener(
-        'load',
-        () => {
-          // this.postArray[i].userAvatar = reader.result;
-          this.postObject[i].userAvatar = reader.result;
-          console.error('user avatar: ' + this.postObject[i].userAvatar);
+  getAudioFileSource() {
+    // this.getAudioFile().then( () => {
+    return new Promise((resolve, reject) => {
+      this.audioFileService.getFile(this.audioFile.id).subscribe(
+        res => {
+          // const blobUrl = URL.createObjectURL(res);
+          // console.error('audioSrc: ' + URL.createObjectURL(res));
+          this.audioSrc = URL.createObjectURL(res);
+          resolve(URL.createObjectURL(res));
         },
-        false
+        res => {
+          console.error('File resource error: ' + res);
+          reject(res);
+        }
       );
-
-      if (image) {
-        reader.readAsDataURL(image);
-      }
-    }*/
+    });
+    // });
+  }
 }

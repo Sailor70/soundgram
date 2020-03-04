@@ -10,6 +10,8 @@ export interface IPostObject {
   userAvatar: any;
   audioFile: IAudioFile;
   audioSrc: any;
+  imageSrc: any;
+  commentsAvatars: { comment: IComment; avatar: any }[];
   /* post: IPost;
   userAvatar: any;
 

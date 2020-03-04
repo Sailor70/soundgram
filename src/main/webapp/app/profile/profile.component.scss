@@ -3,6 +3,10 @@ input.hidden {
   left: -9999px;
 }
 
+.center {
+  margin: auto;
+}
+
 #profile-image1 {
   cursor: pointer;
 
@@ -17,4 +21,20 @@ input.hidden {
 .bot-border {
   border-bottom: 1px #f8f8f8 solid;
   margin: 5px 0 5px 0;
+}
+
+.profile-window {
+  border-radius: 10px;
+  border: 2px solid #522b72;
+  background-color: #ffffff;
+  // max-width: 600px;
+  min-height: 500px;
+  min-width: 350px;
+  padding-bottom: 20px;
+  padding-top: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  color: #000000;
+  // margin-top: 20px;
+  margin: auto; // środkowanie
 }
