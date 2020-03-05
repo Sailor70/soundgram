@@ -14,6 +14,7 @@ import { IUserExtra } from 'app/shared/model/user-extra.model';
 import { UserExtraService } from 'app/entities/user-extra/user-extra.service';
 import { PostDeleteDialogComponent } from 'app/entities/post/post-delete-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Router } from '@angular/router';
 
 // import { Account } from "app/core/user/user.service";
 
@@ -36,6 +37,7 @@ export class ProfileComponent implements OnInit {
   hasImage: boolean;
   isImageLoading: boolean;
   userExtra: IUserExtra;
+  showPosts = false;
 
   tagForm = this.fb.group({
     tagName: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(50), Validators.pattern('^[_.@A-Za-z0-9-]*$')]]
@@ -49,7 +51,8 @@ export class ProfileComponent implements OnInit {
     private audioFileService: AudioFileService,
     private userExtraService: UserExtraService,
     private fb: FormBuilder,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -183,5 +186,13 @@ export class ProfileComponent implements OnInit {
   delete(post: IPost) {
     const modalRef = this.modalService.open(PostDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.post = post;
+  }
+
+  showPostsSection() {
+    this.showPosts = !this.showPosts;
+  }
+
+  openUserFilesAtMusic() {
+    this.router.navigate(['music/', this.user.id, 'play']); // , this.user.id, 'view'
   }
 }

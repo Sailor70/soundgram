@@ -1,38 +1,39 @@
 <div class="row justify-content-center">
-    <div class="col-md-8 profile-window">
-        <div class="row col-md-12">
-            <div class="row col-md-8 center">
-                <img [src]="avatar"
-                     alt="Place image title"
-                     *ngIf="!isImageLoading && hasImage" class="center profile-image rounded-circle"
-                     style="max-width:120px;width:100%;max-height:120px;height:100%">
-                <h2 class="center"><b>{{user.login}}</b></h2>
-            </div>
-            <div class="col-md-4 center">
-                <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-post"
-                        [routerLink]="['/post/new']">
-                    <fa-icon [icon]="'plus'"></fa-icon>
-                    <span class="hidden-sm-down" jhiTranslate="soundgramApp.post.home.createLabel">
+    <div class="container">
+        <div class="col-md-8 profile-window">
+            <div class="row col-md-12">
+                <div class="row col-md-8 center">
+                    <img [src]="avatar"
+                         alt="Place image title"
+                         *ngIf="!isImageLoading && hasImage" class="center profile-image rounded-circle"
+                         style="max-width:120px;width:100%;max-height:120px;height:100%">
+                    <h2 class="center"><b>{{user.login}}</b></h2>
+                </div>
+                <div class="col-md-4 center">
+                    <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-post"
+                            [routerLink]="['/post/new']">
+                        <fa-icon [icon]="'plus'"></fa-icon>
+                        <span class="hidden-sm-down" jhiTranslate="soundgramApp.post.home.createLabel">
                         Create a new Post
                     </span>
-                </button>
+                    </button>
+                </div>
             </div>
-        </div>
-        <br>
-        <dl class="row">
-            <div class="col-md-4 center">
-                <dt><span jhiTranslate="userManagement.firstName">First Name</span></dt>
-                <dd>{{user?.firstName}}</dd>
-                <dt><span jhiTranslate="userManagement.lastName">Last Name</span></dt>
-                <dd>{{user?.lastName}}</dd>
-            </div>
-            <div class="col-md-4 center">
-                <dt><span jhiTranslate="userManagement.email">Email</span></dt>
-                <dd>{{user?.email}}</dd>
-                <dt><span jhiTranslate="userManagement.langKey">Lang Key</span></dt>
-                <dd>{{user?.langKey}}</dd>
-            </div>
-            <div *ngIf="userExtra" class="col-md-4 center">
+            <br>
+            <dl class="row">
+                <div class="col-md-4 center">
+                    <dt><span jhiTranslate="userManagement.firstName">First Name</span></dt>
+                    <dd>{{user?.firstName}}</dd>
+                    <dt><span jhiTranslate="userManagement.lastName">Last Name</span></dt>
+                    <dd>{{user?.lastName}}</dd>
+                </div>
+                <div class="col-md-4 center">
+                    <dt><span jhiTranslate="userManagement.email">Email</span></dt>
+                    <dd>{{user?.email}}</dd>
+                    <dt><span jhiTranslate="userManagement.langKey">Lang Key</span></dt>
+                    <dd>{{user?.langKey}}</dd>
+                </div>
+                <div *ngIf="userExtra" class="col-md-4 center">
                     <dt><span jhiTranslate="soundgramApp.userExtra.userLocation">User Location</span></dt>
                     <dd>
                         <span>{{userExtra.userLocation}}</span>
@@ -41,30 +42,145 @@
                     <dd>
                         <span>{{userExtra.bio}}</span>
                     </dd>
+                </div>
+            </dl>
+            <div class="row">
+                <div class="center">
+                    <form name="form" role="form" (ngSubmit)="addTagToProfile()" [formGroup]="tagForm" *ngIf="!success">
+                        <div class="form-group">
+                            <div class="input-group w-100 mt-3">
+                                <input type="text" class="form-control" id="tagName" name="tagName"
+                                       formControlName="tagName"
+                                       placeholder="{{ 'Add tag to your profile' }}">
+                                <button type="submit" [disabled]="tagForm.invalid" class="btn btn-primary">Assign tag to
+                                    your profile
+                                </button>
+                            </div>
+                            <div
+                                *ngIf="tagForm.get('tagName').invalid && (tagForm.get('tagName').dirty || tagForm.get('tagName').touched)">
+                                <small class="form-text text-danger" *ngIf="tagForm.get('tagName').errors.required">
+                                    Tag name is required.
+                                </small>
+                                <small class="form-text text-danger" *ngIf="tagForm.get('tagName').errors.minlength">
+                                    Tag is required to be at least 1 character.
+                                </small>
+                                <small class="form-text text-danger" *ngIf="tagForm.get('tagName').errors.maxlength">
+                                    Tag cannot be longer than 50 characters.
+                                </small>
+                                <small class="form-text text-danger" *ngIf="tagForm.get('tagName').errors.pattern">
+                                    Tag can only contain letters and digits.
+                                </small>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </dl>
-        <button type="submit"
-                routerLink="/users"
-                class="btn btn-info">
-            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
-        </button>
-        <button type="button"
-                [routerLink]="['/account/settings']"
-                class="btn btn-primary">
-            <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span
-            jhiTranslate="entity.action.edit">Edit your data</span>
-        </button>
-
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="btn-group-vertical btn-group">
+                        <button type="submit"
+                                routerLink="/users"
+                                class="btn btn-info">
+                            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span
+                            jhiTranslate="entity.action.back">Back</span>
+                        </button>
+                        <button type="button"
+                                [routerLink]="['/account/settings']"
+                                class="btn btn-primary">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span
+                            jhiTranslate="entity.action.edit">Edit your data</span>
+                        </button>
+                        <button class="btn btn-primary" (click)="showPostsSection()">
+                            <fa-icon [icon]="'window-maximize'"></fa-icon>
+                            <span class="hidden-sm-down">Show your posts</span>
+                        </button>
+                        <button type="button" (click)="openUserFilesAtMusic()"
+                                class="btn btn-primary">
+                            <fa-icon [icon]="'music'"></fa-icon>&nbsp;<span>Play your music</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="panel" id="result_panel">
+                        <div class="panel-heading"><h5 class="panel-title">User tags</h5>
+                        </div>
+                        <div class="panel-body">
+                            <ul class="list-group">
+                                <li class="list-group-item" *ngFor="let tag of userTags">
+                                    <a [routerLink]="['/tag', tag.id, 'view' ]">{{tag.name}}</a>&nbsp;&nbsp;
+                                    <span class="right"><fa-icon [icon]="'users'"></fa-icon>
+                                        {{tag.users.length}}</span>&nbsp;&nbsp;
+                                    <button type="submit" (click)="deleteTagFromProfile(tag)"
+                                            class="btn btn-danger btn-sm float-right">
+                                        <fa-icon [icon]="'times'"></fa-icon>
+                                        <span class="d-none d-md-inline">Delete tag</span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" *ngIf="showPosts">
+                    <div class="table-responsive" *ngIf="userPosts?.length > 0">
+                        <table class="table table-striped" aria-describedby="page-heading">
+                            <thead>
+                            <tr>
+                                <th scope="col"><span jhiTranslate="global.field.id">ID</span></th>
+                                <th scope="col"><span jhiTranslate="soundgramApp.post.postContent">Post Content</span></th>
+                                <th scope="col"><span jhiTranslate="soundgramApp.post.date">Date</span></th>
+                                <th scope="col"><span jhiTranslate="soundgramApp.post.user">User</span></th>
+                                <th scope="col"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let post of userPosts">
+                                <td><a [routerLink]="['/post', post.id, 'view' ]">{{post.id}}</a></td>
+                                <td>{{post.postContent}}</td>
+                                <td>{{post.date | date:'medium'}}</td>
+                                <td>
+                                    <a [routerLink]="['/', post.user?.login, 'view']">{{post.user?.login}}</a>
+                                </td>
+                                <td class="text-right">
+                                    <div class="btn-group">
+                                        <button type="submit"
+                                                [routerLink]="['/post', post.id, 'view' ]"
+                                                class="btn btn-info btn-sm">
+                                            <fa-icon [icon]="'eye'"></fa-icon>
+                                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                                        </button>
+                                        <button type="submit"
+                                                [routerLink]="['/post', post.id, 'edit']"
+                                                class="btn btn-primary btn-sm">
+                                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                                        </button>
+                                        <button type="submit" (click)="delete(post)"
+                                                class="btn btn-danger btn-sm">
+                                            <fa-icon [icon]="'times'"></fa-icon>
+                                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>
 
-<h4>Add tags to your profile</h4>
+<!--<h4>Add tags to your profile</h4>
 
 <form name="form" role="form" (ngSubmit)="addTagToProfile()" [formGroup]="tagForm" *ngIf="!success">
     <div class="form-group">
-        <label class="form-control-label" for="tagName">Enter new Tag</label>
-        <input type="text" class="form-control" id="tagName" name="tagName" formControlName="tagName">
+        <div class="input-group w-100 mt-3">
+            <input type="text" class="form-control" id="tagName" name="tagName" formControlName="tagName"
+                  placeholder="{{ 'Add tag to your profile' }}">
+            <button type="submit" [disabled]="tagForm.invalid" class="btn btn-primary">Assign tag to your profile</button>
+        </div>
         <div *ngIf="tagForm.get('tagName').invalid && (tagForm.get('tagName').dirty || tagForm.get('tagName').touched)">
             <small class="form-text text-danger" *ngIf="tagForm.get('tagName').errors.required">
                 Tag name is required.
@@ -80,10 +196,10 @@
             </small>
         </div>
     </div>
-    <button type="submit" [disabled]="tagForm.invalid" class="btn btn-primary">Assign tag to your profile</button>
-</form>
+   &lt;!&ndash; <button type="submit" [disabled]="tagForm.invalid" class="btn btn-primary">Assign tag to your profile</button>&ndash;&gt;
+</form>-->
 
-<h3>User tags:</h3>
+<!--<h3>User tags:</h3>
 <p></p>
 
 <div class="table-responsive" *ngIf="userTags?.length > 0">
@@ -107,18 +223,18 @@
             </td>
             <td class="text-right">
                 <div class="btn-group">
-                    <!--                    <button type="submit"-->
-                    <!--                            [routerLink]="['/tag', tag.id, 'view' ]"-->
-                    <!--                            class="btn btn-info btn-sm">-->
-                    <!--                        <fa-icon [icon]="'eye'"></fa-icon>-->
-                    <!--                        <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>-->
-                    <!--                    </button>-->
-                    <!--                    <button type="submit"-->
-                    <!--                            [routerLink]="['/tag', tag.id, 'edit']"-->
-                    <!--                            class="btn btn-primary btn-sm">-->
-                    <!--                        <fa-icon [icon]="'pencil-alt'"></fa-icon>-->
-                    <!--                        <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>-->
-                    <!--                    </button>-->
+                    &lt;!&ndash;                    <button type="submit"&ndash;&gt;
+                    &lt;!&ndash;                            [routerLink]="['/tag', tag.id, 'view' ]"&ndash;&gt;
+                    &lt;!&ndash;                            class="btn btn-info btn-sm">&ndash;&gt;
+                    &lt;!&ndash;                        <fa-icon [icon]="'eye'"></fa-icon>&ndash;&gt;
+                    &lt;!&ndash;                        <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>&ndash;&gt;
+                    &lt;!&ndash;                    </button>&ndash;&gt;
+                    &lt;!&ndash;                    <button type="submit"&ndash;&gt;
+                    &lt;!&ndash;                            [routerLink]="['/tag', tag.id, 'edit']"&ndash;&gt;
+                    &lt;!&ndash;                            class="btn btn-primary btn-sm">&ndash;&gt;
+                    &lt;!&ndash;                        <fa-icon [icon]="'pencil-alt'"></fa-icon>&ndash;&gt;
+                    &lt;!&ndash;                        <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>&ndash;&gt;
+                    &lt;!&ndash;                    </button>&ndash;&gt;
                     <button type="submit" (click)="deleteTagFromProfile(tag)"
                             class="btn btn-danger btn-sm">
                         <fa-icon [icon]="'times'"></fa-icon>
@@ -129,7 +245,7 @@
         </tr>
         </tbody>
     </table>
-</div>
+</div>-->
 
 <h3>User posts:</h3>
 <p></p>

@@ -30,6 +30,7 @@ export class MusicComponent implements OnInit, OnDestroy {
 
   state: StreamState;
   currentFile: IAudioFile;
+  userId: any;
 
   constructor(
     protected audioFileService: AudioFileService,
@@ -47,10 +48,25 @@ export class MusicComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.activatedRoute.data.subscribe(({ userId }) => {
+      this.userId = userId; // .body ? userId.body : userId;
+      console.error('userId: ' + this.userId);
+    });
     this.accountService.identity().subscribe((account: Account) => {
       this.account = account;
       this.userService.find(this.account.login).subscribe(res => {
         this.user = res;
+        if (this.userId) {
+          this.loadUserFiles();
+        }
+        // this.activatedRoute.queryParams.subscribe(params => {
+        //   if (params['functionToExecute'] === 1) {
+        //     console.error('function to exec 1');
+        //     this.loadUserFiles();
+        //   } else {
+        //     console.error('function to exec differs');
+        //   }
+        // });
       });
     });
     this.loadLikedFiles();
@@ -97,7 +113,7 @@ export class MusicComponent implements OnInit, OnDestroy {
       this.state.playClicked = false; // zatrzymanie auto odtwarzania po zmianie listy odtwarzania
     }
     this.likedAudioDisplayed = false;
-    this.audioFileService.getUserFiles(this.user.id).subscribe((res: HttpResponse<IAudioFile[]>) => {
+    this.audioFileService.getUserFiles(this.userId ? this.userId : this.user.id).subscribe((res: HttpResponse<IAudioFile[]>) => {
       this.audioFiles = res.body;
       this.currentSearch = '';
       this.initFileAndService();
