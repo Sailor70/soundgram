@@ -120,7 +120,7 @@ public class PostResource {
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of posts in body.
      */
-    @GetMapping("/posts")
+/*    @GetMapping("/posts")
     public ResponseEntity<List<Post>> getAllPosts(Pageable pageable, @RequestParam(required = false, defaultValue = "false") boolean eagerload) {
         log.debug("REST request to get a page of Posts");
         log.debug("eagerLoad" + eagerload);
@@ -132,9 +132,46 @@ public class PostResource {
         //}
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(allPosts);
+    }*/
+
+    @GetMapping("/posts")
+    public ResponseEntity<List<Post>> getAllPosts(Pageable pageable, @RequestParam(required = false, defaultValue = "true") boolean eagerload) {
+        log.debug("REST request to get a page of Posts");
+        Page<Post> page;
+        if (eagerload) { // eagerload to ładowanie zachłanne - pobieramy wszystkie dane na raz
+            log.debug("eagerload: " + eagerload);
+            page = postRepository.findAllWithEagerRelationships(pageable); //ładuje posty razem z tagami
+        } else {
+            log.debug("eagerload else: " + eagerload);
+            page = postRepository.findAll(pageable); // bez tagów
+        }
+        log.debug("page total elements " + page.getTotalElements() + " pages: " + page.getTotalPages());
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     @GetMapping("/posts-followed")
+    public ResponseEntity<List<Post>> getFollowedUsersPostsPage(Pageable pageable, @RequestParam(required = false, defaultValue = "true") boolean eagerload) {
+        log.debug("REST request to get a page of followed users Posts");
+        List<FollowedUser> allFU = followedUserRepository.findByUserIsCurrentUser();
+        List<Long> followedUsersIds = new ArrayList<>();
+        for(FollowedUser fu : allFU){
+            followedUsersIds.add(fu.getFollowedUserId());
+        }
+        Page<Post> page;
+        if (eagerload) { // eagerload to ładowanie zachłanne - pobieramy wszystkie dane na raz
+            log.debug("eagerload: " + eagerload);
+            page = postRepository.findAllWithEagerRelationshipsAndFollowedUser(pageable, followedUsersIds);
+        } else {
+            log.debug("eagerload else: " + eagerload);
+            page = postRepository.findAll(pageable); // bez tagów
+        }
+        log.debug("page total elements " + page.getTotalElements() + " pages: " + page.getTotalPages());
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+/*    @GetMapping("/posts-followed")
     public ResponseEntity<List<Post>> getFollowedUsersPosts() {
         log.debug("REST request to get a page of followed users Posts");
         List<FollowedUser> allFU = followedUserRepository.findByUserIsCurrentUser();
@@ -154,7 +191,7 @@ public class PostResource {
         }
         // HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().body(followedPosts);
-    }
+    }*/
 
     @GetMapping("/posts-user/{login:" + Constants.LOGIN_REGEX + "}")
     public ResponseEntity<List<Post>> getUserPosts(@PathVariable String login) {

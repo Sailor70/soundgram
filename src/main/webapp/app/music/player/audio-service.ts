@@ -8,7 +8,7 @@ import { StreamState } from 'app/music/player/stream-state.model';
   providedIn: 'root'
 })
 export class AudioService {
-  private stop$ = new Subject();
+  private stop$ = new Subject(); // specjalny typ observable
   private audioObj = new Audio();
   audioEvents = ['ended', 'error', 'play', 'playing', 'pause', 'timeupdate', 'canplay', 'loadedmetadata', 'loadstart'];
   private state: StreamState = {
@@ -64,7 +64,7 @@ export class AudioService {
   }
 
   playStream(url) {
-    return this.streamObservable(url).pipe(takeUntil(this.stop$));
+    return this.streamObservable(url).pipe(takeUntil(this.stop$)); // emituje wartości emitowane przez source observable (streamObseravble) dopóki this.stop$ nie wyemituje czegoś nowego
   }
 
   play() {

@@ -33,7 +33,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   modalRef: NgbModalRef;
 
   posts: IPost[] = [];
-  // eventSubscriber: Subscription;
+
+  eventSubscriber: Subscription;
   itemsPerPage: number;
   links: any;
   page: any;
@@ -41,12 +42,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   reverse: any;
   totalItems: number;
   currentSearch: string;
+
   hasFollowedUsers = true;
   userLogged = false;
-
   followedUsersPosts = true;
   userTags: ITag[];
-
   avatars: any[];
   postObjects: IPostObject[] = [];
 
@@ -82,8 +82,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.postObjects = null;
+    // this.postObjects = null;
     this.identityAndGetFollowed();
+    this.registerChangeInPosts();
     this.registerAuthenticationSuccess();
     this.loginService.isLoggedIn.subscribe(isLogged => {
       this.userLogged = isLogged;
@@ -114,6 +115,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
+  registerChangeInPosts() {
+    this.eventSubscriber = this.eventManager.subscribe('postListModification', () => this.reset());
+  }
+
   registerAuthenticationSuccess() {
     this.authSubscription = this.eventManager.subscribe('authenticationSuccess', () => {
       this.accountService.identity().subscribe(account => {
@@ -134,6 +139,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.authSubscription) {
       this.eventManager.destroy(this.authSubscription);
     }
+    this.eventManager.destroy(this.eventSubscriber);
   }
 
   loadFollowed() {
@@ -149,18 +155,17 @@ export class HomeComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.hasFollowedUsers) {
-      this.postService.getFollowed().subscribe(res => {
-        this.posts = res.body;
-        // this.postWindowService.getPostObject(this.posts[0]).subscribe({
-        //   next: value => {
-        //     console.error(value.audioSrc);
-        //     this.postObject = value;
-        //     // console.error('post object: ' + this.postObject.post.user.login);
-        //   },
-        //   complete: () => console.error('This is how it ends!')
-        // });
-        this.getPostObjectFromService();
-      });
+      this.postService
+        .getFollowed({
+          page: this.page,
+          size: this.itemsPerPage,
+          sort: this.sort()
+        })
+        .subscribe(res => {
+          this.paginatePosts(res.body, res.headers);
+          // this.posts = res.body;
+          // this.getPostObjectFromService();
+        });
     }
     // this.getAvatars();
   }
@@ -177,6 +182,18 @@ export class HomeComponent implements OnInit, OnDestroy {
           console.error('post object user: ' + this.postObjects[i].post.user.login);
         }
         // complete: () => console.error('This is how it ends!')
+      });
+    }
+    // this.checkPostObjectValues();
+  }
+
+  pushPostObject(posts: IPost[]) {
+    for (let i = 0; i < posts.length; i++) {
+      this.postWindowService.getPostObject(posts[i]).subscribe({
+        next: value => {
+          this.postObjects.push(value);
+        },
+        complete: () => console.error('Pushed post of user: ' + posts[i].user.login)
       });
     }
     // this.checkPostObjectValues();
@@ -231,6 +248,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   reset() {
     this.page = 0;
     this.posts = [];
+    this.postObjects = [];
     this.loadFollowed();
   }
 
@@ -241,6 +259,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   clear() {
     this.posts = [];
+    this.postObjects = [];
     this.links = {
       last: 0
     };
@@ -256,6 +275,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       return this.clear();
     }
     this.posts = [];
+    this.postObjects = [];
     this.links = {
       last: 0
     };
@@ -289,16 +309,20 @@ export class HomeComponent implements OnInit, OnDestroy {
       // console.error("post tags: " + data[i].user.login);
       this.posts.push(data[i]);
     }
+    this.pushPostObject(data);
+    // this.getPostObjectFromService();
   }
 
   loadFollowedUsersPosts() {
     this.posts = [];
+    this.postObjects = [];
     this.followedUsersPosts = true;
     this.loadFollowed();
   }
 
   loadFollowedTagsPosts() {
     this.posts = [];
+    this.postObjects = [];
     this.followedUsersPosts = false;
     this.tagService.findUserTags(this.account.login).subscribe(res => {
       this.userTags = res.body;

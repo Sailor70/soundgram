@@ -19,8 +19,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByUserIsCurrentUser();
 
     @Query(value = "select distinct post from Post post left join fetch post.tags",
-        countQuery = "select count(distinct post) from Post post")
+            countQuery = "select count(distinct post) from Post post")
     Page<Post> findAllWithEagerRelationships(Pageable pageable);
+
+    @Query(value = "select distinct post from Post post left join fetch post.tags where post.user.id in(:followedUsersIds)",
+        countQuery = "select count(distinct post) from Post post")
+    Page<Post> findAllWithEagerRelationshipsAndFollowedUser(Pageable pageable, @Param("followedUsersIds") List<Long> followedUsersIds);
 
     @Query("select distinct post from Post post left join fetch post.tags")
     List<Post> findAllWithEagerRelationships();

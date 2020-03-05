@@ -47,9 +47,19 @@ export class PostService {
       .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
   }
 
-  getFollowed(): Observable<EntityArrayResponseType> {
+  /*
+  queryPage(req?: any): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
     return this.http
-      .get<IPost[]>(this.resourceUrl + '-followed', { observe: 'response' })
+      .get<IPost[]>(this.resourceUrl + '-page', { params: options, observe: 'response' })
+      .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
+  }
+*/
+
+  getFollowed(req?: any): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http
+      .get<IPost[]>(this.resourceUrl + '-followed', { params: options, observe: 'response' })
       .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
   }
 
