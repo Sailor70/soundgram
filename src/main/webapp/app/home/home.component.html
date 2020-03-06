@@ -110,66 +110,16 @@
                 <span jhiTranslate="soundgramApp.post.home.notFound">No posts found</span>
             </div>
 
-            <!--<div class="table-responsive" *ngIf="posts?.length > 0">
-                <table class="table table-striped" aria-describedby="page-heading">
-                    <thead>
-                    <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="reset.bind(this)">
-                        <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span>
-                            <fa-icon [icon]="'sort'"></fa-icon>
-                        </th>
-                        <th scope="col" jhiSortBy="postContent"><span jhiTranslate="soundgramApp.post.postContent">Post Content</span>
-                            <fa-icon [icon]="'sort'"></fa-icon>
-                        </th>
-                        <th scope="col" jhiSortBy="date"><span jhiTranslate="soundgramApp.post.date">Date</span>
-                            <fa-icon [icon]="'sort'"></fa-icon>
-                        </th>
-                        <th scope="col" jhiSortBy="user.login"><span
-                            jhiTranslate="soundgramApp.post.user">User</span>
-                            <fa-icon [icon]="'sort'"></fa-icon>
-                        </th>
-                        <th scope="col"><span>Tags</span></th>
-                        <th scope="col"></th>
-                    </tr>
-                    </thead>
-                    <tbody infinite-scroll (scrolled)="loadPage(page + 1)"
-                           [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
-                    <tr *ngFor="let post of posts ;trackBy: trackId">
-                        <td><a [routerLink]="['/post', post.id, 'view' ]">{{post.id}}</a></td>
-                        <td>{{post.postContent}}</td>
-                        <td>{{post.date | date:'medium'}}</td>
-                        <td><a [routerLink]="['/', post.user.login, 'view']">{{post.user?.login}}</a></td>
-                        <td>
-                                <span *ngFor="let tag of post.tags; let last = last">
-                                    <a [routerLink]="['/tag', tag?.id, 'view' ]">{{tag.name}}</a>{{last ? '' : ', '}}
-                                </span>
-                        </td>
-                        <td class="text-right">
-                            <div class="btn-group">
-                                <button type="submit"
-                                        [routerLink]="['/post', post.id, 'view' ]"
-                                        class="btn btn-info btn-sm">
-                                    <fa-icon [icon]="'eye'"></fa-icon>
-                                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-                                </button>
-                                &lt;!&ndash;                                    <button type="submit"
-                                                                            [routerLink]="['/post', post.id, 'edit']"
-                                                                            class="btn btn-primary btn-sm">
-                                                                        <fa-icon [icon]="'pencil-alt'"></fa-icon>
-                                                                        <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-                                                                    </button>
-                                                                    <button type="submit" (click)="delete(post)"
-                                                                            class="btn btn-danger btn-sm">
-                                                                        <fa-icon [icon]="'times'"></fa-icon>
-                                                                        <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-                                                                    </button>&ndash;&gt;
-                            </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>-->
+            <div *ngIf="posts.length > 0">
+                <div infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
+                    <jhi-post-object *ngFor="let post of posts"
+                                     [post]="post"
+                    >
+                    </jhi-post-object>
+                </div>
+            </div>
 
-            <div *ngIf="postObjects?.length > 0">
+<!--            <div *ngIf="postObjects?.length > 0">
                 <div infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
                     <div *ngFor="let postObject of postObjects">
                         <div class="container posts-content">
@@ -211,24 +161,24 @@
                                                                 <span>{{postObject.audioFile.title}}</span>
                                                             </div>
                                                             <input #slide type="range" class="slider" min="0">
-                                                            <!--                                                               [max]="state?.duration" step="0.1"-->
-                                                            <!--                                                               [value]="state.currentTime ? state.currentTime : 0"-->
-                                                            <!--                                                               (change)="onSliderChangeEnd(slide)">-->
+                                                            &lt;!&ndash;                                                               [max]="state?.duration" step="0.1"&ndash;&gt;
+                                                            &lt;!&ndash;                                                               [value]="state.currentTime ? state.currentTime : 0"&ndash;&gt;
+                                                            &lt;!&ndash;                                                               (change)="onSliderChangeEnd(slide)">&ndash;&gt;
                                                             <div class="col-md-6" style="text-align: left">
-                                                                <!--                                                            {{ state?.readableCurrentTime }}-->
+                                                                &lt;!&ndash;                                                            {{ state?.readableCurrentTime }}&ndash;&gt;
                                                             </div>
                                                             <div class="col-md-6" style="text-align: right">
-                                                                <!--                                                            {{ state?.readableDuration }}-->
+                                                                &lt;!&ndash;                                                            {{ state?.readableDuration }}&ndash;&gt;
                                                             </div>
                                                         </div>
                                                         <div class="row center">
                                                             <button type="button" class="btn btn-info center">
-                                                                <!--                                                                (click)="play()" [disabled]="state?.error"-->
-                                                                <!--                                                                *ngIf="!state?.playing">-->
+                                                                &lt;!&ndash;                                                                (click)="play()" [disabled]="state?.error"&ndash;&gt;
+                                                                &lt;!&ndash;                                                                *ngIf="!state?.playing">&ndash;&gt;
                                                                 <fa-icon [icon]="'play'"></fa-icon>
                                                             </button>
                                                             <button type="button" class="btn btn-info center">
-                                                                <!--                                                                (click)="pause()" *ngIf="state?.playing">-->
+                                                                &lt;!&ndash;                                                                (click)="pause()" *ngIf="state?.playing">&ndash;&gt;
                                                                 <fa-icon [icon]="'pause'"></fa-icon>
                                                             </button>
                                                         </div>
@@ -244,10 +194,10 @@
                                         <div class="card-footer">
                                             <div class="row">
                                                 <div class="center">
-                                                    <!--      <button class="btn btn-primary" (click)="toggleComment()">
+                                                    &lt;!&ndash;      <button class="btn btn-primary" (click)="toggleComment()">
                                                               <fa-icon [icon]="'pen'"></fa-icon>
                                                               <span class="hidden-sm-down">Write a comment</span>
-                                                          </button>-->
+                                                          </button>&ndash;&gt;
                                                     <button type="submit"
                                                             [routerLink]="['/post', postObject.post.id, 'view' ]"
                                                             class="btn btn-info btn-sm">
@@ -258,52 +208,52 @@
                                                 </div>
                                                 <div class="center">
                                                     <button class="btn btn-primary">
-                                                        <!--(click)="likeOrDislikeAudioFile()">-->
-                                                        <!--                                                    <div *ngIf="liked">-->
-                                                        <!--                                                        <fa-icon [icon]="'heart-broken'"></fa-icon>-->
-                                                        <!--                                                        <span class="hidden-sm-down">{{likeBtnText}}</span>-->
-                                                        <!--                                                    </div>-->
+                                                        &lt;!&ndash;(click)="likeOrDislikeAudioFile()">&ndash;&gt;
+                                                        &lt;!&ndash;                                                    <div *ngIf="liked">&ndash;&gt;
+                                                        &lt;!&ndash;                                                        <fa-icon [icon]="'heart-broken'"></fa-icon>&ndash;&gt;
+                                                        &lt;!&ndash;                                                        <span class="hidden-sm-down">{{likeBtnText}}</span>&ndash;&gt;
+                                                        &lt;!&ndash;                                                    </div>&ndash;&gt;
                                                         <div>
                                                             <fa-icon [icon]="'star'"></fa-icon>
                                                             <span class="hidden-sm-down">Like this audio</span>
                                                         </div>
                                                     </button>
                                                 </div>
-                                                <!--                                            <div class="center">-->
-                                                <!--                                                <button type="submit"-->
-                                                <!--                                                        (click)="previousState()"-->
-                                                <!--                                                        class="btn btn-info">-->
-                                                <!--                                                    <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span-->
-                                                <!--                                                    jhiTranslate="entity.action.back"> Back</span>-->
-                                                <!--                                                </button>-->
-                                                <!--                                                <div *ngIf="currentUser">-->
-                                                <!--                                                    <button type="button"-->
-                                                <!--                                                            [routerLink]="['/post', post.id, 'edit']"-->
-                                                <!--                                                            class="btn btn-primary"-->
-                                                <!--                                                            [hidden]="currentUser.login !== post.user.login">-->
-                                                <!--                                                        <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span-->
-                                                <!--                                                        jhiTranslate="entity.action.edit"> Edit</span>-->
-                                                <!--                                                    </button>-->
-                                                <!--                                                </div>-->
-                                                <!--                                            </div>-->
+                                                &lt;!&ndash;                                            <div class="center">&ndash;&gt;
+                                                &lt;!&ndash;                                                <button type="submit"&ndash;&gt;
+                                                &lt;!&ndash;                                                        (click)="previousState()"&ndash;&gt;
+                                                &lt;!&ndash;                                                        class="btn btn-info">&ndash;&gt;
+                                                &lt;!&ndash;                                                    <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span&ndash;&gt;
+                                                &lt;!&ndash;                                                    jhiTranslate="entity.action.back"> Back</span>&ndash;&gt;
+                                                &lt;!&ndash;                                                </button>&ndash;&gt;
+                                                &lt;!&ndash;                                                <div *ngIf="currentUser">&ndash;&gt;
+                                                &lt;!&ndash;                                                    <button type="button"&ndash;&gt;
+                                                &lt;!&ndash;                                                            [routerLink]="['/post', post.id, 'edit']"&ndash;&gt;
+                                                &lt;!&ndash;                                                            class="btn btn-primary"&ndash;&gt;
+                                                &lt;!&ndash;                                                            [hidden]="currentUser.login !== post.user.login">&ndash;&gt;
+                                                &lt;!&ndash;                                                        <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span&ndash;&gt;
+                                                &lt;!&ndash;                                                        jhiTranslate="entity.action.edit"> Edit</span>&ndash;&gt;
+                                                &lt;!&ndash;                                                    </button>&ndash;&gt;
+                                                &lt;!&ndash;                                                </div>&ndash;&gt;
+                                                &lt;!&ndash;                                            </div>&ndash;&gt;
                                             </div>
-                                            <!--                                        <div class="row" *ngIf="showCommentWindow">-->
-                                            <!--                                            <div class="card comment-card my-4">-->
-                                            <!--                                                <h6 class="card-header">Leave a Comment:</h6>-->
-                                            <!--                                                <div class="card-body">-->
-                                            <!--                                                    <form>-->
-                                            <!--                                                        <div class="form-group">-->
-                                            <!--                                                    <textarea [(ngModel)]="commentContent" name="txtarea"-->
-                                            <!--                                                              class="form-control" rows="3"></textarea>-->
-                                            <!--                                                        </div>-->
-                                            <!--                                                        <button class="btn btn-primary" (click)="addComment()">-->
-                                            <!--                                                            <fa-icon [icon]="'plus'"></fa-icon>-->
-                                            <!--                                                            <span class="hidden-sm-down">Submit comment</span>-->
-                                            <!--                                                        </button>-->
-                                            <!--                                                    </form>-->
-                                            <!--                                                </div>-->
-                                            <!--                                            </div>-->
-                                            <!--                                        </div>-->
+                                            &lt;!&ndash;                                        <div class="row" *ngIf="showCommentWindow">&ndash;&gt;
+                                            &lt;!&ndash;                                            <div class="card comment-card my-4">&ndash;&gt;
+                                            &lt;!&ndash;                                                <h6 class="card-header">Leave a Comment:</h6>&ndash;&gt;
+                                            &lt;!&ndash;                                                <div class="card-body">&ndash;&gt;
+                                            &lt;!&ndash;                                                    <form>&ndash;&gt;
+                                            &lt;!&ndash;                                                        <div class="form-group">&ndash;&gt;
+                                            &lt;!&ndash;                                                    <textarea [(ngModel)]="commentContent" name="txtarea"&ndash;&gt;
+                                            &lt;!&ndash;                                                              class="form-control" rows="3"></textarea>&ndash;&gt;
+                                            &lt;!&ndash;                                                        </div>&ndash;&gt;
+                                            &lt;!&ndash;                                                        <button class="btn btn-primary" (click)="addComment()">&ndash;&gt;
+                                            &lt;!&ndash;                                                            <fa-icon [icon]="'plus'"></fa-icon>&ndash;&gt;
+                                            &lt;!&ndash;                                                            <span class="hidden-sm-down">Submit comment</span>&ndash;&gt;
+                                            &lt;!&ndash;                                                        </button>&ndash;&gt;
+                                            &lt;!&ndash;                                                    </form>&ndash;&gt;
+                                            &lt;!&ndash;                                                </div>&ndash;&gt;
+                                            &lt;!&ndash;                                            </div>&ndash;&gt;
+                                            &lt;!&ndash;                                        </div>&ndash;&gt;
                                             <br><br>
                                             <div class="table-responsive" *ngIf="postObject.commentsAvatars.length > 0">
                                                 <div *ngFor="let commentAvatar of postObject.commentsAvatars">
@@ -318,25 +268,25 @@
                                                         <div class="col-md-6">
                                                             <span>{{commentAvatar.comment.textContent}}</span>
                                                         </div>
-                                                        <!--                                                    <div *ngIf="currentUser" class="col-md-3">-->
-                                                        <!--                                                        <div-->
-                                                        <!--                                                            [hidden]="currentUser.login !== commentAvatar.comment.user.login">-->
-                                                        <!--                                                            <button type="submit"-->
-                                                        <!--                                                                    [routerLink]="['/comment', commentAvatar.comment.id, 'edit']"-->
-                                                        <!--                                                                    class="btn btn-primary btn-sm">-->
-                                                        <!--                                                                <fa-icon [icon]="'pencil-alt'"></fa-icon>-->
-                                                        <!--                                                                <span class="d-none d-md-inline"-->
-                                                        <!--                                                                      jhiTranslate="entity.action.edit">Edit</span>-->
-                                                        <!--                                                            </button>-->
-                                                        <!--                                                            <button type="submit"-->
-                                                        <!--                                                                    (click)="deleteComment(commentAvatar.comment)"-->
-                                                        <!--                                                                    class="btn btn-danger btn-sm">-->
-                                                        <!--                                                                <fa-icon [icon]="'times'"></fa-icon>-->
-                                                        <!--                                                                <span class="d-none d-md-inline"-->
-                                                        <!--                                                                      jhiTranslate="entity.action.delete">Delete</span>-->
-                                                        <!--                                                            </button>-->
-                                                        <!--                                                        </div>-->
-                                                        <!--                                                    </div>-->
+                                                        &lt;!&ndash;                                                    <div *ngIf="currentUser" class="col-md-3">&ndash;&gt;
+                                                        &lt;!&ndash;                                                        <div&ndash;&gt;
+                                                        &lt;!&ndash;                                                            [hidden]="currentUser.login !== commentAvatar.comment.user.login">&ndash;&gt;
+                                                        &lt;!&ndash;                                                            <button type="submit"&ndash;&gt;
+                                                        &lt;!&ndash;                                                                    [routerLink]="['/comment', commentAvatar.comment.id, 'edit']"&ndash;&gt;
+                                                        &lt;!&ndash;                                                                    class="btn btn-primary btn-sm">&ndash;&gt;
+                                                        &lt;!&ndash;                                                                <fa-icon [icon]="'pencil-alt'"></fa-icon>&ndash;&gt;
+                                                        &lt;!&ndash;                                                                <span class="d-none d-md-inline"&ndash;&gt;
+                                                        &lt;!&ndash;                                                                      jhiTranslate="entity.action.edit">Edit</span>&ndash;&gt;
+                                                        &lt;!&ndash;                                                            </button>&ndash;&gt;
+                                                        &lt;!&ndash;                                                            <button type="submit"&ndash;&gt;
+                                                        &lt;!&ndash;                                                                    (click)="deleteComment(commentAvatar.comment)"&ndash;&gt;
+                                                        &lt;!&ndash;                                                                    class="btn btn-danger btn-sm">&ndash;&gt;
+                                                        &lt;!&ndash;                                                                <fa-icon [icon]="'times'"></fa-icon>&ndash;&gt;
+                                                        &lt;!&ndash;                                                                <span class="d-none d-md-inline"&ndash;&gt;
+                                                        &lt;!&ndash;                                                                      jhiTranslate="entity.action.delete">Delete</span>&ndash;&gt;
+                                                        &lt;!&ndash;                                                            </button>&ndash;&gt;
+                                                        &lt;!&ndash;                                                        </div>&ndash;&gt;
+                                                        &lt;!&ndash;                                                    </div>&ndash;&gt;
                                                     </div>
                                                 </div>
                                             </div>
@@ -347,7 +297,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>-->
         </div>
     </div>
 </div>

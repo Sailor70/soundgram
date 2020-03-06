@@ -5,9 +5,10 @@ import { RoutingUsers, UsersComponent } from './';
 import { UserDetailComponent } from './user-detail/user-detail.component';
 import { CommentDeleteDialogComponent } from 'app/entities/comment/comment-delete-dialog.component';
 import { SoundgramCommentModule } from 'app/entities/comment/comment.module';
+import { PostObjectModule } from 'app/shared/postObject/post-object.module';
 
 @NgModule({
-  imports: [SoundgramSharedModule, RoutingUsers, SoundgramCommentModule], // RouterModule.forRoot([USERS_ROUTE], { useHash: true })
+  imports: [SoundgramSharedModule, RoutingUsers, SoundgramCommentModule, PostObjectModule], // RouterModule.forRoot([USERS_ROUTE], { useHash: true })
   declarations: [UsersComponent, UserDetailComponent],
   entryComponents: [CommentDeleteDialogComponent],
   providers: [],

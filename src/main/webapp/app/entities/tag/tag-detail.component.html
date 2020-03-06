@@ -35,11 +35,11 @@
                 <fa-icon [icon]="'forward'"></fa-icon>&nbsp;<span>Add tag to followed</span>
             </button>
 
-            <h2>Posts that contains this tag:</h2>
+            <h2 class="text-center padding-top">Posts that contains this tag:</h2>
             <div class="alert alert-warning" *ngIf="posts?.length === 0">
                 <span jhiTranslate="soundgramApp.post.home.notFound">No posts found</span>
             </div>
-            <div class="table-responsive" *ngIf="posts?.length > 0">
+            <!--<div class="table-responsive" *ngIf="posts?.length > 0">
                 <table class="table table-striped" aria-describedby="page-heading">
                     <thead>
                     <tr>
@@ -75,7 +75,15 @@
                     </tr>
                     </tbody>
                 </table>
-            </div>
+            </div>-->
         </div>
+    </div>
+</div>
+<div *ngIf="posts.length > 0">
+    <div>
+        <jhi-post-object *ngFor="let post of posts"
+                         [post]="post"
+        >
+        </jhi-post-object>
     </div>
 </div>

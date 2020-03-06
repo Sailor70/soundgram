@@ -6,11 +6,11 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
-export class MusicResolve implements Resolve<Observable<number>> {
+export class MusicResolve implements Resolve<Observable<string>> {
   constructor() {}
 
   resolve(route: ActivatedRouteSnapshot) {
-    return route.params['userId'] ? route.params['userId'] : null;
+    return route.params['userLogin'] ? route.params['userLogin'] : null;
     // console.error('userId: ' + id);
     // return id;
   }
@@ -27,10 +27,10 @@ export const MUSIC_ROUTE: Routes = [
     canActivate: [UserRouteAccessService]
   },
   {
-    path: 'music/:userId/play',
+    path: 'music/:userLogin/play',
     component: MusicComponent,
     resolve: {
-      userId: MusicResolve
+      userLogin: MusicResolve
     },
     data: {
       pageTitle: 'music.title'

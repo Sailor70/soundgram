@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { User } from 'app/core/user/user.model';
 import { IUserExtra } from 'app/shared/model/user-extra.model';
 import { UserExtraService } from 'app/entities/user-extra/user-extra.service';
@@ -30,6 +30,8 @@ export class UserDetailComponent implements OnInit {
   hasImage: boolean;
   isImageLoading: boolean;
 
+  showPosts = false;
+
   constructor(
     private route: ActivatedRoute,
     private userExtraService: UserExtraService,
@@ -37,7 +39,8 @@ export class UserDetailComponent implements OnInit {
     private postService: PostService,
     private audioFileService: AudioFileService,
     protected accountService: AccountService,
-    protected userService: UserService
+    protected userService: UserService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -102,5 +105,13 @@ export class UserDetailComponent implements OnInit {
 
   previousState() {
     window.history.back();
+  }
+
+  showPostsSection() {
+    this.showPosts = !this.showPosts;
+  }
+
+  openUserFilesAtMusic() {
+    this.router.navigate(['music/', this.user.login, 'play']); // , this.user.id, 'view'
   }
 }

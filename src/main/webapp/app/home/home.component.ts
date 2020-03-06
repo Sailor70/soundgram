@@ -16,10 +16,10 @@ import { TagService } from 'app/entities/tag/tag.service';
 import { ITag } from 'app/shared/model/tag.model';
 import { LoginService } from 'app/core/login/login.service';
 import { Moment } from 'moment';
-import { PostDetailComponent } from 'app/entities/post/post-detail.component';
 import { UserService } from 'app/core/user/user.service';
 import { PostWindowService } from 'app/shared/services/post-window.service';
 import { IPostObject } from 'app/shared/post-object.model';
+import { PostObjectComponent } from 'app/shared/postObject/post-object.component';
 
 @Component({
   selector: 'jhi-home',
@@ -50,8 +50,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   avatars: any[];
   postObjects: IPostObject[] = [];
 
-  @ViewChild(PostDetailComponent, { static: false })
-  private detailComponent: PostDetailComponent;
+  @ViewChild(PostObjectComponent, { static: false })
+  private postObjectComponent: PostObjectComponent;
 
   constructor(
     private accountService: AccountService,

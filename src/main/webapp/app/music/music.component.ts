@@ -5,7 +5,6 @@ import { AudioFileService } from 'app/entities/audio-file/audio-file.service';
 import { JhiEventManager } from 'ng-jhipster';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute } from '@angular/router';
-import { AudioFileDeleteDialogComponent } from 'app/entities/audio-file/audio-file-delete-dialog.component';
 import { HttpResponse } from '@angular/common/http';
 import { Account } from 'app/core/user/account.model';
 import { AccountService } from 'app/core/auth/account.service';
@@ -30,7 +29,12 @@ export class MusicComponent implements OnInit, OnDestroy {
 
   state: StreamState;
   currentFile: IAudioFile;
-  userId: any;
+
+  otherUserLogin: any;
+  otherUserFiles = false;
+  whoseFiles = 'My audio files';
+  otherUser: IUser;
+  userSubscribtion: Subscription;
 
   constructor(
     protected audioFileService: AudioFileService,
@@ -48,31 +52,50 @@ export class MusicComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.activatedRoute.data.subscribe(({ userId }) => {
-      this.userId = userId; // .body ? userId.body : userId;
-      console.error('userId: ' + this.userId);
-    });
+    this.userSubscribtion = this.activatedRoute.data.subscribe(
+      ({ userLogin }) => {
+        this.otherUserLogin = userLogin; // .body ? userId.body : userId;
+        if (this.otherUserLogin) {
+          this.otherUserFiles = true;
+          this.whoseFiles = 'Files of user ' + this.otherUserLogin;
+          this.getOtherUser();
+          console.error('otherUserLogin: ' + this.otherUserLogin);
+        } else {
+          this.loadLikedFiles();
+          this.registerChangeInAudioFiles();
+        }
+      },
+      error => {
+        console.error('route error: ' + error);
+      }
+    );
     this.accountService.identity().subscribe((account: Account) => {
       this.account = account;
       this.userService.find(this.account.login).subscribe(res => {
         this.user = res;
-        if (this.userId) {
-          this.loadUserFiles();
-        }
-        // this.activatedRoute.queryParams.subscribe(params => {
-        //   if (params['functionToExecute'] === 1) {
-        //     console.error('function to exec 1');
-        //     this.loadUserFiles();
-        //   } else {
-        //     console.error('function to exec differs');
-        //   }
-        // });
+      });
+    });
+  }
+
+  private getOtherUser() {
+    this.userService.find(this.otherUserLogin).subscribe(res => {
+      this.otherUser = res;
+      if (this.otherUserLogin) {
+        this.loadUserFiles();
+      }
+    });
+  }
+
+  /*  private loadCurrentUser() {
+    this.accountService.identity().subscribe((account: Account) => {
+      this.account = account;
+      this.userService.find(this.account.login).subscribe(res => {
+        this.user = res;
       });
     });
     this.loadLikedFiles();
-    // this.loadAll();
     this.registerChangeInAudioFiles();
-  }
+  }*/
 
   loadAll() {
     this.likedAudioDisplayed = true;
@@ -100,6 +123,11 @@ export class MusicComponent implements OnInit, OnDestroy {
     if (this.state) {
       this.state.playClicked = false; // zatrzymanie auto odtwarzania po zmianie listy odtwarzania
     }
+    if (this.otherUser) {
+      this.otherUser = null;
+      this.otherUserLogin = null;
+      this.whoseFiles = 'My audio files';
+    }
     this.likedAudioDisplayed = true;
     this.audioFileService.getLiked().subscribe((res: HttpResponse<IAudioFile[]>) => {
       this.audioFiles = res.body;
@@ -113,11 +141,13 @@ export class MusicComponent implements OnInit, OnDestroy {
       this.state.playClicked = false; // zatrzymanie auto odtwarzania po zmianie listy odtwarzania
     }
     this.likedAudioDisplayed = false;
-    this.audioFileService.getUserFiles(this.userId ? this.userId : this.user.id).subscribe((res: HttpResponse<IAudioFile[]>) => {
-      this.audioFiles = res.body;
-      this.currentSearch = '';
-      this.initFileAndService();
-    });
+    this.audioFileService
+      .getUserFiles(this.otherUserLogin ? this.otherUser.id : this.user.id)
+      .subscribe((res: HttpResponse<IAudioFile[]>) => {
+        this.audioFiles = res.body;
+        this.currentSearch = '';
+        this.initFileAndService();
+      });
   }
 
   search(query) {
@@ -136,6 +166,7 @@ export class MusicComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     // console.error('destroyed!');
     this.eventManager.destroy(this.eventSubscriber);
+    this.userSubscribtion.unsubscribe();
     this.audioService.stop();
   }
 
@@ -145,11 +176,6 @@ export class MusicComponent implements OnInit, OnDestroy {
 
   registerChangeInAudioFiles() {
     this.eventSubscriber = this.eventManager.subscribe('audioFileListModification', () => this.loadAll());
-  }
-
-  delete(audioFile: IAudioFile) {
-    const modalRef = this.modalService.open(AudioFileDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
-    modalRef.componentInstance.audioFile = audioFile;
   }
 
   /* ------------------------------------------------Player------------------------------------------------------- */
@@ -257,5 +283,9 @@ export class MusicComponent implements OnInit, OnDestroy {
       console.error('next file id: ' + next.id);
       return next.id;
     }
+  }
+
+  previousState() {
+    window.history.back();
   }
 }

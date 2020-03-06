@@ -17,6 +17,7 @@ import { FooterComponent } from './layouts/footer/footer.component';
 import { PageRibbonComponent } from './layouts/profiles/page-ribbon.component';
 import { ActiveMenuDirective } from './layouts/navbar/active-menu.directive';
 import { ErrorComponent } from './layouts/error/error.component';
+import { PostObjectModule } from './shared/postObject/post-object.module';
 
 @NgModule({
   imports: [
@@ -29,7 +30,8 @@ import { ErrorComponent } from './layouts/error/error.component';
     SoundgramAppMusicModule,
     // jhipster-needle-angular-add-module JHipster will add new module here
     SoundgramEntityModule,
-    SoundgramAppRoutingModule
+    SoundgramAppRoutingModule,
+    PostObjectModule
   ],
   declarations: [JhiMainComponent, NavbarComponent, ErrorComponent, PageRibbonComponent, ActiveMenuDirective, FooterComponent],
   bootstrap: [JhiMainComponent]

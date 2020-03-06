@@ -1,0 +1,34 @@
+.center {
+  margin: auto;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.padding-top {
+  padding-top: 8px;
+}
+
+.table-window {
+  border-radius: 10px;
+  border: 2px solid #522b72;
+  background-color: #ffffff;
+  min-width: 300px;
+  max-width: 600px;
+  // max-height: 500px;
+  // min-width: 200px;
+  color: #000000;
+  margin: auto;
+}
+
+.content {
+  padding: 5pt;
+  // border: 1px dashed rgb(200, 0, 0);
+}
+
+@media only screen and (max-width: 570px) {
+  .narrow-hide {
+    display: none;
+  }
+}

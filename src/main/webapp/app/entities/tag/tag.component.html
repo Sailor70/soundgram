@@ -1,5 +1,5 @@
 <div>
-    <h2 id="page-heading">
+    <h2 class="col-md-6 center" id="page-heading">
         <span jhiTranslate="soundgramApp.tag.home.title">Tags</span>
         <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-tag" [routerLink]="['/tag/new']">
             <fa-icon [icon]="'plus'"></fa-icon>
@@ -11,7 +11,7 @@
     <jhi-alert-error></jhi-alert-error>
     <jhi-alert></jhi-alert>
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-8 center">
             <form name="searchForm" class="form-inline">
                 <div class="input-group w-100 mt-3">
                     <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'soundgramApp.tag.home.search' | translate }}">
@@ -29,24 +29,20 @@
     <div class="alert alert-warning" *ngIf="tags?.length === 0">
         <span jhiTranslate="soundgramApp.tag.home.notFound">No tags found</span>
     </div>
-    <div class="table-responsive" *ngIf="tags?.length > 0">
+    <div class="table-responsive table-window" *ngIf="tags?.length > 0">
         <table class="table table-striped" aria-describedby="page-heading">
             <thead>
             <tr>
-            <th scope="col" ><span jhiTranslate="global.field.id">ID</span></th>
             <th scope="col" ><span jhiTranslate="soundgramApp.tag.name">Name</span></th>
-            <th scope="col" ><span jhiTranslate="soundgramApp.tag.user">User</span></th>
+            <th scope="col" ><span jhiTranslate="soundgramApp.tag.user">Users</span></th>
             <th scope="col"></th>
             </tr>
             </thead>
             <tbody>
             <tr *ngFor="let tag of tags ;trackBy: trackId">
-                <td><a [routerLink]="['/tag', tag.id, 'view' ]">{{tag.id}}</a></td>
-                <td>{{tag.name}}</td>
+                <td><a [routerLink]="['/tag', tag.id, 'view' ]">{{tag.name}}</a></td>
                 <td>
-                    <span *ngFor="let user of tag.users; let last = last">
-                            {{user.login}}{{last ? '' : ', '}}
-                        </span>
+                    <span>{{tag.users.length}} <fa-icon [icon]="'users'"></fa-icon></span>
                 </td>
                 <td class="text-right">
                     <div class="btn-group">
@@ -62,11 +58,13 @@
 <!--                            <fa-icon [icon]="'pencil-alt'"></fa-icon>-->
 <!--                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>-->
 <!--                        </button>-->
-<!--                        <button type="submit" (click)="delete(tag)"-->
-<!--                                class="btn btn-danger btn-sm">-->
-<!--                            <fa-icon [icon]="'times'"></fa-icon>-->
-<!--                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>-->
-<!--                        </button>-->
+                        <div *jhiHasAnyAuthority="'ROLE_ADMIN'">
+                            <button type="submit" (click)="delete(tag)"
+                                    class="btn btn-danger btn-sm">
+                                <fa-icon [icon]="'times'"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                            </button>
+                        </div>
                     </div>
                 </td>
             </tr>

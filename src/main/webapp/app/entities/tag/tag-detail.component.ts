@@ -8,7 +8,8 @@ import { TagService } from 'app/entities/tag/tag.service';
 
 @Component({
   selector: 'jhi-tag-detail',
-  templateUrl: './tag-detail.component.html'
+  templateUrl: './tag-detail.component.html',
+  styleUrls: ['tag.scss']
 })
 export class TagDetailComponent implements OnInit {
   tag: ITag;

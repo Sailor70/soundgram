@@ -1,0 +1,62 @@
+input.hidden {
+  position: absolute;
+  left: -9999px;
+}
+
+.center {
+  margin: auto;
+}
+
+.padding10 {
+  padding: 10px;
+}
+
+.right {
+  position: absolute;
+  right: 140px;
+}
+
+.btn-group {
+  display: block;
+  margin: auto;
+  padding-top: 30px;
+  width: 60%;
+}
+
+#profile-image1 {
+  cursor: pointer;
+  width: 100px;
+  height: 100px;
+  border: 2px solid #03b1ce;
+}
+.tital {
+  font-size: 16px;
+  font-weight: 500;
+}
+.bot-border {
+  border-bottom: 1px #f8f8f8 solid;
+  margin: 5px 0 5px 0;
+}
+
+.list-group {
+  max-height: 200px;
+  margin-bottom: 10px;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+.profile-window {
+  border-radius: 10px;
+  border: 2px solid #522b72;
+  background-color: #ffffff;
+  // max-width: 600px;
+  min-height: 500px;
+  min-width: 350px;
+  padding-bottom: 20px;
+  padding-top: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  color: #000000;
+  // margin-top: 20px;
+  margin: auto; // środkowanie
+}

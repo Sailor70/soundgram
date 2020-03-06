@@ -193,6 +193,6 @@ export class ProfileComponent implements OnInit {
   }
 
   openUserFilesAtMusic() {
-    this.router.navigate(['music/', this.user.id, 'play']); // , this.user.id, 'view'
+    this.router.navigate(['music/', this.user.login, 'play']); // , this.user.id, 'view'
   }
 }
