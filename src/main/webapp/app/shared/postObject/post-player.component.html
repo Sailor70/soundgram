@@ -1,1 +1,24 @@
-<p>post-player works!</p>
+<div *ngIf="audioFile" class="container">
+    <div class="row slidecontainer">
+        <div class="col-md-12" style="text-align: center">
+            <span>{{audioFile.title}}</span>
+        </div>
+        <input #slide type="range" class="slider" min="0" [max]="state?.duration" step="0.1"
+               [value]="state.currentTime ? state.currentTime : 0" (change)="onSliderChangeEnd(slide)">
+        <div class="col-md-6" style="text-align: left">
+            {{ state?.readableCurrentTime }}
+        </div>
+        <div class="col-md-6" style="text-align: right">
+            {{ state?.readableDuration }}
+        </div>
+    </div>
+    <div class="row center">
+        <button type="button" class="btn btn-info center" (click)="play()" [disabled]="state?.error"
+                *ngIf="!state?.playing">
+            <fa-icon [icon]="'play'"></fa-icon>
+        </button>
+        <button type="button" class="btn btn-info center" (click)="pause()" *ngIf="state?.playing">
+            <fa-icon [icon]="'pause'"></fa-icon>
+        </button>
+    </div>
+</div>

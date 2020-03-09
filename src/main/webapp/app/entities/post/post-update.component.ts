@@ -36,6 +36,7 @@ export class PostUpdateComponent implements OnInit, OnDestroy {
   selectedAudioFiles: FileList;
   selectedImages: FileList;
   currentAudioFile: File;
+  audioFile: IAudioFile;
   audio: HTMLAudioElement;
   currentImage: File;
   displayImage: any;
@@ -250,8 +251,8 @@ export class PostUpdateComponent implements OnInit, OnDestroy {
   loadMediaResources() {
     this.audioFileService.findByPost(this.currentPost.id).subscribe(
       (afRes: HttpResponse<IAudioFile>) => {
-        const audioFile = afRes.body;
-        this.audioFileService.getFile(audioFile.id).subscribe(
+        this.audioFile = afRes.body;
+        this.audioFileService.getFile(this.audioFile.id).subscribe(
           res => {
             const blobUrl = URL.createObjectURL(res);
             this.currentAudioFile = new File([res], 'plik.mp3'); // this.blobToAudio(res, "plik.mp3");

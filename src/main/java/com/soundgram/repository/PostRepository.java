@@ -37,4 +37,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("select post from Post post where post.user.login =:login")
     List<Post> findPostByUserLogin(@Param("login") String login);
 
+    @Query("select post from Post post left join fetch post.tags where post.user.login =:login")
+    List<Post> findPostWithEagerRelationshipsByUserLogin(@Param("login") String login);
+
 }

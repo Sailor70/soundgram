@@ -196,7 +196,7 @@ public class PostResource {
     @GetMapping("/posts-user/{login:" + Constants.LOGIN_REGEX + "}")
     public ResponseEntity<List<Post>> getUserPosts(@PathVariable String login) {
         log.debug("REST request to get posts that belong to user: {}", login);
-        List<Post> userPosts = postRepository.findPostByUserLogin(login);
+        List<Post> userPosts = postRepository.findPostWithEagerRelationshipsByUserLogin(login);
         return ResponseEntity.ok().body(userPosts);
     }
 

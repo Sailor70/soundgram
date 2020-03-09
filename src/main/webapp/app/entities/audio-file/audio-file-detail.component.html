@@ -46,7 +46,9 @@
 <!--            <mat-basic-audio-player [audioUrl]="msbapAudioUrl" [title]="msbapTitle" [autoPlay]="false" muted="muted"-->
 <!--                                    [displayTitle]="msbapDisplayTitle" [displayVolumeControls]="msbapDisplayVolumeControls" ></mat-basic-audio-player>-->
 
-            <button type="button"
+            <jhi-post-player [audioFile]="audioFile">
+            </jhi-post-player>
+<!--            <button type="button"
                     (click)="playAudio()"
                     class="btn btn-info">
                 <fa-icon [icon]="'play-circle'"></fa-icon>
@@ -55,7 +57,7 @@
                     (click)="pauseAudio()"
                     class="btn btn-info">
                 <fa-icon [icon]="'pause-circle'"></fa-icon>
-            </button>
+            </button>-->
 
             <!--            <audio id="voice" controls="">
                             <source src="{{fileUrl}}" type="audio/mpeg">

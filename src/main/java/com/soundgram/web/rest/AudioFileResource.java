@@ -264,7 +264,7 @@ public class AudioFileResource {
         // Long currentUserId = currentUser.getId();
         log.debug("REST request to get Audiofiles that are owned by the user of id : {}", userId);
         List<AudioFile> allAF = audioFileRepository.findAllWithEagerRelationships();
-        List<AudioFile> usersAFs = new ArrayList<AudioFile>();
+        List<AudioFile> usersAFs = new ArrayList<>();
         for (AudioFile af : allAF) {
             Long ownerId = Long.parseLong(af.getIconPath());
             if (ownerId.equals(userId)) {
@@ -326,6 +326,7 @@ public class AudioFileResource {
             response.setHeader(
                 "Content-Disposition",
                 "attachment;filename=" + title);
+            assert mp3 != null;
             response.setContentLength((int) mp3.length());
             // FileInputStream input = new FileInputStream(mp3);
             File finalMp = mp3;
@@ -339,8 +340,7 @@ public class AudioFileResource {
                     stream.write(readBytes);
                 if (stream != null)
                     stream.close();
-                if (buf != null)
-                    buf.close();
+                buf.close();
                 log.info("steaming response {} ", stream);
             };
             return new ResponseEntity(streamRS, HttpStatus.OK);

@@ -6,7 +6,7 @@ import { SoundgramSharedModule } from '../shared/shared.module';
 import { MUSIC_ROUTE, MusicComponent, MusicResolve } from './';
 
 @NgModule({
-  imports: [SoundgramSharedModule, RouterModule.forRoot(MUSIC_ROUTE, { useHash: true })],
+  imports: [SoundgramSharedModule, RouterModule.forRoot(MUSIC_ROUTE, { useHash: true, enableTracing: true })],
   declarations: [MusicComponent],
   entryComponents: [],
   providers: [MusicResolve], // to i exports właściwie niepotrzebne

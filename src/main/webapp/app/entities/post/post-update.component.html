@@ -16,19 +16,6 @@
                            formControlName="postContent"/>
                 </div>
 
-                <!--                                <div class="form-group">
-                                                    <label jhiTranslate="soundgramApp.post.tag" for="field_tags">Tag</label>
-                                                    <button id="jh-create-tag" class="btn btn-primary jh-create-entity create-audio-file" [routerLink]="['/tag/new']">
-                                                        <fa-icon [icon]="'plus'"></fa-icon>
-                                                        <span class="hidden-sm-down" >
-                                                        Add Tag
-                                                    </span>
-                                                    </button>
-                                                    <select class="form-control" id="field_tags" multiple name="tags" formControlName="tags">
-                                                        <option [ngValue]="getSelected(editForm.get('tags').value, tagOption)" *ngFor="let tagOption of tags; trackBy: trackTagByName">{{tagOption.name}}</option>
-                                                    </select>
-                                                </div>-->
-
                 <form name="form" role="form" (ngSubmit)="makeNewTag()" [formGroup]="tagForm" *ngIf="!success">
                     <div class="form-group">
                         <label class="form-control-label" for="tagName">Enter tag name</label>
@@ -76,16 +63,7 @@
                                 </button>-->
 
                 <div *ngIf="currentAudioFile">
-                    <button type="button"
-                            (click)="playAudio()"
-                            class="btn btn-info">
-                        <fa-icon [icon]="'play-circle'"></fa-icon>
-                    </button>
-                    <button type="button"
-                            (click)="pauseAudio()"
-                            class="btn btn-info">
-                        <fa-icon [icon]="'pause-circle'"></fa-icon>
-                    </button>
+                    <jhi-post-player [audioFile]="audioFile"></jhi-post-player>
                 </div>
                 <div style="text-align:center">
                     <label>
