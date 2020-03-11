@@ -3,6 +3,7 @@ package com.soundgram.web.rest;
 import com.soundgram.config.Constants;
 import com.soundgram.domain.FollowedUser;
 import com.soundgram.domain.Post;
+import com.soundgram.domain.Tag;
 import com.soundgram.domain.User;
 import com.soundgram.repository.FollowedUserRepository;
 import com.soundgram.repository.PostRepository;
@@ -194,11 +195,24 @@ public class PostResource {
     }*/
 
     @GetMapping("/posts-user/{login:" + Constants.LOGIN_REGEX + "}")
-    public ResponseEntity<List<Post>> getUserPosts(@PathVariable String login) {
+    public ResponseEntity<List<Post>> getUserPosts(@PathVariable String login, Pageable pageable, @RequestParam(required = false, defaultValue = "true") boolean eagerload) {
         log.debug("REST request to get posts that belong to user: {}", login);
-        List<Post> userPosts = postRepository.findPostWithEagerRelationshipsByUserLogin(login);
-        return ResponseEntity.ok().body(userPosts);
+        Page<Post> page;
+        page = postRepository.findPostWithEagerRelationshipsByUserLogin(pageable, login); //ładuje posty razem z tagami
+        log.debug("page total elements " + page.getTotalElements() + " pages: " + page.getTotalPages());
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
+
+//    @GetMapping("/posts-tags/{tags:" + Constants.LOGIN_REGEX + "}")
+//    public ResponseEntity<List<Post>> getPostsWithTag(@PathVariable Tag tags[], Pageable pageable, @RequestParam(required = false, defaultValue = "true") boolean eagerload) {
+//        log.debug("REST request to get posts that contain tags: {}", tags.length);
+//        Page<Post> page;
+//        page = postRepository.findPostWithEagerRelationshipsByUserLogin(pageable, tags); //ładuje posty razem z tagami
+//        log.debug("page total elements " + page.getTotalElements() + " pages: " + page.getTotalPages());
+//        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+//        return ResponseEntity.ok().headers(headers).body(page.getContent());
+//    }
 
     /**
      * {@code GET  /posts/:id} : get the "id" post.

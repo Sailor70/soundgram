@@ -22,6 +22,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AudioService } from 'app/music/player/audio-service';
 import { StreamState } from 'app/music/player/stream-state.model';
 import { AvatarService } from 'app/shared/services/avatar.service';
+import { PostDeleteDialogComponent } from 'app/entities/post/post-delete-dialog.component';
 
 @Component({
   selector: 'jhi-post-detail',
@@ -192,6 +193,14 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.comment = comment;
     modalRef.componentInstance.isDeleted.subscribe(() => {
       this.ngOnInit();
+    });
+  }
+
+  deletePost(post: IPost) {
+    const modalRef = this.modalService.open(PostDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.post = post;
+    modalRef.componentInstance.isDeleted.subscribe(() => {
+      this.previousState();
     });
   }
 

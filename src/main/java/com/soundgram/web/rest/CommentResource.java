@@ -153,6 +153,14 @@ public class CommentResource {
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 
+    @DeleteMapping("/comments-post/{id}")
+    public ResponseEntity<Void> deleteCommentsOfPost(@PathVariable Long id) {
+        log.debug("REST request to delete all Comment Of posts of id : {}", id);
+        commentRepository.deleteCommentsByPostId(id);
+        commentSearchRepository.deleteCommentsByPostId(id);
+        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
+    }
+
     /**
      * {@code SEARCH  /_search/comments?query=:query} : search for the comment corresponding
      * to the query.

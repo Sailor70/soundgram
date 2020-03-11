@@ -9,13 +9,12 @@ import { Account } from 'app/core/user/account.model';
 import { IPost } from 'app/shared/model/post.model';
 import { PostService } from 'app/entities/post/post.service';
 import { ActivatedRoute } from '@angular/router';
-import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
+import { ITEMS_PER_PAGE_POST_OBJ } from 'app/shared/constants/pagination.constants';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { FollowedUserService } from 'app/entities/followed-user/followed-user.service';
 import { TagService } from 'app/entities/tag/tag.service';
 import { ITag } from 'app/shared/model/tag.model';
 import { LoginService } from 'app/core/login/login.service';
-import { Moment } from 'moment';
 import { UserService } from 'app/core/user/user.service';
 import { PostWindowService } from 'app/shared/services/post-window.service';
 import { IPostObject } from 'app/shared/post-object.model';
@@ -33,6 +32,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   modalRef: NgbModalRef;
 
   posts: IPost[] = [];
+  postsWithUserTags: IPost[] = [];
 
   eventSubscriber: Subscription;
   itemsPerPage: number;
@@ -68,7 +68,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private postWindowService: PostWindowService
   ) {
     this.posts = [];
-    this.itemsPerPage = ITEMS_PER_PAGE;
+    this.postsWithUserTags = [];
+    this.itemsPerPage = ITEMS_PER_PAGE_POST_OBJ;
     this.page = 0;
     this.links = {
       last: 0
@@ -149,7 +150,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           query: this.currentSearch,
           page: this.page,
           size: this.itemsPerPage,
-          sort: this.sort()
+          sort: ['date' + ',' + 'desc'] // sortuje posty od najnowszego według daty
         })
         .subscribe((res: HttpResponse<IPost[]>) => this.paginatePosts(res.body, res.headers));
       return;
@@ -159,7 +160,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         .getFollowed({
           page: this.page,
           size: this.itemsPerPage,
-          sort: this.sort()
+          sort: ['date' + ',' + 'desc'] // sortuje posty od najnowszego według daty
         })
         .subscribe(res => {
           this.paginatePosts(res.body, res.headers);
@@ -168,6 +169,130 @@ export class HomeComponent implements OnInit, OnDestroy {
         });
     }
     // this.getAvatars();
+  }
+
+  loadPostsByTags() {
+    this.postService.query().subscribe((res: HttpResponse<IPost[]>) => {
+      const allPosts = res.body;
+      // console.error('all posts:' + this.posts.length);
+      for (const post of allPosts) {
+        // console.error("postTags:" + post.tags.length);
+        if (post.tags) {
+          for (const postTag of post.tags) {
+            for (const tag of this.userTags) {
+              if (tag.name === postTag.name) {
+                this.postsWithUserTags.push(post);
+                break;
+              }
+            }
+          }
+        }
+      }
+      this.pushPostWithTags(this.page);
+      this.links = { last: this.postsWithUserTags.length / this.itemsPerPage };
+      console.error('links: ' + this.links.last);
+    });
+  }
+
+  pushPostWithTags(page: number) {
+    for (let i = 0; i < this.itemsPerPage; i++) {
+      if (this.postsWithUserTags[page * this.itemsPerPage + i]) {
+        this.posts.push(this.postsWithUserTags[page * this.itemsPerPage + i]);
+      }
+    }
+  }
+
+  resetOnPostsChange() {
+    this.postsWithUserTags = [];
+    this.posts = [];
+    this.page = 0;
+    this.links = {
+      last: 0
+    };
+  }
+
+  reset() {
+    this.page = 0;
+    this.posts = [];
+    this.postObjects = [];
+    this.loadFollowed();
+  }
+
+  loadPage(page) {
+    this.page = page;
+    if (this.followedUsersPosts) {
+      this.loadFollowed();
+    } else {
+      this.pushPostWithTags(this.page);
+    }
+  }
+
+  clear() {
+    this.posts = [];
+    this.postObjects = [];
+    this.links = {
+      last: 0
+    };
+    this.page = 0;
+    this.predicate = 'id';
+    this.reverse = true;
+    this.currentSearch = '';
+    this.loadFollowed();
+  }
+
+  search(query) {
+    if (!query) {
+      return this.clear();
+    }
+    this.posts = [];
+    this.postObjects = [];
+    this.links = {
+      last: 0
+    };
+    this.page = 0;
+    this.predicate = '_score';
+    this.reverse = false;
+    this.currentSearch = query;
+    this.loadFollowed();
+  }
+
+  trackId(index: number, item: IPost) {
+    return item.id;
+  }
+
+  sort() {
+    const result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
+    if (this.predicate !== 'id') {
+      result.push('id');
+    }
+    return result;
+  }
+
+  protected paginatePosts(data: IPost[], headers: HttpHeaders) {
+    this.links = this.parseLinks.parse(headers.get('link'));
+    this.totalItems = parseInt(headers.get('X-Total-Count'), 10);
+    for (let i = 0; i < data.length; i++) {
+      // console.error("post tags: " + data[i].user.login);
+      this.posts.push(data[i]);
+    }
+    // this.pushPostObject(data);
+    // this.getPostObjectFromService();
+  }
+
+  loadFollowedUsersPosts() {
+    this.resetOnPostsChange();
+    this.followedUsersPosts = true;
+    this.loadFollowed();
+  }
+
+  loadFollowedTagsPosts() {
+    this.resetOnPostsChange();
+    this.followedUsersPosts = false;
+    this.tagService.findUserTags(this.account.login).subscribe(res => {
+      this.userTags = res.body;
+      // console.error('User tags:' + this.userTags.length);
+      this.loadPostsByTags();
+    });
   }
 
   getPostObjectFromService() {
@@ -221,113 +346,5 @@ export class HomeComponent implements OnInit, OnDestroy {
         postObject.commentsAvatars[0].avatar.length
     );
     // }
-  }
-
-  loadPostsByTags() {
-    this.postService.query().subscribe((res: HttpResponse<IPost[]>) => {
-      this.posts = res.body;
-      // console.error('all posts:' + this.posts.length);
-      const tmpPosts = [];
-      for (const post of this.posts) {
-        // console.error("postTags:" + post.tags.length);
-        if (post.tags) {
-          for (const postTag of post.tags) {
-            for (const tag of this.userTags) {
-              if (tag.name === postTag.name) {
-                tmpPosts.push(post);
-                break;
-              }
-            }
-          }
-        }
-      }
-      this.posts = tmpPosts;
-    });
-  }
-
-  reset() {
-    this.page = 0;
-    this.posts = [];
-    this.postObjects = [];
-    this.loadFollowed();
-  }
-
-  loadPage(page) {
-    this.page = page;
-    this.loadFollowed();
-  }
-
-  clear() {
-    this.posts = [];
-    this.postObjects = [];
-    this.links = {
-      last: 0
-    };
-    this.page = 0;
-    this.predicate = 'id';
-    this.reverse = true;
-    this.currentSearch = '';
-    this.loadFollowed();
-  }
-
-  search(query) {
-    if (!query) {
-      return this.clear();
-    }
-    this.posts = [];
-    this.postObjects = [];
-    this.links = {
-      last: 0
-    };
-    this.page = 0;
-    this.predicate = '_score';
-    this.reverse = false;
-    this.currentSearch = query;
-    this.loadFollowed();
-  }
-
-  trackId(index: number, item: IPost) {
-    return item.id;
-  }
-
-  trackDate(date: Moment, item: IPost) {
-    return item.date;
-  }
-
-  sort() {
-    const result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
-    if (this.predicate !== 'id') {
-      result.push('id');
-    }
-    return result;
-  }
-
-  protected paginatePosts(data: IPost[], headers: HttpHeaders) {
-    this.links = this.parseLinks.parse(headers.get('link'));
-    this.totalItems = parseInt(headers.get('X-Total-Count'), 10);
-    for (let i = 0; i < data.length; i++) {
-      // console.error("post tags: " + data[i].user.login);
-      this.posts.push(data[i]);
-    }
-    this.pushPostObject(data);
-    // this.getPostObjectFromService();
-  }
-
-  loadFollowedUsersPosts() {
-    this.posts = [];
-    this.postObjects = [];
-    this.followedUsersPosts = true;
-    this.loadFollowed();
-  }
-
-  loadFollowedTagsPosts() {
-    this.posts = [];
-    this.postObjects = [];
-    this.followedUsersPosts = false;
-    this.tagService.findUserTags(this.account.login).subscribe(res => {
-      this.userTags = res.body;
-      // console.error('User tags:' + this.userTags.length);
-      this.loadPostsByTags();
-    });
   }
 }

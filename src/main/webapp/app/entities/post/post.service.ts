@@ -63,11 +63,19 @@ export class PostService {
       .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
   }
 
-  getUserPosts(login: string): Observable<EntityArrayResponseType> {
+  getUserPosts(login: string, req?: any): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
     return this.http
-      .get<IPost[]>(`${this.resourceUrl + '-user'}/${login}`, { observe: 'response' })
+      .get<IPost[]>(`${this.resourceUrl + '-user'}/${login}`, { params: options, observe: 'response' })
       .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
   }
+
+  // getPostsWithTag(tags: ITag[], req?: any): Observable<EntityArrayResponseType> {
+  //   const options = createRequestOption(req);
+  //   return this.http
+  //     .get<IPost[]>(`${this.resourceUrl + '-tags'}/${tags}`, { params: options, observe: 'response' })
+  //     .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
+  // }
 
   delete(id: number): Observable<HttpResponse<any>> {
     return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });

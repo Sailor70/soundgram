@@ -1,5 +1,6 @@
 package com.soundgram.repository;
 import com.soundgram.domain.Post;
+import com.soundgram.domain.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
@@ -37,7 +38,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("select post from Post post where post.user.login =:login")
     List<Post> findPostByUserLogin(@Param("login") String login);
 
-    @Query("select post from Post post left join fetch post.tags where post.user.login =:login")
-    List<Post> findPostWithEagerRelationshipsByUserLogin(@Param("login") String login);
+    @Query(value = "select post from Post post left join fetch post.tags where post.user.login =:login",
+        countQuery = "select count(distinct post) from Post post")
+    Page<Post> findPostWithEagerRelationshipsByUserLogin(Pageable pageable, @Param("login") String login);
+
+    @Query(value = "select distinct post from Post post left join fetch post.tags", // where ( select tag from post.tags ) in(:tags) // any ? intersect ?
+        countQuery = "select count(distinct post) from Post post")
+    Page<Post> findAllWithEagerRelationshipsAndTagsContaining(Pageable pageable, @Param("tags") List<Long> tags);
 
 }

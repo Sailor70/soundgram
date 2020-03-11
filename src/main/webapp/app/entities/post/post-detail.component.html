@@ -29,7 +29,7 @@
                                     {{post.postContent}}
                                 </p>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div *ngIf="postImage" class="col-md-6">
                                         <img [src]="postImage" class="ui-rect ui-bg-cover"
                                              alt="">
                                     </div>
@@ -100,6 +100,12 @@
                                                     [hidden]="currentUser.login !== post.user.login">
                                                 <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span
                                                 jhiTranslate="entity.action.edit"> Edit</span>
+                                            </button>
+                                            <button type="submit" (click)="deletePost(post)"
+                                                    class="btn btn-danger btn-sm">
+                                                <fa-icon [icon]="'times'"></fa-icon>
+                                                <span class="d-none d-md-inline"
+                                                      jhiTranslate="entity.action.delete">Delete</span>
                                             </button>
                                         </div>
                                     </div>

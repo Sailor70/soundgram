@@ -15,6 +15,9 @@ import { UserExtraService } from 'app/entities/user-extra/user-extra.service';
 import { PostDeleteDialogComponent } from 'app/entities/post/post-delete-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
+import { ITEMS_PER_PAGE_POST_OBJ } from 'app/shared/constants/pagination.constants';
+import { HttpHeaders } from '@angular/common/http';
+import { JhiParseLinks } from 'ng-jhipster';
 
 // import { Account } from "app/core/user/user.service";
 
@@ -39,6 +42,11 @@ export class ProfileComponent implements OnInit {
   userExtra: IUserExtra;
   showPosts = false;
 
+  itemsPerPage: number;
+  links: any;
+  page: any;
+  totalItems: number;
+
   tagForm = this.fb.group({
     tagName: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(50), Validators.pattern('^[_.@A-Za-z0-9-]*$')]]
   });
@@ -52,8 +60,16 @@ export class ProfileComponent implements OnInit {
     private userExtraService: UserExtraService,
     private fb: FormBuilder,
     private modalService: NgbModal,
-    private router: Router
-  ) {}
+    private router: Router,
+    protected parseLinks: JhiParseLinks
+  ) {
+    this.userPosts = [];
+    this.itemsPerPage = ITEMS_PER_PAGE_POST_OBJ;
+    this.page = 0;
+    this.links = {
+      last: 0
+    };
+  }
 
   ngOnInit() {
     this.success = false;
@@ -86,15 +102,20 @@ export class ProfileComponent implements OnInit {
     this.getAvatarFromService();
     this.refreshTags(); // load tags
 
-    this.postService.getUserPosts(this.account.login).subscribe(
-      res => {
-        this.userPosts = res.body;
-        console.error('posts: ' + this.userPosts.length);
-      },
-      res => {
-        console.error('posts error: ' + res.body);
-      }
-    );
+    this.loadPosts();
+  }
+
+  sort() {
+    const result = ['date' + ',' + 'desc']; // sortuje posty od najnowszego według daty
+    // if (this.predicate !== 'id') {
+    // result.push('id');
+    // }
+    return result;
+  }
+
+  loadPage(page) {
+    this.page = page;
+    this.loadPosts();
   }
 
   refreshTags() {
@@ -102,6 +123,34 @@ export class ProfileComponent implements OnInit {
       this.userTags = res.body;
       console.error('tags: ' + this.userTags.length);
     });
+  }
+
+  loadPosts() {
+    this.postService
+      .getUserPosts(this.account.login, {
+        page: this.page,
+        size: this.itemsPerPage,
+        sort: this.sort()
+      })
+      .subscribe(
+        res => {
+          this.paginatePosts(res.body, res.headers);
+          // this.userPosts = res.body;
+          console.error('posts: ' + this.userPosts.length);
+        },
+        res => {
+          console.error('posts error: ' + res.body);
+        }
+      );
+  }
+
+  protected paginatePosts(data: IPost[], headers: HttpHeaders) {
+    this.links = this.parseLinks.parse(headers.get('link'));
+    this.totalItems = parseInt(headers.get('X-Total-Count'), 10);
+    for (let i = 0; i < data.length; i++) {
+      console.error('post to paginate id: ' + data[i].id);
+      this.userPosts.push(data[i]);
+    }
   }
 
   addTagToProfile() {

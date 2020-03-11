@@ -12,6 +12,9 @@ import { IAudioFile } from 'app/shared/model/audio-file.model';
 import { Account } from 'app/core/user/account.model';
 import { AccountService } from 'app/core/auth/account.service';
 import { UserService } from 'app/core/user/user.service';
+import { ITEMS_PER_PAGE_POST_OBJ } from 'app/shared/constants/pagination.constants';
+import { HttpHeaders } from '@angular/common/http';
+import { JhiParseLinks } from 'ng-jhipster';
 
 @Component({
   selector: 'jhi-user-detail',
@@ -32,6 +35,11 @@ export class UserDetailComponent implements OnInit {
 
   showPosts = false;
 
+  itemsPerPage: number;
+  links: any;
+  page: any;
+  totalItems: number;
+
   constructor(
     private route: ActivatedRoute,
     private userExtraService: UserExtraService,
@@ -40,8 +48,16 @@ export class UserDetailComponent implements OnInit {
     private audioFileService: AudioFileService,
     protected accountService: AccountService,
     protected userService: UserService,
-    private router: Router
-  ) {}
+    private router: Router,
+    protected parseLinks: JhiParseLinks
+  ) {
+    this.userPosts = [];
+    this.itemsPerPage = ITEMS_PER_PAGE_POST_OBJ;
+    this.page = 0;
+    this.links = {
+      last: 0
+    };
+  }
 
   ngOnInit() {
     this.route.data.subscribe(({ user }) => {
@@ -58,13 +74,44 @@ export class UserDetailComponent implements OnInit {
       this.userTags = res.body;
     });
 
-    this.postService.getUserPosts(this.user.login).subscribe(res => {
-      this.userPosts = res.body;
-    });
+    this.loadPosts();
 
     this.audioFileService.getUserFiles(this.user.id).subscribe(res => {
       this.userAudioFiles = res.body;
     });
+  }
+
+  loadPosts() {
+    this.postService
+      .getUserPosts(this.user.login, {
+        page: this.page,
+        size: this.itemsPerPage,
+        sort: ['date' + ',' + 'desc'] // sortuje posty od najnowszego według daty
+      })
+      .subscribe(
+        res => {
+          this.paginatePosts(res.body, res.headers);
+          // this.userPosts = res.body;
+          console.error('posts: ' + this.userPosts.length);
+        },
+        res => {
+          console.error('posts error: ' + res.body);
+        }
+      );
+  }
+
+  loadPage(page) {
+    this.page = page;
+    this.loadPosts();
+  }
+
+  protected paginatePosts(data: IPost[], headers: HttpHeaders) {
+    this.links = this.parseLinks.parse(headers.get('link'));
+    this.totalItems = parseInt(headers.get('X-Total-Count'), 10);
+    for (let i = 0; i < data.length; i++) {
+      console.error('post to paginate id: ' + data[i].id);
+      this.userPosts.push(data[i]);
+    }
   }
 
   getAvatarFromService() {

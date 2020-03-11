@@ -58,6 +58,10 @@ export class CommentService {
     return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
+  deleteCommentsOfPost(id: number): Observable<HttpResponse<any>> {
+    return this.http.delete<any>(`${this.resourceUrl + '-post'}/${id}`, { observe: 'response' });
+  }
+
   search(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http
