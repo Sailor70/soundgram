@@ -1,9 +1,9 @@
 <div *ngIf="audioFile" class="container">
     <div class="row slidecontainer">
         <div class="col-md-12" style="text-align: center">
-            <span>{{audioFile.title}}</span>
+            <span><a [routerLink]="['/audio-file', audioFile.id, 'view' ]">{{audioFile.title.split('.').slice(0, -1).join('.')}}</a></span>
         </div>
-        <input #slide type="range" class="slider" min="0" [max]="state?.duration" step="0.1"
+        <input #slide type="range" class="slider center" min="0" [max]="state?.duration" step="0.1"
                [value]="state.currentTime ? state.currentTime : 0" (change)="onSliderChangeEnd(slide)">
         <div class="col-md-6" style="text-align: left">
             {{ state?.readableCurrentTime }}

@@ -3,7 +3,7 @@ import { AudioFileService } from 'app/entities/audio-file/audio-file.service';
 import { PostService } from 'app/entities/post/post.service';
 import { IPost } from 'app/shared/model/post.model';
 import { UserService } from 'app/core/user/user.service';
-import { IPostObject } from 'app/shared/post-object.model';
+import { IPostObject } from 'app/shared/model/post-object.model';
 import { forkJoin, Observable, of } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 import { IAudioFile } from 'app/shared/model/audio-file.model';

@@ -8,7 +8,7 @@ import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [PostObjectComponent, PostPlayerComponent, PostCommentsComponent],
-  exports: [PostObjectComponent, PostPlayerComponent],
+  exports: [PostObjectComponent, PostPlayerComponent, PostCommentsComponent],
   imports: [CommonModule, SoundgramSharedModule, RouterModule]
 })
 export class PostObjectModule {}

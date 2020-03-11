@@ -119,11 +119,11 @@ public class CommentResource {
     }
 
     @GetMapping("/comments-post/{postId}")
-    public ResponseEntity<List<Comment>> getCommentsByPost(@PathVariable Long postId) {
-        log.debug("REST request to get a page of Comments");
-        List<Comment> page = commentRepository.findCommentByPostId(postId);
-        //HttpHeaders headers = new HttpHeaders(null); // PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().body(page); // headers(headers)
+    public ResponseEntity<List<Comment>> getCommentsByPost(@PathVariable Long postId, Pageable pageable, @RequestParam(required = false, defaultValue = "true") boolean eagerload) {
+        log.debug("REST request to get a page of Comments of post of id: " + postId);
+        Page<Comment> page = commentRepository.findCommentByPostId(pageable, postId);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**

@@ -2,10 +2,12 @@ import { Injectable } from '@angular/core';
 import { UserService } from 'app/core/user/user.service';
 import { IComment } from 'app/shared/model/comment.model';
 import { IUser } from 'app/core/user/user.model';
+import { ICommentAvatar } from 'app/shared/model/comment-avatar.model';
 
 @Injectable({ providedIn: 'root' })
 export class AvatarService {
   commentsAvatars: { comment: IComment; avatar: any }[] = [];
+  commentsAvatarsEd: ICommentAvatar[] = [];
   usersAvatars: { user: IUser; avatar: any }[] = [];
   comments: IComment[] = [];
   users: IUser[] = [];
@@ -131,6 +133,48 @@ export class AvatarService {
       'load',
       () => {
         this.usersAvatars.push({ user, avatar: reader.result });
+      },
+      false
+    );
+
+    if (image) {
+      reader.readAsDataURL(image);
+    }
+  }
+
+  getAvatarsForCommentListEd(comments: IComment[]): any {
+    // console.error('comments ED: ' + comments.length);
+    this.commentsAvatarsEd = [];
+    this.comments = [];
+    this.comments = comments;
+    for (const comment of comments) {
+      this.userService.getAvatarFilename(comment.user.login).subscribe(avatarFileName => {
+        // console.error('avatar user login: ' + comment.user.login);
+        // console.error('avatar filename: ' + avatarFileName.body);
+        if (avatarFileName !== '') {
+          this.userService.getAvatar(avatarFileName.body).subscribe(
+            data => {
+              this.createAvatarFromBlobEd(data, comment);
+            },
+            error => {
+              console.error('Probably no avatar: ' + error);
+            }
+          );
+        } else {
+          this.commentsAvatarsEd.push({ comment, avatar: null, editable: false });
+        }
+      });
+    }
+    // console.error('this.commentsAvatarsEd: ' + this.commentsAvatarsEd.length);
+    return this.commentsAvatarsEd;
+  }
+
+  private createAvatarFromBlobEd(image: Blob, comment: IComment) {
+    const reader = new FileReader();
+    reader.addEventListener(
+      'load',
+      () => {
+        this.commentsAvatarsEd.push({ comment, avatar: reader.result, editable: false });
       },
       false
     );

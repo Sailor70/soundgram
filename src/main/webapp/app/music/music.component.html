@@ -56,7 +56,7 @@
             </thead>
             <tbody>
             <tr *ngFor="let audioFile of audioFiles ;trackBy: trackId">
-                <td>{{audioFile.title}}</td>
+                <td>{{audioFile.title.split('.').slice(0, -1).join('.')}}</td>
                 <td class="narrow-hide"><a
                     [routerLink]="['/', audioFile.post.user.login, 'view']">{{audioFile.post.user.login}}</a></td>
                 <td class="narrow-hide">
@@ -96,7 +96,7 @@
     <div *ngIf="audioFiles" class="container">
         <div class="row slidecontainer">
             <div class="col-md-12" style="text-align: center">
-                <span>{{currentFile.title}}</span>
+                <span>{{currentFile.title.split('.').slice(0, -1).join('.')}}</span>
             </div>
             <input #slide type="range" class="slider" min="0" [max]="state?.duration" step="0.1"
                    [value]="state.currentTime ? state.currentTime : 0" (change)="onSliderChangeEnd(slide)">

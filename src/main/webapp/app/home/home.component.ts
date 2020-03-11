@@ -17,7 +17,7 @@ import { ITag } from 'app/shared/model/tag.model';
 import { LoginService } from 'app/core/login/login.service';
 import { UserService } from 'app/core/user/user.service';
 import { PostWindowService } from 'app/shared/services/post-window.service';
-import { IPostObject } from 'app/shared/post-object.model';
+import { IPostObject } from 'app/shared/model/post-object.model';
 import { PostObjectComponent } from 'app/shared/postObject/post-object.component';
 
 @Component({

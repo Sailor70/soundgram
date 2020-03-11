@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IPost } from 'app/shared/model/post.model';
 import { ImageService } from 'app/entities/image/image.service';
@@ -21,6 +21,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AudioService } from 'app/music/player/audio-service';
 import { StreamState } from 'app/music/player/stream-state.model';
 import { AvatarService } from 'app/shared/services/avatar.service';
+import { PostCommentsComponent } from 'app/shared/postObject/post-comments.component';
 
 @Component({
   selector: 'jhi-post-object',
@@ -50,6 +51,9 @@ export class PostObjectComponent implements OnInit, OnDestroy {
   liked = false;
   likeBtnText = 'Like this audio';
   commentsAvatars: { comment: IComment; avatar: any }[] = [];
+
+  @ViewChild(PostCommentsComponent, { static: false })
+  private postCommentsComponent: PostCommentsComponent;
 
   constructor(
     protected activatedRoute: ActivatedRoute,

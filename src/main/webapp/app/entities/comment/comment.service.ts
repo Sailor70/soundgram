@@ -47,10 +47,11 @@ export class CommentService {
       .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
   }
 
-  findByPost(postId: number): Observable<EntityArrayResponseType> {
+  findByPost(postId: number, req?: any): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
     console.error('Find comment by post of id:' + postId);
     return this.http
-      .get<IComment[]>(`${this.resourceUrl + '-post'}/${postId}`, { observe: 'response' })
+      .get<IComment[]>(`${this.resourceUrl + '-post'}/${postId}`, { params: options, observe: 'response' })
       .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
   }
 

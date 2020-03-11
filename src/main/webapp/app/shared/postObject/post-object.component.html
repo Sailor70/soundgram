@@ -34,6 +34,107 @@
                                              alt="">
                                     </div>
                                     <div class="col-md-6">
+                                        <div *ngIf="audioFile">
+                                            <jhi-post-player [audioFile]="audioFile"></jhi-post-player>
+                                        </div>
+                                        <div>
+                                            <span>Tags: </span><br>
+                                            <span *ngFor="let tag of post.tags; let last = last">
+                                    <a [routerLink]="['/tag', tag?.id, 'view' ]">{{tag.name}}</a>{{last ? '' : ', '}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="center">
+                                        <button class="btn btn-primary" (click)="postCommentsComponent.toggleComment()">
+                                            <fa-icon [icon]="'pen'"></fa-icon>
+                                            <span class="hidden-sm-down">Write a comment</span>
+                                        </button>
+                                    </div>
+                                    <div class="center">
+                                        <button class="btn btn-primary" (click)="likeOrDislikeAudioFile()">
+                                            <div *ngIf="liked">
+                                                <fa-icon [icon]="'heart-broken'"></fa-icon>
+                                                <span class="hidden-sm-down">{{likeBtnText}}</span>
+                                            </div>
+                                            <div *ngIf="!liked">
+                                                <fa-icon [icon]="'star'"></fa-icon>
+                                                <span class="hidden-sm-down">{{likeBtnText}}</span>
+                                            </div>
+                                        </button>
+                                    </div>
+                                    <div class="center">
+                                        <button type="submit"
+                                                [routerLink]="['/post', post.id, 'view' ]"
+                                                class="btn btn-info">
+                                            <fa-icon [icon]="'eye'"></fa-icon>&nbsp;<span>View Post</span>
+                                        </button>
+                                        <div *ngIf="currentUser">
+                                            <button type="button"
+                                                    [routerLink]="['/post', post.id, 'edit']"
+                                                    class="btn btn-primary"
+                                                    [hidden]="currentUser.login !== post.user.login">
+                                                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span
+                                                jhiTranslate="entity.action.edit"> Edit</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="post && currentUser">
+                                    <!--<div class="col-md-8 center">-->
+                                        <jhi-post-comments [post]="post"
+                                                           [currentUser]="currentUser"
+                                        ></jhi-post-comments>
+                                    <!--</div>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="post">
+
+            <div class="container posts-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card post-window mb-3">
+                            <div class="card-body">
+                                <div class="media mb-3">
+                                    <img [src]="avatar" *ngIf="!isImageLoading && hasImage"
+                                         class="d-block ui-w-60 rounded-circle" alt="">
+                                    <div class="media-body ml-3">
+                                        <a [routerLink]="['/', post.user.login, 'view']">{{post.user?.login}}</a>
+                                        <div class="text-muted small">{{post.date | date:'medium'}}</div>
+                                    </div>
+                                    <div class="media-body ml-3 mt-3">
+                                        <div *ngIf="audioFile && usersComments">
+                                            <h6 class="d-inline-block text-muted">{{audioFile.users.length}}
+                                                Likes<span>&nbsp;&nbsp;&nbsp;</span></h6>
+                                            <h6 class="d-inline-block text-muted">{{usersComments.length}}
+                                                Comments</h6>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <p class="card-text">
+                                    {{post.postContent}}
+                                </p>
+                                <div class="row">
+                                    <div *ngIf="postImage" class="col-md-6">
+                                        <img [src]="postImage" class="ui-rect ui-bg-cover"
+                                             alt="">
+                                    </div>
+                                    <div class="col-md-6">
                                         <div *ngIf="audioFile" class="container">
                                             <div class="row slidecontainer">
                                                 <div class="col-md-12" style="text-align: center">
@@ -160,4 +261,5 @@
             </div>
         </div>
     </div>
-</div>
+</div>-->
+
