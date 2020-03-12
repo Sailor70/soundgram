@@ -1,6 +1,6 @@
 <div class="row justify-content-center">
     <div class="container">
-        <div class="col-md-8 profile-window" *ngIf="user">
+        <div class="col-md-10 profile-window" *ngIf="user">
             <div class="row col-md-12">
                 <div class="row col-md-8 center">
                     <img [src]="avatar"
@@ -120,14 +120,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="row" *ngIf="showPosts">
-                    <div *ngIf="userPosts.length > 0">
-                        <div infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
-                            <jhi-post-object *ngFor="let post of userPosts"
-                                             [post]="post"
-                            >
-                            </jhi-post-object>
-                        </div>
+            </div>
+            <div class="row" *ngIf="showPosts">
+                <div *ngIf="userPosts.length > 0">
+                    <div infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
+                        <jhi-post-object *ngFor="let post of userPosts"
+                                         [post]="post"
+                        >
+                        </jhi-post-object>
                     </div>
                 </div>
             </div>

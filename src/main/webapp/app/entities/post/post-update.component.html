@@ -1,103 +1,230 @@
 <div class="row justify-content-center">
-    <div class="col-8">
-        <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-            <h2 id="jhi-post-heading" jhiTranslate="soundgramApp.post.home.createOrEditLabel">Create or edit a Post</h2>
-            <div>
-                <jhi-alert-error></jhi-alert-error>
-                <div class="form-group" [hidden]="!editForm.get('id').value">
-                    <label for="id" jhiTranslate="global.field.id">ID</label>
-                    <input type="text" class="form-control" id="id" name="id" formControlName="id"
-                           readonly/>
-                </div>
-                <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="soundgramApp.post.postContent"
-                           for="field_postContent">Post Content</label>
-                    <input type="text" class="form-control" name="postContent" id="field_postContent"
-                           formControlName="postContent"/>
-                </div>
-
-                <form name="form" role="form" (ngSubmit)="makeNewTag()" [formGroup]="tagForm" *ngIf="!success">
-                    <div class="form-group">
-                        <label class="form-control-label" for="tagName">Enter tag name</label>
-                        <input type="text" class="form-control" id="tagName" name="tagName" formControlName="tagName">
-                        <div
-                            *ngIf="tagForm.get('tagName').invalid && (tagForm.get('tagName').dirty || tagForm.get('tagName').touched)">
-                            <small class="form-text text-danger" *ngIf="tagForm.get('tagName').errors.required">
-                                Tag name is required.
-                            </small>
-                            <small class="form-text text-danger" *ngIf="tagForm.get('tagName').errors.minlength">
-                                Tag is required to be at least 1 character.
-                            </small>
-                            <small class="form-text text-danger" *ngIf="tagForm.get('tagName').errors.maxlength">
-                                Tag cannot be longer than 50 characters.
-                            </small>
-                            <small class="form-text text-danger" *ngIf="tagForm.get('tagName').errors.pattern">
-                                Tag can only contain letters and digits.
-                            </small>
-                        </div>
+    <div class="col-10">
+        <div class="container">
+            <jhi-alert-error></jhi-alert-error>
+            <div class="card post-window mb-3">
+                <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+                    <h2 id="jhi-post-heading" class="text-center">{{pageTitle}}</h2>
+                    <div class="form-group center">
+                        <!--                            <label class="form-control-label" jhiTranslate="soundgramApp.post.postContent"
+                                                           for="field_postContent">Post Content</label>
+                                                    <input type="text" class="form-control" name="postContent" id="field_postContent"
+                                                           formControlName="postContent"/>-->
+                        <textarea class="form-control" name="postContent" id="field_postContent" rows="2"
+                                  formControlName="postContent"
+                                  placeholder="{{ 'Write something ...' }}"></textarea>
                     </div>
-                    <button type="submit" [disabled]="tagForm.invalid" class="btn btn-primary">Assign tag to this post
-                    </button>
+
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div *ngIf="currentAudioFile">
+                                <jhi-post-player [audioFile]="audioFile"></jhi-post-player>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroupFileAddonAudio">Audio</span>
+                                </div>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="inputGroupFileAudio"
+                                           aria-describedby="inputGroupFileAddon01" (change)="selectAudioFile($event)">
+                                    <label class="custom-file-label" for="inputGroupFileAudio">{{chooseAudio}}</label>
+                                </div>
+                            </div>
+<!--                            <div style="text-align:center">-->
+<!--                                <label>-->
+<!--                                    <span>Dodaj plik audio: </span>-->
+<!--                                    <input type="file" (change)="selectAudioFile($event)">-->
+<!--                                </label>-->
+<!--                                &lt;!&ndash;<button [disabled]="!selectedFiles" (click)="upload()">Upload</button>&ndash;&gt;-->
+<!--                            </div>-->
+                            <br>
+                            <div *ngIf="displayImage">
+                                <img [src]="displayImage"
+                                     alt="post image"
+                                     style="max-width:400px;width:100%;max-height:500px;height:100%">
+                            </div>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroupFileAddonImage">Image</span>
+                                </div>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="inputGroupFileImage"
+                                           aria-describedby="inputGroupFileAddon01" (change)="selectImage($event)">
+                                    <label class="custom-file-label" for="inputGroupFileImage">{{chooseImage}}</label>
+                                </div>
+                            </div>
+<!--                            <div style="text-align:center">-->
+<!--                                <label>-->
+<!--                                    <span>Dodaj obraz: </span>-->
+<!--                                    <input type="file" (change)="selectImage($event)">-->
+<!--                                </label>-->
+<!--                                &lt;!&ndash;<button [disabled]="!selectedFiles" (click)="upload()">Upload</button>&ndash;&gt;-->
+<!--                            </div>-->
+                        </div>
+                        <div class="col-md-5">
+                            <div class="center">
+                                <form name="form" role="form" (ngSubmit)="makeNewTag()" [formGroup]="tagForm"
+                                      *ngIf="!success">
+                                    <div class="form-group">
+                                        <div class="input-group w-100 mt-3">
+                                            <input type="text" class="form-control" id="tagName" name="tagName"
+                                                   formControlName="tagName"
+                                                   placeholder="{{ 'Add tag to post' }}">
+                                            <button type="submit" [disabled]="tagForm.invalid" class="btn btn-primary">
+                                                Add
+                                            </button>
+                                        </div>
+                                        <div
+                                            *ngIf="tagForm.get('tagName').invalid && (tagForm.get('tagName').dirty || tagForm.get('tagName').touched)">
+                                            <small class="form-text text-danger"
+                                                   *ngIf="tagForm.get('tagName').errors.required">
+                                                Tag name is required.
+                                            </small>
+                                            <small class="form-text text-danger"
+                                                   *ngIf="tagForm.get('tagName').errors.minlength">
+                                                Tag is required to be at least 1 character.
+                                            </small>
+                                            <small class="form-text text-danger"
+                                                   *ngIf="tagForm.get('tagName').errors.maxlength">
+                                                Tag cannot be longer than 50 characters.
+                                            </small>
+                                            <small class="form-text text-danger"
+                                                   *ngIf="tagForm.get('tagName').errors.pattern">
+                                                Tag can only contain letters and digits.
+                                            </small>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div *ngIf="postTags">
+                                <div class="panel" id="result_panel">
+                                    <div class="panel-heading"><h5 class="panel-title">Post tags</h5>
+                                    </div>
+                                    <div class="panel-body">
+                                        <ul class="list-group">
+                                            <li class="list-group-item" *ngFor="let tag of postTags">
+                                                <a [routerLink]="['/tag', tag.id, 'view' ]">{{tag.name}}</a>&nbsp;&nbsp;
+<!--                                                <span class="right"><fa-icon [icon]="'users'"></fa-icon>-->
+<!--                                                    {{tag.users.length}}</span>&nbsp;&nbsp;-->
+                                                <button type="submit" (click)="deleteTagFromPost(tag)"
+                                                        class="btn btn-danger btn-sm float-right">
+                                                    <fa-icon [icon]="'times'"></fa-icon>
+                                                    <span class="d-none d-md-inline">Delete tag</span>
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--                                <div *ngIf="postTags">
+                                                                <h4>Post tags</h4>
+                                                                <ul class="tags">
+                                                                    <li *ngFor="let tag of postTags">
+                                                                        <span class="badge">{{tag.name}}</span> {{tag.id}}
+                                                                        <button type="button" (click)="deleteTagFromPost(tag)"
+                                                                                class="btn btn-danger btn-sm">
+                                                                            <fa-icon [icon]="'times'"></fa-icon>
+                                                                            <span class="d-none d-md-inline">Delete tag from this post</span>
+                                                                        </button>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>-->
+
+                            <!--                                <div class="col-md-6">
+                                                                <form name="form" role="form" (ngSubmit)="makeNewTag()" [formGroup]="tagForm"
+                                                                      *ngIf="!success">
+                                                                    <div class="form-group">
+                                                                        <label class="form-control-label" for="tagName">Enter tag name</label>
+                                                                        <input type="text" class="form-control" id="tagName" name="tagName"
+                                                                               formControlName="tagName">
+                                                                        <div
+                                                                            *ngIf="tagForm.get('tagName').invalid && (tagForm.get('tagName').dirty || tagForm.get('tagName').touched)">
+                                                                            <small class="form-text text-danger"
+                                                                                   *ngIf="tagForm.get('tagName').errors.required">
+                                                                                Tag name is required.
+                                                                            </small>
+                                                                            <small class="form-text text-danger"
+                                                                                   *ngIf="tagForm.get('tagName').errors.minlength">
+                                                                                Tag is required to be at least 1 character.
+                                                                            </small>
+                                                                            <small class="form-text text-danger"
+                                                                                   *ngIf="tagForm.get('tagName').errors.maxlength">
+                                                                                Tag cannot be longer than 50 characters.
+                                                                            </small>
+                                                                            <small class="form-text text-danger"
+                                                                                   *ngIf="tagForm.get('tagName').errors.pattern">
+                                                                                Tag can only contain letters and digits.
+                                                                            </small>
+                                                                        </div>
+                                                                    </div>
+                                                                    <button type="submit" [disabled]="tagForm.invalid" class="btn btn-primary">Assign
+                                                                        tag to
+                                                                        this post
+                                                                    </button>
+                                                                </form>
+
+                                                                <div *ngIf="postTags">
+                                                                    <h4>Post tags</h4>
+                                                                    <ul class="tags">
+                                                                        <li *ngFor="let tag of postTags">
+                                                                            <span class="badge">{{tag.name}}</span> {{tag.id}}
+                                                                            <button type="button" (click)="deleteTagFromPost(tag)"
+                                                                                    class="btn btn-danger btn-sm">
+                                                                                <fa-icon [icon]="'times'"></fa-icon>
+                                                                                <span class="d-none d-md-inline">Delete tag from this post</span>
+                                                                            </button>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>-->
+                        </div>
+
+
+                        <!--                <button type="file" id="jh-create-audio" class="btn btn-primary jh-create-entity create-audio-file" (change)="selectFile($event)">
+                                            <fa-icon [icon]="'plus'"></fa-icon>
+                                            <span class="hidden-sm-down" >
+                                                Add audio file
+                                            </span>
+                                        </button>-->
+
+                        <!--                            <div *ngIf="currentAudioFile">
+                                                        <jhi-post-player [audioFile]="audioFile"></jhi-post-player>
+                                                    </div>
+                                                    <div style="text-align:center">
+                                                        <label>
+                                                            <span>Dodaj plik audio: </span>
+                                                            <input type="file" (change)="selectAudioFile($event)">
+                                                        </label>
+                                                        &lt;!&ndash;<button [disabled]="!selectedFiles" (click)="upload()">Upload</button>&ndash;&gt;
+                                                    </div>
+                                                    <br>
+                                                    <div *ngIf="displayImage">
+                                                        <img [src]="displayImage"
+                                                             alt="post image"
+                                                             style="max-width:400px;width:100%;max-height:500px;height:100%">
+                                                    </div>
+                                                    <div style="text-align:center">
+                                                        <label>
+                                                            <span>Dodaj obraz: </span>
+                                                            <input type="file" (change)="selectImage($event)">
+                                                        </label>
+                                                        &lt;!&ndash;<button [disabled]="!selectedFiles" (click)="upload()">Upload</button>&ndash;&gt;
+                                                    </div>
+
+                                                    <p></p>-->
+                    </div>
+                    <div class="row center">
+                        <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+                            <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span
+                            jhiTranslate="entity.action.cancel">Cancel</span>
+                        </button>
+                        <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving"
+                                class="btn btn-primary">
+                            <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                        </button>
+                    </div>
                 </form>
-
-                <div *ngIf="postTags">
-                    <h4>Post tags</h4>
-                    <ul class="tags">
-                        <li *ngFor="let tag of postTags">
-                            <span class="badge">{{tag.name}}</span> {{tag.id}}
-                            <button type="button" (click)="deleteTagFromPost(tag)"
-                                    class="btn btn-danger btn-sm">
-                                <fa-icon [icon]="'times'"></fa-icon>
-                                <span class="d-none d-md-inline">Delete tag from this post</span>
-                            </button>
-                        </li>
-                    </ul>
-                </div>
-
-
-                <!--                <button type="file" id="jh-create-audio" class="btn btn-primary jh-create-entity create-audio-file" (change)="selectFile($event)">
-                                    <fa-icon [icon]="'plus'"></fa-icon>
-                                    <span class="hidden-sm-down" >
-                                        Add audio file
-                                    </span>
-                                </button>-->
-
-                <div *ngIf="currentAudioFile">
-                    <jhi-post-player [audioFile]="audioFile"></jhi-post-player>
-                </div>
-                <div style="text-align:center">
-                    <label>
-                        <span>Dodaj plik audio: </span>
-                        <input type="file" (change)="selectAudioFile($event)">
-                    </label>
-                    <!--<button [disabled]="!selectedFiles" (click)="upload()">Upload</button>-->
-                </div>
-                <br>
-                <div *ngIf="displayImage">
-                    <img [src]="displayImage"
-                         alt="post image"
-                         style="max-width:400px;width:100%;max-height:500px;height:100%">
-                </div>
-                <div style="text-align:center">
-                    <label>
-                        <span>Dodaj obraz: </span>
-                        <input type="file" (change)="selectImage($event)">
-                    </label>
-                    <!--<button [disabled]="!selectedFiles" (click)="upload()">Upload</button>-->
-                </div>
-
-                <p></p>
-
             </div>
-            <div>
-                <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
-                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
-                </button>
-                <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving"
-                        class="btn btn-primary">
-                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
-                </button>
-            </div>
-        </form>
+        </div>
     </div>
 </div>

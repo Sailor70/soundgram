@@ -9,7 +9,6 @@ import * as moment from 'moment';
 import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 import { JhiAlertService } from 'ng-jhipster';
 import { IPost, Post } from 'app/shared/model/post.model';
-import { PostService } from './post.service';
 import { ITag, Tag } from 'app/shared/model/tag.model';
 import { TagService } from 'app/entities/tag/tag.service';
 import { now } from 'moment';
@@ -20,17 +19,15 @@ import { Account } from 'app/core/user/account.model';
 import { AccountService } from 'app/core/auth/account.service';
 import { IAudioFile } from 'app/shared/model/audio-file.model';
 import { IImage } from 'app/shared/model/image.model';
+import { PostService } from 'app/entities/post/post.service';
 
 @Component({
-  selector: 'jhi-post-update',
-  templateUrl: './post-update.component.html',
-  styleUrls: ['./post.scss']
+  selector: 'jhi-post-new',
+  templateUrl: './post-new.component.html',
+  styleUrls: ['./post-new.component.scss']
 })
-export class PostUpdateComponent implements OnInit {
+export class PostNewComponent implements OnInit {
   isSaving: boolean;
-  pageTitle = 'Create new Post';
-  chooseAudio = 'Choose Audio';
-  chooseImage = 'Choose Image';
 
   allTags: ITag[];
   postTags: ITag[] = []; // current / tags loaded from database
@@ -83,18 +80,17 @@ export class PostUpdateComponent implements OnInit {
     this.isSaving = false;
     this.audio = new Audio();
     this.activatedRoute.data.subscribe(({ post }) => {
-      console.error('nowy post id : ' + post.id);
       this.updateForm(post);
       this.currentPost = post;
       // console.error('tags length' + this.currentPost.tags.length);
       if (post.id !== undefined) {
-        console.error('edytujemy post: ' + post.id);
         this.editMode = true;
-        this.pageTitle = 'Edit Post';
         this.loadMediaResources();
       }
-      this.loadAllTagsAndPostTags();
     });
+    this.tagService
+      .query()
+      .subscribe((res: HttpResponse<ITag[]>) => (this.allTags = res.body), (res: HttpErrorResponse) => this.onError(res.message));
 
     /*    this.accountService.identity().subscribe((account: Account) => {
           this.account = account;
@@ -118,28 +114,9 @@ export class PostUpdateComponent implements OnInit {
       tags: post.tags,
       user: post.user // jak edytujemy to nie nullujemy usera
     });
-    // if (post.tags !== undefined) {
-    //   this.postTags = this.tagService. post.tags;
-    //   // console.error('postTags: ' + this.postTags[1].users.length);
-    // }
-  }
-
-  loadAllTagsAndPostTags() {
-    this.tagService.query().subscribe(
-      (res: HttpResponse<ITag[]>) => {
-        this.allTags = res.body;
-        if (this.currentPost.tags) {
-          for (const postTag of this.currentPost.tags) {
-            for (const tag of this.allTags) {
-              if (tag.id === postTag.id) {
-                this.postTags.push(tag);
-              }
-            }
-          }
-        }
-      },
-      (res: HttpErrorResponse) => this.onError(res.message)
-    );
+    if (post.tags !== undefined) {
+      this.postTags = post.tags;
+    }
   }
 
   previousState() {
@@ -218,13 +195,13 @@ export class PostUpdateComponent implements OnInit {
 
   selectAudioFile(event) {
     this.selectedAudioFiles = event.target.files;
-    this.chooseAudio = this.selectedAudioFiles.item(0).name;
+    this.currentAudioFile = this.selectedAudioFiles.item(0);
+    console.error('audio filetype: ' + typeof this.currentAudioFile);
     this.newAudioSelected = true;
   }
 
   selectImage(event) {
     this.selectedImages = event.target.files;
-    this.chooseImage = this.selectedImages.item(0).name;
     // if(this.editMode) {
     this.newImageSelected = true;
     // }
@@ -348,18 +325,4 @@ export class PostUpdateComponent implements OnInit {
       reader.readAsDataURL(image);
     }
   }
-
-  /*  playAudio() {
-    if (!this.audio.paused) {
-      this.audio.load();
-      this.audio.play();
-    } else {
-      this.audio.play();
-    }
-  }
-  pauseAudio() {
-    if (!this.audio.paused) {
-      this.audio.pause();
-    }
-  }*/
 }

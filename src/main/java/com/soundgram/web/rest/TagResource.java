@@ -127,6 +127,12 @@ public class TagResource {
         return tagRepository.findAllWithEagerRelationships();
     }
 
+//    @GetMapping("/tags-post/{id}")
+//    public List<Tag> getPostTags(@PathVariable Long postId) {
+//        log.debug("REST request to get all Tags");
+//        return tagRepository.findAllWithEagerRelationships();
+//    }
+
     @GetMapping("/tags-user/{login:" + Constants.LOGIN_REGEX + "}")
     public List<Tag> getAllUserTags(@PathVariable String login) {
         log.debug("REST request to get all Tags assigned to user of login: {}", login);
