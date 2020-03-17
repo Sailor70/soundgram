@@ -15,11 +15,16 @@ exports.config = {
                 ? [ "--headless", "--disable-gpu", "--window-size=800,600" ]
                 : [ "--disable-gpu", "--window-size=800,600" ]
         }
+      // browserName: 'firefox',
+      //
+      // 'moz:firefoxOptions': {
+      //   args: [ "--headless" ]
+      // }
     },
 
     directConnect: true,
 
-    baseUrl: 'http://localhost:8080/',
+    baseUrl: 'http://localhost:9000/', // 8080
 
     framework: 'mocha',
 

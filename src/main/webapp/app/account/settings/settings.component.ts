@@ -9,6 +9,7 @@ import { UserExtraService } from 'app/entities/user-extra/user-extra.service';
 import { UserService } from 'app/core/user/user.service';
 import { IUser } from 'app/core/user/user.model';
 import { IUserExtra } from 'app/shared/model/user-extra.model';
+import { RxwebValidators } from '@rxweb/reactive-form-validators';
 
 @Component({
   selector: 'jhi-settings',
@@ -26,7 +27,15 @@ export class SettingsComponent implements OnInit {
     authorities: [[]],
     langKey: ['en'],
     login: [],
-    imageUrl: []
+    imageUrl: [],
+    imageFile: [
+      '',
+      [
+        RxwebValidators.extension({ extensions: ['jpeg', 'png'] }),
+        RxwebValidators.image({ maxHeight: 100, maxWidth: 100 }),
+        RxwebValidators.fileSize({ maxSize: 2 })
+      ]
+    ]
   });
 
   extraForm = this.fb.group({
@@ -46,6 +55,7 @@ export class SettingsComponent implements OnInit {
   avatar: any;
   hasImage: boolean;
   isImageLoading: boolean;
+  chooseAvatar = 'Choose Avatar';
 
   constructor(
     private accountService: AccountService,
@@ -184,6 +194,7 @@ export class SettingsComponent implements OnInit {
 
   selectFile(event) {
     this.selectedFiles = event.target.files;
+    this.chooseAvatar = this.selectedFiles.item(0).name;
   }
 
   previousState() {

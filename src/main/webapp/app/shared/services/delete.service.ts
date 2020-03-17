@@ -4,7 +4,7 @@ import { PostService } from 'app/entities/post/post.service';
 import { ImageService } from 'app/entities/image/image.service';
 
 @Injectable({ providedIn: 'root' })
-export class deleteService {
+export class DeleteService {
   constructor(private audioFileService: AudioFileService, private postService: PostService, private imageService: ImageService) {}
 
   deletePost(id: number) {

@@ -83,7 +83,6 @@ public class ImageResource {
         Post post;
         if (postOpt.isPresent()) {
             post = postOpt.get();
-            User currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null);
             Path imagePath = storageService.storeImage(file, postId);
 
             Image image = new Image();

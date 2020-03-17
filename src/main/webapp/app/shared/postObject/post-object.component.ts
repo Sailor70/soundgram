@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IPost } from 'app/shared/model/post.model';
 import { ImageService } from 'app/entities/image/image.service';
@@ -6,22 +6,16 @@ import { IImage } from 'app/shared/model/image.model';
 import { HttpResponse } from '@angular/common/http';
 import { AudioFile, IAudioFile } from 'app/shared/model/audio-file.model';
 import { AudioFileService } from 'app/entities/audio-file/audio-file.service';
-import { CommentService } from 'app/entities/comment/comment.service';
-import { IComment } from 'app/shared/model/comment.model';
 import { IUser } from 'app/core/user/user.model';
-import * as moment from 'moment';
-import { now } from 'moment';
-import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 import { UserService } from 'app/core/user/user.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Account } from 'app/core/user/account.model';
 import { AccountService } from 'app/core/auth/account.service';
-import { CommentDeleteDialogComponent } from 'app/entities/comment/comment-delete-dialog.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AudioService } from 'app/music/player/audio-service';
-import { StreamState } from 'app/music/player/stream-state.model';
 import { AvatarService } from 'app/shared/services/avatar.service';
 import { PostCommentsComponent } from 'app/shared/postObject/post-comments.component';
+import { IComment } from 'app/shared/model/comment.model';
+import { CommentService } from 'app/entities/comment/comment.service';
 
 @Component({
   selector: 'jhi-post-object',
@@ -29,28 +23,23 @@ import { PostCommentsComponent } from 'app/shared/postObject/post-comments.compo
   styleUrls: ['./post-object.component.scss'],
   providers: [AudioService, AvatarService]
 })
-export class PostObjectComponent implements OnInit, OnDestroy {
+export class PostObjectComponent implements OnInit {
   @Input() post: IPost | IPost; // to disable IPost export warning
-  image: IImage;
+
   postImage: any;
-
+  image: IImage;
   audioFile: IAudioFile;
-  state: StreamState;
-
-  commentContent: string;
-  newComment: IComment;
   usersComments: IComment[];
+
   currentUser: IUser;
+  account: Account;
 
   avatar: any;
   isImageLoading: boolean;
-  account: Account;
   hasImage: boolean;
 
-  showCommentWindow = false;
   liked = false;
   likeBtnText = 'Like this audio';
-  commentsAvatars: { comment: IComment; avatar: any }[] = [];
 
   @ViewChild(PostCommentsComponent, { static: false })
   private postCommentsComponent: PostCommentsComponent;
@@ -62,21 +51,16 @@ export class PostObjectComponent implements OnInit, OnDestroy {
     protected commentService: CommentService,
     protected userService: UserService,
     private sanitizer: DomSanitizer,
-    private accountService: AccountService,
-    private modalService: NgbModal,
-    private audioService: AudioService,
-    private avatarService: AvatarService
+    private accountService: AccountService
   ) {}
 
   ngOnInit() {
-    this.commentsAvatars = null;
     this.hasImage = false;
     this.getAvatarFromService();
 
     this.audioFileService.findByPost(this.post.id).subscribe(
       (res: HttpResponse<IAudioFile>) => {
         this.audioFile = res.body;
-        this.initAudioFileAndService();
         this.checkIfLiked();
         console.error('Audio id:' + this.audioFile.id);
         // this.audioFile.users.forEach((user) => user.id);
@@ -102,8 +86,6 @@ export class PostObjectComponent implements OnInit, OnDestroy {
     this.commentService.findByPost(this.post.id).subscribe(
       (res: HttpResponse<IComment[]>) => {
         this.usersComments = res.body;
-        // this.usersComments.forEach(value => console.error(value));
-        this.getCommentsAvatars();
       },
       res => {
         console.error('Comments load error: ' + res.body);
@@ -117,22 +99,6 @@ export class PostObjectComponent implements OnInit, OnDestroy {
         console.error('current user: ' + this.currentUser.login);
       });
     });
-  }
-
-  getCommentsAvatars() {
-    this.commentsAvatars = [];
-    // const usersOfComments: IUser[] = [];
-    // for (const userComment of this.usersComments) {
-    //   usersOfComments.push(userComment.user);
-    // }
-    this.commentsAvatars = this.avatarService.getAvatarsForCommentList(this.usersComments);
-    for (const commentAvatar of this.commentsAvatars) {
-      console.error('comment user ' + commentAvatar.comment.user + ' avatar ' + commentAvatar.avatar);
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.audioService.stop();
   }
 
   private checkIfLiked() {
@@ -161,38 +127,6 @@ export class PostObjectComponent implements OnInit, OnDestroy {
         this.likeBtnText = 'Like this audio';
       });
     }
-  }
-
-  addComment() {
-    this.newComment = new (class implements IComment {
-      date: moment.Moment;
-      id: number;
-      post: IPost;
-      textContent: string;
-      user: IUser;
-    })();
-    this.newComment.post = this.post;
-    this.newComment.textContent = this.commentContent;
-    this.newComment.user = null; // spróbować pobrać usera na frontendzie bo teraz idzie ze spring security
-    this.newComment.date = moment(new Date(now()), DATE_TIME_FORMAT);
-    this.commentService.create(this.newComment).subscribe(() => {
-      // this.currentUser = res.body;
-      this.showCommentWindow = false;
-      this.commentContent = '';
-      this.ngOnInit();
-    });
-  }
-
-  toggleComment() {
-    this.showCommentWindow = !this.showCommentWindow;
-  }
-
-  deleteComment(comment: IComment) {
-    const modalRef = this.modalService.open(CommentDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
-    modalRef.componentInstance.comment = comment;
-    modalRef.componentInstance.isDeleted.subscribe(() => {
-      this.ngOnInit();
-    });
   }
 
   getAvatarFromService() {
@@ -262,43 +196,5 @@ export class PostObjectComponent implements OnInit, OnDestroy {
 
   previousState() {
     window.history.back();
-  }
-
-  /* ----------------------------------------------player--------------------------------------------- */
-
-  initAudioFileAndService() {
-    this.getFileAndPassToService(this.audioFile.id);
-    this.audioService.getState().subscribe(state => {
-      this.state = state;
-      // console.error('State cr time: ' + this.state.currentTime);
-    });
-  }
-
-  getFileAndPassToService(id: number) {
-    this.audioFileService.getFile(id).subscribe(
-      res => {
-        const blobUrl = URL.createObjectURL(res);
-        this.audioService.playStream(blobUrl).subscribe(() => {
-          // listening for fun here
-        });
-      },
-      (res: HttpResponse<IAudioFile>) => {
-        console.error('File resource error: ' + res);
-      }
-    );
-  }
-
-  pause() {
-    this.audioService.pause();
-  }
-
-  play() {
-    // this.state.playClicked = true;
-    this.audioService.play();
-  }
-
-  onSliderChangeEnd(change) {
-    console.error('Change: ' + change.value);
-    this.audioService.seekTo(change.value);
   }
 }

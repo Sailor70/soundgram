@@ -6,7 +6,8 @@
         "createLabel": "Create a new Tag",
         "createOrEditLabel": "Create or edit a Tag",
         "search": "Search for Tag",
-        "notFound": "No Tags found"
+        "notFound": "No Tags found",
+        "follow": "Add tag to watchlist"
       },
       "created": "A new Tag is created with identifier {{ param }}",
       "updated": "A Tag is updated with identifier {{ param }}",
@@ -15,10 +16,10 @@
         "question": "Are you sure you want to delete Tag {{ id }}?"
       },
       "detail": {
-        "title": "Tag"
+        "title": "Tag:"
       },
       "name": "Name",
-      "user": "User",
+      "user": "Users who follow this tag: ",
       "post": "Post"
     }
   }

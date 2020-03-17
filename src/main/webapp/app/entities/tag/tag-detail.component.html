@@ -1,15 +1,12 @@
 <div class="row justify-content-center">
     <div class="col-8">
         <div *ngIf="tag">
-            <h2><span jhiTranslate="soundgramApp.tag.detail.title">Tag</span> {{tag.id}}</h2>
+            <h2><span jhiTranslate="soundgramApp.tag.detail.title">Tag: </span> {{tag.name}}</h2>
             <hr>
             <jhi-alert-error></jhi-alert-error>
             <dl class="row-md jh-entity-details">
-                <dt><span jhiTranslate="soundgramApp.tag.name">Name</span></dt>
-                <dd>
-                    <span>{{tag.name}}</span>
-                </dd>
-                <dt><span jhiTranslate="soundgramApp.tag.user">User</span></dt>
+
+                <dt><span jhiTranslate="soundgramApp.tag.user">Users: </span></dt>
                 <dd>
                     <span *ngFor="let user of tag.users; let last = last">
                         <a [routerLink]="['/', user.login, 'view']">{{user.login}}{{last ? '' : ', '}}</a>
@@ -24,58 +21,16 @@
             </button>
 
             <button type="button"
-                    [routerLink]="['/tag', tag.id, 'edit']"
-                    class="btn btn-primary">
-                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-            </button>
-
-            <button type="button"
                     (click)="followThisTag()"
                     class="btn btn-primary">
-                <fa-icon [icon]="'forward'"></fa-icon>&nbsp;<span>Add tag to followed</span>
+                <fa-icon [icon]="'forward'"></fa-icon>&nbsp;<span jhiTranslate="soundgramApp.tag.home.follow">Add tag to watchlist</span>
             </button>
 
-            <h2 class="text-center padding-top">Posts that contains this tag:</h2>
+            <h2 class="text-center padding-top"><span jhiTranslate="soundgramApp.post.home.post-tag">Posts that contain the tag</span> {{tag.name}}</h2>
             <div class="alert alert-warning" *ngIf="posts?.length === 0">
                 <span jhiTranslate="soundgramApp.post.home.notFound">No posts found</span>
             </div>
-            <!--<div class="table-responsive" *ngIf="posts?.length > 0">
-                <table class="table table-striped" aria-describedby="page-heading">
-                    <thead>
-                    <tr>
-                        <th scope="col"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-                        <th scope="col"><span jhiTranslate="soundgramApp.post.postContent">Post Content</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-                        <th scope="col"><span jhiTranslate="soundgramApp.post.date">Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-                        <th scope="col"><span jhiTranslate="soundgramApp.post.user">User</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-                        <th scope="col"><span>Tags</span></th>
-                        <th scope="col"></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr *ngFor="let post of posts ;trackBy: trackId">
-                        <td><a [routerLink]="['/post', post.id, 'view' ]">{{post.id}}</a></td>
-                        <td>{{post.postContent}}</td>
-                        <td>{{post.date | date:'medium'}}</td>
-                        <td><a [routerLink]="['/', post.user.login, 'view']">{{post.user?.login}}</a></td>
-                        <td>
-                                <span *ngFor="let tag of post.tags; let last = last">
-                                    <a [routerLink]="['/tag', tag?.id, 'view' ]">{{tag.name}}</a>{{last ? '' : ', '}}
-                                </span>
-                        </td>
-                        <td class="text-right">
-                            <div class="btn-group">
-                                <button type="submit"
-                                        [routerLink]="['/post', post.id, 'view' ]"
-                                        class="btn btn-info btn-sm">
-                                    <fa-icon [icon]="'eye'"></fa-icon>
-                                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>-->
+
         </div>
     </div>
 </div>

@@ -6,7 +6,8 @@
         "createLabel": "Dodaj Tag",
         "createOrEditLabel": "Dodaj lub edytuj: Tag",
         "search": "Szukaj Tag",
-        "notFound": "No Tags found"
+        "notFound": "No Tags found",
+        "follow": "Dodaj tag do listy obserwowanych"
       },
       "created": "Utworzono nowy obiekt typu Tag z identyfikatorem {{ param }}",
       "updated": "Uaktualniono obiekt typu Tag z identyfikatorem {{ param }}",
@@ -15,10 +16,10 @@
         "question": "Czy na pewno chcesz usunąć Tag {{ id }}?"
       },
       "detail": {
-        "title": "Tag"
+        "title": "Tag:"
       },
       "name": "Name",
-      "user": "User",
+      "user": "Użytkownicy którzy obserwują ten tag: ",
       "post": "Post"
     }
   }

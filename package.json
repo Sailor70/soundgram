@@ -21,6 +21,7 @@
     "@ng-bootstrap/ng-bootstrap": "5.1.0",
     "@ngx-translate/core": "11.0.1",
     "@ngx-translate/http-loader": "4.0.0",
+    "@rxweb/reactive-form-validators": "^1.9.9-beta2",
     "bootstrap": "4.3.1",
     "core-js": "3.2.1",
     "moment": "2.24.0",

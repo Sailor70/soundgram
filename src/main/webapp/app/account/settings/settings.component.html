@@ -15,13 +15,37 @@
 
             <form name="form" role="form" (ngSubmit)="save()" [formGroup]="settingsForm" *ngIf="settingsForm.get('login').value" novalidate>
 
-                <div style="text-align:center">
+                <div class="col-md-8 input-group form-group" style="margin: auto">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroupFileAddonImage">Image</span>
+                    </div>
+                    <div class="custom-file">
+                        <input type="file" formControlName="imageFile" class="custom-file-input" id="inputGroupFileImage"
+                               aria-describedby="inputGroupFileAddon01" (change)="selectFile($event)">
+                        <label class="custom-file-label" for="inputGroupFileImage">{{chooseAvatar}}</label>
+                    </div>
+                    <div *ngIf="settingsForm.get('imageFile').invalid">
+                        <small class="form-text text-danger"
+                               *ngIf="settingsForm.get('imageFile').errors.extension">
+                            Nieprawidłowy typ pliku! Załaduj png lub jpg
+                        </small>
+                        <small class="form-text text-danger"
+                               *ngIf="settingsForm.get('imageFile').errors.image">
+                            Avatar jest za duży
+                        </small>
+                        <small class="form-text text-danger"
+                               *ngIf="settingsForm.get('imageFile').errors.fileSize">
+                            Za duży plik!
+                        </small>
+                    </div>
+                </div>
+<!--                <div style="text-align:center">
                     <label>
                         <span>Wybierz swój awatar: </span>
                         <input type="file" (change)="selectFile($event)">
                     </label>
-                    <!--<button [disabled]="!selectedFiles" (click)="upload()">Upload</button>-->
-                </div>
+                    &lt;!&ndash;<button [disabled]="!selectedFiles" (click)="upload()">Upload</button>&ndash;&gt;
+                </div>-->
 
                 <div class="form-group">
                     <label class="form-control-label" for="firstName" jhiTranslate="settings.form.firstname">First Name</label>

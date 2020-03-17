@@ -3,10 +3,11 @@
     "post": {
       "home": {
         "title": "Post",
-        "createLabel": "Dodaj Post",
+        "createLabel": "Dodaj nowy Post",
         "createOrEditLabel": "Dodaj lub edytuj: Post",
-        "search": "Szukaj Post",
-        "notFound": "No Posts found"
+        "search": "Szukaj Posta",
+        "notFound": "Nie znaleziono postów",
+        "post-tag": "Posty które zawierają tag"
       },
       "created": "Utworzono nowy obiekt typu Post z identyfikatorem {{ param }}",
       "updated": "Uaktualniono obiekt typu Post z identyfikatorem {{ param }}",

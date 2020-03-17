@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { IAudioFile } from 'app/shared/model/audio-file.model';
 import { HttpResponse } from '@angular/common/http';
 import { AudioFileService } from 'app/entities/audio-file/audio-file.service';
@@ -10,7 +10,7 @@ import { StreamState } from 'app/music/player/stream-state.model';
   templateUrl: './post-player.component.html',
   styleUrls: ['./post-player.component.scss']
 })
-export class PostPlayerComponent implements OnInit {
+export class PostPlayerComponent implements OnInit, OnDestroy {
   @Input() audioFile: IAudioFile | IAudioFile;
   state: StreamState;
 
@@ -22,6 +22,10 @@ export class PostPlayerComponent implements OnInit {
       this.state = state;
       // console.error('State cr time: ' + this.state.currentTime);
     });
+  }
+
+  ngOnDestroy(): void {
+    this.audioService.stop();
   }
 
   getFileAndPassToService(id: number) {

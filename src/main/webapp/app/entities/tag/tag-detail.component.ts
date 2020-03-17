@@ -38,6 +38,13 @@ export class TagDetailComponent implements OnInit {
           }
         }
       }
+      this.sortPostsByDate();
+    });
+  }
+
+  sortPostsByDate() {
+    this.posts.sort((a: IPost, b: IPost) => {
+      return b.date.toDate().getTime() - a.date.toDate().getTime(); // sorts them descending (latest dates first)
     });
   }
 
@@ -45,10 +52,6 @@ export class TagDetailComponent implements OnInit {
     this.tagService.addUserToTag(this.tag).subscribe(res => {
       this.tag = res.body;
     });
-  }
-
-  trackId(index: number, item: IPost) {
-    return item.id;
   }
 
   previousState() {

@@ -16,11 +16,11 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-7">
-                            <div *ngIf="currentAudioFile">
+                        <div class="col-md-7 center">
+                            <div class="padding-10" *ngIf="currentAudioFile && !newAudioSelected">
                                 <jhi-post-player [audioFile]="audioFile"></jhi-post-player>
                             </div>
-                            <div class="input-group">
+                            <div class="input-group padding-10">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="inputGroupFileAddonAudio">Audio</span>
                                 </div>
@@ -38,12 +38,12 @@
 <!--                                &lt;!&ndash;<button [disabled]="!selectedFiles" (click)="upload()">Upload</button>&ndash;&gt;-->
 <!--                            </div>-->
                             <br>
-                            <div *ngIf="displayImage">
+                            <div *ngIf="displayImage && !newImageSelected">
                                 <img [src]="displayImage"
                                      alt="post image"
                                      style="max-width:400px;width:100%;max-height:500px;height:100%">
                             </div>
-                            <div class="input-group">
+                            <div class="input-group padding-10">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="inputGroupFileAddonImage">Image</span>
                                 </div>

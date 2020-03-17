@@ -159,7 +159,7 @@ export class PostUpdateComponent implements OnInit {
       } else {
         this.subscribeToSaveResponse(this.postService.create(post));
       }
-    }); // dodajemy tagi do posta na koniec w onDestroy
+    });
   }
 
   private createFromForm(): IPost {
@@ -179,21 +179,23 @@ export class PostUpdateComponent implements OnInit {
 
   protected onSaveSuccess(res: HttpResponse<IPost>) {
     this.currentPost = res.body;
-    console.error('currentPost: {]', this.currentPost.id);
+    console.error('currentPost: ', this.currentPost.id);
 
     if (this.editMode) {
       // jeśli tryb edycji to usuwamy stare pliki i zapisujemy nowe
       if (this.newAudioSelected) {
         this.audioFileService.findByPost(this.currentPost.id).subscribe(audioFile => {
-          this.audioFileService.delete(audioFile.body.id);
+          this.audioFileService.delete(audioFile.body.id).subscribe(() => {
+            this.audioFileService.create(this.currentAudioFile, this.currentPost.id).subscribe();
+          });
         });
-        this.audioFileService.create(this.currentAudioFile, this.currentPost.id).subscribe();
       }
       if (this.newImageSelected) {
-        this.imageService.findByPost(this.currentPost.id).subscribe(audioFile => {
-          this.imageService.delete(audioFile.body.id);
+        this.imageService.findByPost(this.currentPost.id).subscribe(image => {
+          this.imageService.delete(image.body.id).subscribe(() => {
+            this.imageService.create(this.currentImage, this.currentPost.id).subscribe();
+          });
         });
-        this.imageService.create(this.currentImage, this.currentPost.id).subscribe();
       }
     } else {
       this.audioFileService.create(this.currentAudioFile, this.currentPost.id).subscribe();

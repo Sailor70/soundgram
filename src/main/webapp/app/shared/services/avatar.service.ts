@@ -166,7 +166,14 @@ export class AvatarService {
       });
     }
     // console.error('this.commentsAvatarsEd: ' + this.commentsAvatarsEd.length);
+    this.sortByDate();
     return this.commentsAvatarsEd;
+  }
+
+  sortByDate() {
+    this.commentsAvatarsEd.sort((a: ICommentAvatar, b: ICommentAvatar) => {
+      return b.comment.date.toDate().getTime() - a.comment.date.toDate().getTime(); // sorts them descending (latest dates first)
+    });
   }
 
   private createAvatarFromBlobEd(image: Blob, comment: IComment) {
