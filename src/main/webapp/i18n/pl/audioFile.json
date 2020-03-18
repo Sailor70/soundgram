@@ -2,26 +2,27 @@
   "soundgramApp": {
     "audioFile": {
       "home": {
-        "title": "Audio File",
-        "createLabel": "Dodaj Audio File",
-        "createOrEditLabel": "Dodaj lub edytuj: Audio File",
-        "search": "Szukaj Audio File",
-        "notFound": "No Audio Files found"
+        "title": "Plik audio",
+        "createLabel": "Dodaj plik audio",
+        "createOrEditLabel": "Dodaj lub edytuj plik audio",
+        "search": "Szukaj Apliku audio",
+        "notFound": "Nie znaleziono plików audio"
       },
       "created": "Utworzono nowy obiekt typu Audio File z identyfikatorem {{ param }}",
       "updated": "Uaktualniono obiekt typu Audio File z identyfikatorem {{ param }}",
       "deleted": "Usunięto obiekt typu Audio File z identyfikatorem {{ param }}",
       "delete": {
-        "question": "Czy na pewno chcesz usunąć Audio File {{ id }}?"
+        "question": "Czy na pewno chcesz usunąć plik audio {{ id }}?"
       },
       "detail": {
-        "title": "Audio File"
+        "title": "Plik audio"
       },
       "audioPath": "Audio Path",
-      "title": "Title",
-      "iconPath": "Icon Path",
+      "title": "Tytuł",
+      "iconPath": "Id właściciela pliku",
       "post": "Post",
-      "user": "User"
+      "user": "Użytkownicy którzy polubili ten utwór: ",
+      "owner": "Właściciel pliku"
     }
   }
 }

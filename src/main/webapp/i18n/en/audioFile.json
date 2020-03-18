@@ -15,13 +15,14 @@
         "question": "Are you sure you want to delete Audio File {{ id }}?"
       },
       "detail": {
-        "title": "Audio File"
+        "title": "Audio file"
       },
       "audioPath": "Audio Path",
       "title": "Title",
-      "iconPath": "Icon Path",
+      "iconPath": "Owner Id",
       "post": "Post",
-      "user": "User"
+      "user": "Users who liked this audio: ",
+      "owner": "File Owner"
     }
   }
 }

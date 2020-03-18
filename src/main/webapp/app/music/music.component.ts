@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core'; // OnDestroy
 import { IAudioFile } from 'app/shared/model/audio-file.model';
-import { Subscription } from 'rxjs';
 import { AudioFileService } from 'app/entities/audio-file/audio-file.service';
 import { JhiEventManager } from 'ng-jhipster';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -21,7 +20,7 @@ import { AudioService } from 'app/music/player/audio-service';
 })
 export class MusicComponent implements OnInit, OnDestroy {
   audioFiles: IAudioFile[];
-  eventSubscriber: Subscription;
+  // eventSubscriber: Subscription;
   currentSearch: string;
   likedAudioDisplayed = true;
   user: IUser;
@@ -34,7 +33,7 @@ export class MusicComponent implements OnInit, OnDestroy {
   otherUserFiles = false;
   whoseFiles = 'My audio files';
   otherUser: IUser;
-  userSubscribtion: Subscription;
+  // userSubscribtion: Subscription;
 
   constructor(
     protected audioFileService: AudioFileService,
@@ -52,7 +51,8 @@ export class MusicComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.userSubscribtion = this.activatedRoute.data.subscribe(
+    this.activatedRoute.data.subscribe(
+      // this.userSubscribtion =
       ({ userLogin }) => {
         this.otherUserLogin = userLogin; // .body ? userId.body : userId;
         if (this.otherUserLogin) {
@@ -62,7 +62,7 @@ export class MusicComponent implements OnInit, OnDestroy {
           console.error('otherUserLogin: ' + this.otherUserLogin);
         } else {
           this.loadLikedFiles();
-          this.registerChangeInAudioFiles();
+          // this.registerChangeInAudioFiles();
         }
       },
       error => {
@@ -164,9 +164,9 @@ export class MusicComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // console.error('destroyed!');
-    this.eventManager.destroy(this.eventSubscriber);
-    this.userSubscribtion.unsubscribe();
+    console.error('destroyed!');
+    // this.eventManager.destroy(this.eventSubscriber);
+    // this.userSubscribtion.unsubscribe();
     this.audioService.stop();
   }
 
@@ -174,9 +174,9 @@ export class MusicComponent implements OnInit, OnDestroy {
     return item.id;
   }
 
-  registerChangeInAudioFiles() {
-    this.eventSubscriber = this.eventManager.subscribe('audioFileListModification', () => this.loadAll());
-  }
+  // registerChangeInAudioFiles() {
+  //   this.eventSubscriber = this.eventManager.subscribe('audioFileListModification', () => this.loadAll());
+  // }
 
   /* ------------------------------------------------Player------------------------------------------------------- */
 
