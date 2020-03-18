@@ -5,7 +5,7 @@
         "title": "Plik audio",
         "createLabel": "Dodaj plik audio",
         "createOrEditLabel": "Dodaj lub edytuj plik audio",
-        "search": "Szukaj Apliku audio",
+        "search": "Szukaj pliku audio",
         "notFound": "Nie znaleziono plików audio"
       },
       "created": "Utworzono nowy obiekt typu Audio File z identyfikatorem {{ param }}",
@@ -22,7 +22,9 @@
       "iconPath": "Id właściciela pliku",
       "post": "Post",
       "user": "Użytkownicy którzy polubili ten utwór: ",
-      "owner": "Właściciel pliku"
+      "owner": "Właściciel pliku",
+      "like": "Polub ten utwór",
+      "dislike": "Usuń utwór z polubionych"
     }
   }
 }

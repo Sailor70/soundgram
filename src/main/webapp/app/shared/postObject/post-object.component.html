@@ -57,19 +57,20 @@
                                         <button class="btn btn-primary" (click)="likeOrDislikeAudioFile()">
                                             <div *ngIf="liked">
                                                 <fa-icon [icon]="'heart-broken'"></fa-icon>
-                                                <span class="hidden-sm-down">{{likeBtnText}}</span>
+                                                <span class="hidden-sm-down" jhiTranslate="soundgramApp.audioFile.dislike">{{likeBtnText}}</span>
                                             </div>
                                             <div *ngIf="!liked">
                                                 <fa-icon [icon]="'star'"></fa-icon>
-                                                <span class="hidden-sm-down">{{likeBtnText}}</span>
+                                                <span class="hidden-sm-down" jhiTranslate="soundgramApp.audioFile.like">{{likeBtnText}}</span>
                                             </div>
                                         </button>
                                     </div>
                                     <div class="center">
                                         <button type="submit"
                                                 [routerLink]="['/post', post.id, 'view' ]"
-                                                class="btn btn-info">
-                                            <fa-icon [icon]="'eye'"></fa-icon>&nbsp;<span>View Post</span>
+                                                class="btn btn-primary">
+                                            <fa-icon [icon]="'eye'"></fa-icon>&nbsp;
+                                            <span jhiTranslate="soundgramApp.post.viewPost">View Post</span>
                                         </button>
                                         <div *ngIf="currentUser">
                                             <button type="button"

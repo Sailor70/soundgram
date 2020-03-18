@@ -1,10 +1,10 @@
 <div class="row justify-content-center">
     <div class="col-8">
         <div *ngIf="audioFile">
-            <h2><span jhiTranslate="soundgramApp.audioFile.detail.title">Audio File</span> {{audioFile.title.split('.').slice(0, -1).join('.')}}</h2>
+            <h2 class="text-center"><span jhiTranslate="soundgramApp.audioFile.detail.title">Audio File</span> {{audioFile.title.split('.').slice(0, -1).join('.')}}</h2>
             <hr>
             <jhi-alert-error></jhi-alert-error>
-            <dl class="row-md jh-entity-details">
+            <dl class="row-md jh-entity-details text-center">
 <!--                <dt><span jhiTranslate="soundgramApp.audioFile.audioPath">Audio Path</span></dt>
                 <dd>
                     <span>{{audioFile.audioPath}}</span>
@@ -31,40 +31,47 @@
                 </dd>
             </dl>
 
-            <button type="submit"
-                    (click)="previousState()"
-                    class="btn btn-info">
-                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
-            </button>
+            <div class="row">
+                <div class="center">
+                    <button type="submit"
+                            (click)="previousState()"
+                            class="btn btn-info">
+                        <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span
+                        jhiTranslate="entity.action.back"> Back</span>
+                    </button>
 
-            <button type="submit"
-                    [routerLink]="['/post', audioFile.post.id, 'view' ]"
-                    class="btn btn-info">
-                <fa-icon [icon]="'eye'"></fa-icon>&nbsp;<span>View Post</span>
-            </button>
+                    <button type="submit"
+                            [routerLink]="['/post', audioFile.post.id, 'view' ]"
+                            class="btn btn-primary">
+                        <fa-icon [icon]="'eye'"></fa-icon>&nbsp;<span
+                        jhiTranslate="soundgramApp.post.viewPost">View Post</span>
+                    </button>
 
-<!--            <button type="button"
-                    [routerLink]="['/audio-file', audioFile.id, 'edit']"
-                    class="btn btn-primary">
-                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-            </button>-->
+                    <!--            <button type="button"
+                                        [routerLink]="['/audio-file', audioFile.id, 'edit']"
+                                        class="btn btn-primary">
+                                    <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+                                </button>-->
 
-            <button class="btn btn-primary" (click)="likeOrDislikeAudioFile()">
-                <div *ngIf="liked">
-                    <fa-icon [icon]="'heart-broken'"></fa-icon>
-                    <span class="hidden-sm-down">{{likeBtnText}}</span>
+                    <button class="btn btn-primary" (click)="likeOrDislikeAudioFile()">
+                        <div *ngIf="liked">
+                            <fa-icon [icon]="'heart-broken'"></fa-icon>
+                            <span class="hidden-sm-down" jhiTranslate="soundgramApp.audioFile.dislike">{{likeBtnText}}</span>
+                        </div>
+                        <div *ngIf="!liked">
+                            <fa-icon [icon]="'star'"></fa-icon>
+                            <span class="hidden-sm-down" jhiTranslate="soundgramApp.audioFile.like">{{likeBtnText}}</span>
+                        </div>
+                    </button>
                 </div>
-                <div *ngIf="!liked">
-                    <fa-icon [icon]="'star'"></fa-icon>
-                    <span class="hidden-sm-down">{{likeBtnText}}</span>
-                </div>
-            </button>
+            </div>
+            <br>
 
-<!--            <mat-basic-audio-player [audioUrl]="msbapAudioUrl" [title]="msbapTitle" [autoPlay]="false" muted="muted"-->
-<!--                                    [displayTitle]="msbapDisplayTitle" [displayVolumeControls]="msbapDisplayVolumeControls" ></mat-basic-audio-player>-->
 
-            <jhi-post-player [audioFile]="audioFile">
-            </jhi-post-player>
+            <div class="row">
+                <jhi-post-player class="center" [audioFile]="audioFile">
+                </jhi-post-player>
+            </div>
 <!--            <button type="button"
                     (click)="playAudio()"
                     class="btn btn-info">

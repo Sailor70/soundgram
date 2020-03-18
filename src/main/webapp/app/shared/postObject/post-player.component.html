@@ -13,11 +13,11 @@
         </div>
     </div>
     <div class="row center">
-        <button type="button" class="btn btn-info center" (click)="play()" [disabled]="state?.error"
+        <button type="button" class="btn btn-primary center" (click)="play()" [disabled]="state?.error"
                 *ngIf="!state?.playing">
             <fa-icon [icon]="'play'"></fa-icon>
         </button>
-        <button type="button" class="btn btn-info center" (click)="pause()" *ngIf="state?.playing">
+        <button type="button" class="btn btn-primary center" (click)="pause()" *ngIf="state?.playing">
             <fa-icon [icon]="'pause'"></fa-icon>
         </button>
     </div>

@@ -1,22 +1,22 @@
 <div class="content" [ngSwitch]="likedAudioDisplayed">
     <div class="row">
-        <h2 class="col-md-6 center" *ngSwitchCase="true">
+        <h2 class="col-md-7 center" *ngSwitchCase="true">
             <span id="likedFiles-page-heading">Liked audio files</span>
             <button class="btn btn-primary" (click)="loadUserFiles()">
                 <fa-icon [icon]="'music'"></fa-icon>
                 <span>Show my audio files</span>
             </button>
-            <button type="button" class="btn btn-secondary float-right" (click)="previousState()">
+            <button type="button" class="btn btn-info float-right" (click)="previousState()">
                 <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
             </button>
         </h2>
-        <h2 class="col-md-6 center" *ngSwitchCase="false">
+        <h2 class="col-md-7 center" *ngSwitchCase="false">
             <span id="myFiles-page-heading">{{whoseFiles}}</span>
             <button class="btn btn-primary" (click)="loadLikedFiles()">
                 <fa-icon [icon]="'music'"></fa-icon>
                 <span>Show liked audio files</span>
             </button>
-            <button type="button" class="btn btn-secondary float-right" (click)="previousState()">
+            <button type="button" class="btn btn-info float-right" (click)="previousState()">
                 <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
             </button>
         </h2>
@@ -62,9 +62,9 @@
                 <td class="narrow-hide">
                     <button type="submit"
                             [routerLink]="['/post', audioFile.post?.id, 'view' ]"
-                            class="btn btn-info btn-sm">
+                            class="btn btn-primary btn-sm">
                         <fa-icon [icon]="'eye'"></fa-icon>
-                        <span class="d-none d-md-inline">View post</span>
+                        <span class="d-none d-md-inline" jhiTranslate="soundgramApp.post.viewPost">View post</span>
                     </button>
                 </td>
                 <td class="narrow-hide">
@@ -75,12 +75,12 @@
                     <div class="btn-group">
                         <button type="submit"
                                 [routerLink]="['/audio-file', audioFile.id, 'view' ]"
-                                class="btn btn-info btn-sm">
+                                class="btn btn-primary btn-sm">
                             <fa-icon [icon]="'eye'"></fa-icon>
                             <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
                         </button>
                         <button type="button" (click)="playThisAudio(audioFile)"
-                                class="btn btn-info btn-sm">
+                                class="btn btn-secondary btn-sm">
                             <fa-icon [icon]="'play'"></fa-icon>
                             <span class="d-none d-md-inline">Play</span>
                         </button>
@@ -108,20 +108,20 @@
             </div>
         </div>
         <div class="row center">
-            <button type="button" class="btn btn-info center" [disabled]="isFirstPlaying()" (click)="previous()">
+            <button type="button" class="btn btn-primary center" [disabled]="isFirstPlaying()" (click)="previous()">
                 <fa-icon [icon]="'step-backward'"></fa-icon>
             </button>
 
-            <button type="button" class="btn btn-info center" (click)="play()" [disabled]="state?.error"
+            <button type="button" class="btn btn-primary center" (click)="play()" [disabled]="state?.error"
                     *ngIf="!state?.playing">
                 <fa-icon [icon]="'play'"></fa-icon>
             </button>
 
-            <button type="button" class="btn btn-info center" (click)="pause()" *ngIf="state?.playing">
+            <button type="button" class="btn btn-primary center" (click)="pause()" *ngIf="state?.playing">
                 <fa-icon [icon]="'pause'"></fa-icon>
             </button>
 
-            <button type="button" class="btn btn-info center" [disabled]="isLastPlaying()" (click)="next()">
+            <button type="button" class="btn btn-primary center" [disabled]="isLastPlaying()" (click)="next()">
                 <fa-icon [icon]="'step-forward'"></fa-icon>
             </button>
         </div>

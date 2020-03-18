@@ -6,7 +6,8 @@ import { HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'jhi-audio-file-detail',
-  templateUrl: './audio-file-detail.component.html'
+  templateUrl: './audio-file-detail.component.html',
+  styleUrls: ['audio-file.scss']
 })
 export class AudioFileDetailComponent implements OnInit {
   audioFile: IAudioFile;

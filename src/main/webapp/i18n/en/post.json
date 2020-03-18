@@ -21,7 +21,8 @@
       "postContent": "Post Content",
       "date": "Date",
       "tag": "Tag",
-      "user": "User"
+      "user": "User",
+      "viewPost": "View post"
     }
   }
 }

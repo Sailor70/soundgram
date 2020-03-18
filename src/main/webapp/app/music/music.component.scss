@@ -20,9 +20,9 @@
   appearance: none;
   width: 100%; /* Full-width */
   height: 25px; /* Specified height */
-  background: #d3d3d3; /* Grey background */
+  background: #b697d0; // #d3d3d3; /* Grey background */
   outline: none; /* Remove outline */
-  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  // opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
   -webkit-transition: 0.2s; /* 0.2 seconds transition on hover */
   transition: opacity 0.2s;
 }
@@ -53,7 +53,7 @@
   border-radius: 10px;
   border: 2px solid #522b72;
   background-color: #ffffff;
-  min-width: 400px;
+  min-width: 250px;
   max-width: 900px;
   // max-height: 500px;
   // min-width: 200px;

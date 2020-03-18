@@ -22,7 +22,9 @@
       "iconPath": "Owner Id",
       "post": "Post",
       "user": "Users who liked this audio: ",
-      "owner": "File Owner"
+      "owner": "File Owner",
+      "like": "Like this audio",
+      "dislike": "Dislike this audio"
     }
   }
 }
