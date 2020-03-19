@@ -5,10 +5,6 @@
             <hr>
             <jhi-alert-error></jhi-alert-error>
             <dl class="row-md jh-entity-details text-center">
-<!--                <dt><span jhiTranslate="soundgramApp.audioFile.audioPath">Audio Path</span></dt>
-                <dd>
-                    <span>{{audioFile.audioPath}}</span>
-                </dd>-->
                 <dt><span jhiTranslate="soundgramApp.audioFile.title">Title</span></dt>
                 <dd>
                     <span>{{audioFile.title.split('.').slice(0, -1).join('.')}}</span>
@@ -17,12 +13,7 @@
                 <dd>
                     <span><a [routerLink]="['/', audioFile.post.user.login, 'view']">{{audioFile.post.user.login}}</a></span>
                 </dd>
-                <!--<dt><span jhiTranslate="soundgramApp.audioFile.post">Post</span></dt>
-                <dd>
-                    <div *ngIf="audioFile.post">
-                        <a [routerLink]="['/post', audioFile.post?.id, 'view']">{{audioFile.post?.id}}</a>
-                    </div>
-                </dd>-->
+
                 <dt><span jhiTranslate="soundgramApp.audioFile.user">User</span><span>{{audioFile.users.length}}</span></dt>
                 <dd>
                     <span *ngFor="let user of audioFile.users; let last = last">
@@ -47,45 +38,17 @@
                         jhiTranslate="soundgramApp.post.viewPost">View Post</span>
                     </button>
 
-                    <!--            <button type="button"
-                                        [routerLink]="['/audio-file', audioFile.id, 'edit']"
-                                        class="btn btn-primary">
-                                    <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-                                </button>-->
-
-                    <button class="btn btn-primary" (click)="likeOrDislikeAudioFile()">
-                        <div *ngIf="liked">
-                            <fa-icon [icon]="'heart-broken'"></fa-icon>
-                            <span class="hidden-sm-down" jhiTranslate="soundgramApp.audioFile.dislike">{{likeBtnText}}</span>
-                        </div>
-                        <div *ngIf="!liked">
-                            <fa-icon [icon]="'star'"></fa-icon>
-                            <span class="hidden-sm-down" jhiTranslate="soundgramApp.audioFile.like">{{likeBtnText}}</span>
-                        </div>
-                    </button>
+                    <jhi-like-audio [audioFile]="audioFile"
+                                    (likeClicked)='onLikeClicked($event)'>
+                    </jhi-like-audio>
                 </div>
             </div>
             <br>
-
 
             <div class="row">
                 <jhi-post-player class="center" [audioFile]="audioFile">
                 </jhi-post-player>
             </div>
-<!--            <button type="button"
-                    (click)="playAudio()"
-                    class="btn btn-info">
-                <fa-icon [icon]="'play-circle'"></fa-icon>
-            </button>
-            <button type="button"
-                    (click)="pauseAudio()"
-                    class="btn btn-info">
-                <fa-icon [icon]="'pause-circle'"></fa-icon>
-            </button>-->
-
-            <!--            <audio id="voice" controls="">
-                            <source src="{{fileUrl}}" type="audio/mpeg">
-                        </audio>-->
 
         </div>
     </div>

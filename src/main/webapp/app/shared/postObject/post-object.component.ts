@@ -1,18 +1,14 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { IPost } from 'app/shared/model/post.model';
 import { ImageService } from 'app/entities/image/image.service';
 import { IImage } from 'app/shared/model/image.model';
 import { HttpResponse } from '@angular/common/http';
-import { AudioFile, IAudioFile } from 'app/shared/model/audio-file.model';
+import { IAudioFile } from 'app/shared/model/audio-file.model';
 import { AudioFileService } from 'app/entities/audio-file/audio-file.service';
 import { IUser } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
-import { DomSanitizer } from '@angular/platform-browser';
 import { Account } from 'app/core/user/account.model';
 import { AccountService } from 'app/core/auth/account.service';
-import { AudioService } from 'app/music/player/audio-service';
-import { AvatarService } from 'app/shared/services/avatar.service';
 import { PostCommentsComponent } from 'app/shared/postObject/post-comments.component';
 import { IComment } from 'app/shared/model/comment.model';
 import { CommentService } from 'app/entities/comment/comment.service';
@@ -20,8 +16,7 @@ import { CommentService } from 'app/entities/comment/comment.service';
 @Component({
   selector: 'jhi-post-object',
   templateUrl: './post-object.component.html',
-  styleUrls: ['./post-object.component.scss'],
-  providers: [AudioService, AvatarService]
+  styleUrls: ['./post-object.component.scss']
 })
 export class PostObjectComponent implements OnInit {
   @Input() post: IPost | IPost; // to disable IPost export warning
@@ -38,19 +33,14 @@ export class PostObjectComponent implements OnInit {
   isImageLoading: boolean;
   hasImage: boolean;
 
-  liked = false;
-  likeBtnText = 'Like this audio';
-
   @ViewChild(PostCommentsComponent, { static: false })
   private postCommentsComponent: PostCommentsComponent;
 
   constructor(
-    protected activatedRoute: ActivatedRoute,
     protected imageService: ImageService,
     protected audioFileService: AudioFileService,
     protected commentService: CommentService,
     protected userService: UserService,
-    private sanitizer: DomSanitizer,
     private accountService: AccountService
   ) {}
 
@@ -61,7 +51,6 @@ export class PostObjectComponent implements OnInit {
     this.audioFileService.findByPost(this.post.id).subscribe(
       (res: HttpResponse<IAudioFile>) => {
         this.audioFile = res.body;
-        this.checkIfLiked();
         console.error('Audio id:' + this.audioFile.id);
         // this.audioFile.users.forEach((user) => user.id);
         console.error('Audio users count:' + this.audioFile.users.length);
@@ -101,32 +90,8 @@ export class PostObjectComponent implements OnInit {
     });
   }
 
-  private checkIfLiked() {
-    this.audioFileService.getLiked().subscribe(liked => {
-      const likedAudios: IAudioFile[] = liked.body;
-      for (const la of likedAudios) {
-        if (la.id === this.audioFile.id) {
-          this.liked = true;
-          this.likeBtnText = 'Dislike this audio';
-        }
-      }
-    });
-  }
-
-  likeOrDislikeAudioFile() {
-    if (!this.liked) {
-      this.audioFileService.addUser(this.audioFile).subscribe((res: HttpResponse<AudioFile>) => {
-        this.audioFile = res.body;
-        this.liked = true;
-        this.likeBtnText = 'Dislike this audio';
-      });
-    } else {
-      this.audioFileService.removeUser(this.audioFile).subscribe((res: HttpResponse<AudioFile>) => {
-        this.audioFile = res.body;
-        this.liked = false;
-        this.likeBtnText = 'Like this audio';
-      });
-    }
+  onLikeClicked(updatedAudioFile: IAudioFile): void {
+    this.audioFile = updatedAudioFile;
   }
 
   getAvatarFromService() {
@@ -192,9 +157,5 @@ export class PostObjectComponent implements OnInit {
     if (image) {
       reader.readAsDataURL(image);
     }
-  }
-
-  previousState() {
-    window.history.back();
   }
 }
