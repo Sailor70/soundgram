@@ -18,7 +18,7 @@ import { COMMENTS_PER_PAGE } from 'app/shared/constants/pagination.constants';
   selector: 'jhi-post-comments',
   templateUrl: './post-comments.component.html',
   styleUrls: ['./post-comments.component.scss'],
-  providers: [AvatarService]
+  providers: [AvatarService] // jedna instancja servisu na zadeklarowany provider ( post-comment me swoją instance tego serwisu )
 })
 export class PostCommentsComponent implements OnInit {
   @Input() post: IPost | IPost;
@@ -53,6 +53,10 @@ export class PostCommentsComponent implements OnInit {
     this.commentsAvatars = [];
     this.commentContent = '';
     this.usersComments = [];
+    this.page = 0;
+    this.links = {
+      last: 0
+    };
 
     this.loadComments();
   }
@@ -138,10 +142,18 @@ export class PostCommentsComponent implements OnInit {
   // pobieramy za każdym razem wszystkie commentsAvatars a lepiej by było pushować nowo pobrane z paginacji
   getCommentsAvatars() {
     this.commentsAvatars = [];
-    this.commentsAvatars = this.avatarService.getAvatarsForCommentListEd(this.usersComments);
+    this.avatarService.getAvatarsForCommentListEd(this.usersComments).then((sortedCA: ICommentAvatar[]) => {
+      this.commentsAvatars = sortedCA;
+    });
     console.error('get comments avatars length ' + this.commentsAvatars.length);
     for (const commentAvatar of this.commentsAvatars) {
-      console.error('comment user ' + commentAvatar.comment.user.login + ' avatar ' + commentAvatar.avatar);
+      console.error(
+        'comment date ' +
+          commentAvatar.comment.date
+            .toDate()
+            .getTime()
+            .toString()
+      );
     }
   }
 

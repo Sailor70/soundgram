@@ -1,7 +1,7 @@
 <div class="row justify-content-center">
     <div class="col-8">
         <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-            <h2 id="jhi-tag-heading" jhiTranslate="soundgramApp.tag.home.createOrEditLabel">Create or edit a Tag</h2>
+            <h2 id="jhi-tag-heading" jhiTranslate="soundgramApp.tag.home.create">Create a new Tag</h2>
             <div>
                 <jhi-alert-error></jhi-alert-error>
                 <div class="form-group" [hidden]="!editForm.get('id').value">
@@ -10,9 +10,9 @@
                         readonly />
                 </div>
                 <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="soundgramApp.tag.name" for="field_name">Name</label>
+<!--                    <label class="form-control-label" jhiTranslate="soundgramApp.tag.name" for="field_name">Name</label>-->
                     <input type="text" class="form-control" name="name" id="field_name"
-                           formControlName="name"/>
+                           formControlName="name" placeholder="{{'soundgramApp.tag.newTag' | translate}}"/>
                     <div *ngIf="editForm.get('name').invalid && (editForm.get('name').dirty || editForm.get('name').touched)">
                         <small class="form-text text-danger"
                                *ngIf="editForm.get('name').errors.required" jhiTranslate="entity.validation.required">
@@ -22,7 +22,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Add this tag to your profile?</label>
+                    <label jhiTranslate="soundgramApp.tag.addToProfile">Add this tag to your profile?</label>
                     <input (change)="checkValue($event)" value="angular" type="checkbox"/>
 <!--                    <select class="form-control" id="field_users" multiple name="users" formControlName="users">-->
 <!--                        <option [ngValue]="getSelected(editForm.get('users').value, userOption)" *ngFor="let userOption of users; trackBy: trackUserById">{{userOption.login}}</option>-->

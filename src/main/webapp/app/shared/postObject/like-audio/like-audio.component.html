@@ -1,4 +1,4 @@
-<button class="btn btn-primary" (click)="likeOrDislikeAudioFile()">
+<button [hidden]="!audioFile" class="btn btn-primary" (click)="likeOrDislikeAudioFile()">
     <div *ngIf="liked">
         <fa-icon [icon]="'heart-broken'"></fa-icon>
         <span class="hidden-sm-down" jhiTranslate="soundgramApp.audioFile.dislike">{{likeBtnText}}</span>

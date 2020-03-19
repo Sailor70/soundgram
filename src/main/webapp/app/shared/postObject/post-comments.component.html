@@ -1,15 +1,16 @@
 <div class="row" *ngIf="showCommentWindow">
     <div class="card comment-card my-4">
-        <h6 class="card-header">Leave a Comment:</h6>
+        <!--<h6 class="card-header">Leave a Comment:</h6>-->
         <div class="card-body">
             <form>
                 <div class="form-group">
-                                                    <textarea [(ngModel)]="commentContent" name="txtarea"
-                                                              class="form-control" rows="3"></textarea>
+                    <textarea [(ngModel)]="commentContent" name="txtarea"
+                              class="form-control" rows="3"
+                              placeholder="{{'global.form.comment.placeholder' | translate}}"></textarea>
                 </div>
                 <button class="btn btn-primary" (click)="addComment()">
                     <fa-icon [icon]="'plus'"></fa-icon>
-                    <span class="hidden-sm-down">Submit comment</span>
+                    <span class="hidden-sm-down" jhiTranslate="soundgramApp.comment.submit">Submit comment</span>
                 </button>
             </form>
         </div>
@@ -18,52 +19,52 @@
 <br><br>
 <div class="table-responsive" *ngIf="commentsAvatars?.length > 0">
     <!--<div infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">-->
-        <div *ngFor="let commentAvatar of commentsAvatars">
-            <div class="row mb-2">
-                <div class="col-md-3">
-                    <img [src]="commentAvatar.avatar"
-                         class="d-block ui-w-60 rounded-circle" alt="">
-                    <a [routerLink]="['/', commentAvatar.comment.user.login, 'view']">{{commentAvatar.comment.user.login}}</a>
-                    <div class="text-muted small">{{commentAvatar.comment.date | date:'medium'}}</div>
+    <div *ngFor="let commentAvatar of commentsAvatars">
+        <div class="row mb-2">
+            <div class="col-md-3">
+                <img [src]="commentAvatar.avatar"
+                     class="d-block ui-w-60 rounded-circle" alt="">
+                <a [routerLink]="['/', commentAvatar.comment.user.login, 'view']">{{commentAvatar.comment.user.login}}</a>
+                <div class="text-muted small">{{commentAvatar.comment.date | date:'medium'}}</div>
+            </div>
+            <div class="col-md-6">
+                <div *ngIf="!commentAvatar.editable">
+                    <span>{{commentAvatar.comment.textContent}}</span>
                 </div>
-                <div class="col-md-6">
-                    <div *ngIf="!commentAvatar.editable">
-                        <span>{{commentAvatar.comment.textContent}}</span>
-                    </div>
-                    <div *ngIf="commentAvatar.editable">
+                <div *ngIf="commentAvatar.editable">
                     <textarea [(ngModel)]="commentContent" name="txtarea"
                               class="form-control" rows="3"></textarea>
-                        <button class="btn btn-primary"
-                                (click)="saveComment(commentAvatar.comment); commentAvatar.editable = false">
-                            <fa-icon [icon]="'edit'"></fa-icon>
-                            <span class="hidden-sm-down">Submit comment</span>
-                        </button>
-                    </div>
+                    <button class="btn btn-primary"
+                            (click)="saveComment(commentAvatar.comment); commentAvatar.editable = false">
+                        <fa-icon [icon]="'edit'"></fa-icon>
+                        <span class="hidden-sm-down">Submit comment</span>
+                    </button>
                 </div>
-                <div *ngIf="currentUser" class="col-md-3">
-                    <div [hidden]="currentUser.login !== commentAvatar.comment.user.login">
-                        <button type="submit"
-                                (click)="commentAvatar.editable = true; onEdit(commentAvatar.comment)"
-                                class="btn btn-primary btn-sm">
-                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
-                            <span class="d-none d-md-inline"
-                                  jhiTranslate="entity.action.edit">Edit</span>
-                        </button>
-                        <button type="submit" (click)="deleteComment(commentAvatar.comment)"
-                                class="btn btn-danger btn-sm">
-                            <fa-icon [icon]="'times'"></fa-icon>
-                            <span class="d-none d-md-inline"
-                                  jhiTranslate="entity.action.delete">Delete</span>
-                        </button>
-                    </div>
+            </div>
+            <div *ngIf="currentUser" class="col-md-3">
+                <div [hidden]="currentUser.login !== commentAvatar.comment.user.login">
+                    <button type="submit"
+                            (click)="commentAvatar.editable = true; onEdit(commentAvatar.comment)"
+                            class="btn btn-primary btn-sm">
+                        <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                        <span class="d-none d-md-inline"
+                              jhiTranslate="entity.action.edit">Edit</span>
+                    </button>
+                    <button type="submit" (click)="deleteComment(commentAvatar.comment)"
+                            class="btn btn-danger btn-sm">
+                        <fa-icon [icon]="'times'"></fa-icon>
+                        <span class="d-none d-md-inline"
+                              jhiTranslate="entity.action.delete">Delete</span>
+                    </button>
                 </div>
             </div>
         </div>
-<!--    </div>-->
+    </div>
+    <!--    </div>-->
     <div class="row">
         <button class="btn btn-primary center" [hidden]="page >= links['last']" (click)="loadPage(page + 1)">
             <fa-icon [icon]="'arrow-down'"></fa-icon>
-            <span class="hidden-sm-down">More comments</span>
+            <span class="hidden-sm-down" jhiTranslate="soundgramApp.comment.showMore">More comments</span>
         </button>
     </div>
 </div>

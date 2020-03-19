@@ -2,9 +2,9 @@
   "soundgramApp": {
     "tag": {
       "home": {
-        "title": "Tag",
+        "title": "Tagi",
         "createLabel": "Dodaj Tag",
-        "createOrEditLabel": "Dodaj lub edytuj: Tag",
+        "create": "Dodaj nowy tag",
         "search": "Szukaj Tag",
         "notFound": "No Tags found",
         "follow": "Dodaj tag do listy obserwowanych"
@@ -20,7 +20,10 @@
       },
       "name": "Name",
       "user": "Użytkownicy którzy obserwują ten tag: ",
-      "post": "Post"
+      "post": "Post",
+      "view": "Wyświetl tagi",
+      "addToProfile": "Przypisać ten tag do twojego profilu?",
+      "newTag": "Nowy tag ..."
     }
   }
 }

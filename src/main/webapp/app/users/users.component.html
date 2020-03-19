@@ -1,16 +1,22 @@
 <div [ngSwitch]="allUsersDisplayed">
-    <h2 *ngSwitchCase="true">
-        <span id="users-page-heading" jhiTranslate="users.allUsers">All Users</span>
-        <button class="btn btn-primary float-right" (click)="loadFollowed()">
-            <fa-icon [icon]="'users'"></fa-icon> <span jhiTranslate="users.showFollowedUsers">Show my followed users</span>
-        </button>
-    </h2>
-    <h2 *ngSwitchCase="false">
-        <span id="followed-users-page-heading" jhiTranslate="users.followedUsers">My followed users</span>
-        <button class="btn btn-primary float-right" (click)="loadAll()">
-            <fa-icon [icon]="'users'"></fa-icon> <span jhiTranslate="users.showAllUsers">Show all users</span>
-        </button>
-    </h2>
+    <div class="row">
+        <div class="col-md-8 center">
+            <h2 *ngSwitchCase="true">
+                <span id="users-page-heading" jhiTranslate="users.allUsers">All Users</span>
+                <button class="btn btn-primary float-right" (click)="loadFollowed()">
+                    <fa-icon [icon]="'users'"></fa-icon>
+                    <span jhiTranslate="users.showFollowedUsers">Show my followed users</span>
+                </button>
+            </h2>
+            <h2 *ngSwitchCase="false">
+                <span id="followed-users-page-heading" jhiTranslate="users.followedUsers">My followed users</span>
+                <button class="btn btn-primary float-right" (click)="loadAll()">
+                    <fa-icon [icon]="'users'"></fa-icon>
+                    <span jhiTranslate="users.showAllUsers">Show all users</span>
+                </button>
+            </h2>
+        </div>
+    </div>
     <div class="row">
         <div class="col-sm-8 center">
             <form name="searchForm" class="form-inline">

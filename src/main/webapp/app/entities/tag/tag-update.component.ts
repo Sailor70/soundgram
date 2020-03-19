@@ -113,23 +113,4 @@ export class TagUpdateComponent implements OnInit {
   checkValue(event: any) {
     this.addTagToUser = event.currentTarget.checked;
   }
-
-  trackUserById(index: number, item: IUser) {
-    return item.id;
-  }
-
-  trackPostById(index: number, item: IPost) {
-    return item.id;
-  }
-
-  getSelected(selectedVals: any[], option: any) {
-    if (selectedVals) {
-      for (let i = 0; i < selectedVals.length; i++) {
-        if (option.id === selectedVals[i].id) {
-          return selectedVals[i];
-        }
-      }
-    }
-    return option;
-  }
 }

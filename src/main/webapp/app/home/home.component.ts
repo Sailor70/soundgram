@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiParseLinks } from 'ng-jhipster';
-
 import { LoginModalService } from 'app/core/login/login-modal.service';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
@@ -15,16 +14,13 @@ import { FollowedUserService } from 'app/entities/followed-user/followed-user.se
 import { TagService } from 'app/entities/tag/tag.service';
 import { ITag } from 'app/shared/model/tag.model';
 import { LoginService } from 'app/core/login/login.service';
-import { UserService } from 'app/core/user/user.service';
-import { PostWindowService } from 'app/shared/services/post-window.service';
-import { IPostObject } from 'app/shared/model/post-object.model';
 import { PostObjectComponent } from 'app/shared/postObject/post-object.component';
 
 @Component({
   selector: 'jhi-home',
   templateUrl: './home.component.html',
-  styleUrls: ['home.scss'],
-  providers: [PostWindowService] // jedna instancja servisu na zadeklarowany provider ( home me swoją instance tego serwisu )
+  styleUrls: ['home.scss']
+  // providers: [PostWindowService] // jedna instancja servisu na zadeklarowany provider ( home me swoją instance tego serwisu )
 })
 export class HomeComponent implements OnInit, OnDestroy {
   account: Account;
@@ -47,8 +43,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   userLogged = false;
   followedUsersPosts = true;
   userTags: ITag[];
-  avatars: any[];
-  postObjects: IPostObject[] = [];
 
   @ViewChild(PostObjectComponent, { static: false })
   private postObjectComponent: PostObjectComponent;
@@ -63,9 +57,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     protected parseLinks: JhiParseLinks,
     protected followedUserService: FollowedUserService,
     protected tagService: TagService,
-    protected activatedRoute: ActivatedRoute,
-    private userService: UserService,
-    private postWindowService: PostWindowService
+    protected activatedRoute: ActivatedRoute
   ) {
     this.posts = [];
     this.postsWithUserTags = [];
@@ -214,7 +206,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   reset() {
     this.page = 0;
     this.posts = [];
-    this.postObjects = [];
     this.loadFollowed();
   }
 
@@ -229,7 +220,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   clear() {
     this.posts = [];
-    this.postObjects = [];
     this.links = {
       last: 0
     };
@@ -245,7 +235,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       return this.clear();
     }
     this.posts = [];
-    this.postObjects = [];
     this.links = {
       last: 0
     };
@@ -256,18 +245,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.loadFollowed();
   }
 
-  trackId(index: number, item: IPost) {
-    return item.id;
-  }
-
-  sort() {
-    const result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
-    if (this.predicate !== 'id') {
-      result.push('id');
-    }
-    return result;
-  }
-
   protected paginatePosts(data: IPost[], headers: HttpHeaders) {
     this.links = this.parseLinks.parse(headers.get('link'));
     this.totalItems = parseInt(headers.get('X-Total-Count'), 10);
@@ -275,8 +252,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       // console.error("post tags: " + data[i].user.login);
       this.posts.push(data[i]);
     }
-    // this.pushPostObject(data);
-    // this.getPostObjectFromService();
   }
 
   loadFollowedUsersPosts() {
@@ -293,58 +268,5 @@ export class HomeComponent implements OnInit, OnDestroy {
       // console.error('User tags:' + this.userTags.length);
       this.loadPostsByTags();
     });
-  }
-
-  getPostObjectFromService() {
-    this.postObjects = [];
-    for (let i = 0; i < this.posts.length; i++) {
-      // console.error('post user login: ' + post.user.login);
-      this.postWindowService.getPostObject(this.posts[i]).subscribe({
-        next: value => {
-          // console.error('comment avatar user login: ' + value.commentsAvatars[0].comment.user.login);
-          console.error('post commentAvatars length: ' + value.commentsAvatars.length + ' i : ' + i);
-          this.postObjects.push(value);
-          console.error('post object user: ' + this.postObjects[i].post.user.login);
-        }
-        // complete: () => console.error('This is how it ends!')
-      });
-    }
-    // this.checkPostObjectValues();
-  }
-
-  pushPostObject(posts: IPost[]) {
-    for (let i = 0; i < posts.length; i++) {
-      this.postWindowService.getPostObject(posts[i]).subscribe({
-        next: value => {
-          this.postObjects.push(value);
-        },
-        complete: () => console.error('Pushed post of user: ' + posts[i].user.login)
-      });
-    }
-    // this.checkPostObjectValues();
-  }
-
-  checkPostObjectValues() {
-    console.error('check postObject values!');
-    // for(const postObject of this.postObject) {
-    const postObject: IPostObject = this.postObjects[1];
-
-    console.error(
-      'Post user: ' +
-        postObject.post.user +
-        '\nuser avatar length: ' +
-        postObject.userAvatar.length +
-        '\naudioFile title ' +
-        postObject.audioFile.title +
-        '\naudioFIle length ' +
-        postObject.audioSrc.length +
-        '\nimageSrc length ' +
-        postObject.imageSrc.length +
-        '\n0 comment user ' +
-        postObject.commentsAvatars[0].comment.user.login +
-        '\navatar length ' +
-        postObject.commentsAvatars[0].avatar.length
-    );
-    // }
   }
 }

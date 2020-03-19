@@ -142,37 +142,55 @@ export class AvatarService {
     }
   }
 
-  getAvatarsForCommentListEd(comments: IComment[]): any {
-    // console.error('comments ED: ' + comments.length);
-    this.commentsAvatarsEd = [];
-    this.comments = [];
-    this.comments = comments;
-    for (const comment of comments) {
-      this.userService.getAvatarFilename(comment.user.login).subscribe(avatarFileName => {
-        // console.error('avatar user login: ' + comment.user.login);
-        // console.error('avatar filename: ' + avatarFileName.body);
-        if (avatarFileName !== '') {
-          this.userService.getAvatar(avatarFileName.body).subscribe(
-            data => {
-              this.createAvatarFromBlobEd(data, comment);
-            },
-            error => {
-              console.error('Probably no avatar: ' + error);
-            }
-          );
-        } else {
-          this.commentsAvatarsEd.push({ comment, avatar: null, editable: false });
-        }
+  getAvatarsForCommentListEd(comments: IComment[]) {
+    return new Promise(resolve => {
+      // console.error('comments ED: ' + comments.length);
+      const promises = [];
+      this.commentsAvatarsEd = [];
+      this.comments = [];
+      this.comments = comments;
+      for (const comment of comments) {
+        promises.push(
+          new Promise((resolveInside, reject) => {
+            this.userService.getAvatarFilename(comment.user.login).subscribe(avatarFileName => {
+              // console.error('avatar user login: ' + comment.user.login);
+              // console.error('avatar filename: ' + avatarFileName.body);
+              if (avatarFileName !== '') {
+                this.userService.getAvatar(avatarFileName.body).subscribe(
+                  data => {
+                    this.createAvatarFromBlobEd(data, comment);
+                    resolveInside();
+                  },
+                  error => {
+                    console.error('Probably no avatar: ' + error);
+                    reject();
+                  }
+                );
+              } else {
+                this.commentsAvatarsEd.push({ comment, avatar: null, editable: false });
+                resolveInside();
+              }
+            });
+          })
+        );
+      }
+      // console.error('this.commentsAvatarsEd: ' + this.commentsAvatarsEd.length);
+      promises.push(this.sortByDate());
+      Promise.all(promises).then(() => {
+        console.error('wszystkie promisy spełnione! a było ich: ' + promises.length);
+        resolve(this.commentsAvatarsEd);
       });
-    }
-    // console.error('this.commentsAvatarsEd: ' + this.commentsAvatarsEd.length);
-    this.sortByDate();
-    return this.commentsAvatarsEd;
+    });
+    // return this.commentsAvatarsEd;
   }
 
   sortByDate() {
-    this.commentsAvatarsEd.sort((a: ICommentAvatar, b: ICommentAvatar) => {
-      return b.comment.date.toDate().getTime() - a.comment.date.toDate().getTime(); // sorts them descending (latest dates first)
+    return new Promise(resolve => {
+      console.error('items to sort: ' + this.commentsAvatarsEd.length);
+      this.commentsAvatarsEd.sort((a: ICommentAvatar, b: ICommentAvatar) => {
+        return b.comment.date.toDate().getTime() - a.comment.date.toDate().getTime(); // sorts them descending (latest dates first)
+      });
+      resolve();
     });
   }
 

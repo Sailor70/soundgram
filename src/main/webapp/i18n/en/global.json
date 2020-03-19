@@ -53,7 +53,8 @@
       "confirmpassword.label": "New password confirmation",
       "confirmpassword.placeholder": "Confirm the new password",
       "email.label": "Email",
-      "email.placeholder": "Your email"
+      "email.placeholder": "Your email",
+      "comment.placeholder": "Write something ..."
     },
     "messages": {
       "info": {

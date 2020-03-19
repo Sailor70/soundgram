@@ -53,7 +53,8 @@
       "confirmpassword.label": "Potwierdź nowe hasło",
       "confirmpassword.placeholder": "Potwierdź nowe hasło",
       "email.label": "Email",
-      "email.placeholder": "Twój email"
+      "email.placeholder": "Twój email",
+      "comment.placeholder": "Napisz coś ..."
     },
     "messages": {
       "info": {

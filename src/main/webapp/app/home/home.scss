@@ -70,6 +70,20 @@ Main page styles
 .center {
   margin: auto;
 }
+
+.text-center {
+  text-align: center;
+}
+
+.new-post {
+  float: right;
+}
+.btn-space {
+  margin-right: 5px;
+}
+.padding-top {
+  padding-top: 10px;
+}
 //.d-flex, .d-inline-flex, .media, .media>:not(.media-body), .jumbotron, .card {
 //  -ms-flex-negative: 1;
 //  flex-shrink: 1;

@@ -3,8 +3,8 @@
     "comment": {
       "home": {
         "title": "Comments",
-        "createLabel": "Create a new Comment",
-        "createOrEditLabel": "Create or edit a Comment",
+        "create": "Write a comment",
+        "edit": "Edit",
         "search": "Search for Comment",
         "notFound": "No Comments found"
       },
@@ -20,7 +20,10 @@
       "textContent": "Text Content",
       "date": "Date",
       "user": "User",
-      "post": "Post"
+      "post": "Post",
+      "showMore": "Show more comments",
+      "write.placeholder": "Write something ...",
+      "submit": "Submit comment"
     }
   }
 }

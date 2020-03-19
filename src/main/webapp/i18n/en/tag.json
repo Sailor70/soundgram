@@ -4,7 +4,7 @@
       "home": {
         "title": "Tags",
         "createLabel": "Create a new Tag",
-        "createOrEditLabel": "Create or edit a Tag",
+        "create": "Create a new Tag",
         "search": "Search for Tag",
         "notFound": "No Tags found",
         "follow": "Add tag to watchlist"
@@ -20,7 +20,10 @@
       },
       "name": "Name",
       "user": "Users who follow this tag: ",
-      "post": "Post"
+      "post": "Post",
+      "view": "View tags",
+      "addToProfile": "Add this tag to your profile?",
+      "newTag": "New tag name ..."
     }
   }
 }

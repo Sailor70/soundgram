@@ -3,8 +3,8 @@
     "comment": {
       "home": {
         "title": "Comment",
-        "createLabel": "Dodaj Comment",
-        "createOrEditLabel": "Dodaj lub edytuj: Comment",
+        "create": "Napisz komentarz",
+        "edit": "Edytuj",
         "search": "Szukaj Comment",
         "notFound": "No Comments found"
       },
@@ -20,7 +20,10 @@
       "textContent": "Text Content",
       "date": "Date",
       "user": "User",
-      "post": "Post"
+      "post": "Post",
+      "showMore": "Pokaż więcej komentarzy",
+      "write.placeholder": "Napisz coś ...",
+      "submit": "Prześlij komentarz"
     }
   }
 }
