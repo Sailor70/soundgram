@@ -5,6 +5,12 @@
     "showFollowedUsers": "Show my followed users",
     "allUsers": "All users",
     "showAllUsers": "Show all users",
-    "search": "Search for user"
+    "search": "Search for user",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "userDetail": {
+      "userPosts": "Show user posts",
+      "userMusic": "Play user music"
+    }
   }
 }

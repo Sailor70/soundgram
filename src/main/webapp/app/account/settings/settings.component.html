@@ -37,6 +37,10 @@
                                *ngIf="settingsForm.get('imageFile').errors.fileSize">
                             Za duży plik!
                         </small>
+                        <small class="form-text text-danger"
+                               *ngIf="settingsForm.get('imageFile').errors.file">
+                            Wybierz tylko 1 plik!
+                        </small>
                     </div>
                 </div>
 <!--                <div style="text-align:center">

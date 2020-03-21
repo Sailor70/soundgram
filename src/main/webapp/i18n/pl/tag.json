@@ -23,7 +23,10 @@
       "post": "Post",
       "view": "Wyświetl tagi",
       "addToProfile": "Przypisać ten tag do twojego profilu?",
-      "newTag": "Nowy tag ..."
+      "newTag": "Nowy tag ...",
+      "userTags": "Tagi użytkownika",
+      "yourTags": "Twoje tagi",
+      "addTag": "tag ..."
     }
   }
 }

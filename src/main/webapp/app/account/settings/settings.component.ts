@@ -31,17 +31,18 @@ export class SettingsComponent implements OnInit {
     imageFile: [
       '',
       [
-        RxwebValidators.extension({ extensions: ['jpeg', 'png'] }),
-        RxwebValidators.image({ maxHeight: 100, maxWidth: 100 }),
-        RxwebValidators.fileSize({ maxSize: 2 })
+        RxwebValidators.extension({ extensions: ['jpg', 'png'] }),
+        // RxwebValidators.image({ maxHeight: 1000, maxWidth: 1000 }),
+        RxwebValidators.file({ minFiles: 1, maxFiles: 1 }),
+        RxwebValidators.fileSize({ maxSize: 500000 }) // 0.5 MB
       ]
     ]
   });
 
   extraForm = this.fb.group({
     id: [],
-    userLocation: [],
-    bio: [],
+    userLocation: [undefined, [Validators.minLength(1), Validators.maxLength(50)]],
+    bio: [undefined, [Validators.minLength(1), Validators.maxLength(255)]],
     user: []
   });
 

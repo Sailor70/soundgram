@@ -1,24 +1,43 @@
 <div class="content" [ngSwitch]="likedAudioDisplayed">
     <div class="row">
         <h2 class="col-md-7 center" *ngSwitchCase="true">
-            <span id="likedFiles-page-heading">Liked audio files</span>
+            <fa-icon [icon]="'star'"></fa-icon>
+            <span id="likedFiles-page-heading" jhiTranslate="music.likedAudios">Liked audio files</span>
             <button class="btn btn-primary" (click)="loadUserFiles()">
-                <fa-icon [icon]="'music'"></fa-icon>
-                <span>Show my audio files</span>
+                <fa-icon [icon]="'user'"></fa-icon>
+                <span jhiTranslate="music.showMyAudios">Show my audio files</span>
             </button>
             <button type="button" class="btn btn-info float-right" (click)="previousState()">
                 <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
             </button>
         </h2>
         <h2 class="col-md-7 center" *ngSwitchCase="false">
-            <span id="myFiles-page-heading">{{whoseFiles}}</span>
-            <button class="btn btn-primary" (click)="loadLikedFiles()">
-                <fa-icon [icon]="'music'"></fa-icon>
-                <span>Show liked audio files</span>
-            </button>
-            <button type="button" class="btn btn-info float-right" (click)="previousState()">
-                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
-            </button>
+
+            <div *ngIf="otherUserFiles">
+                <span id="otherUserFiles-page-heading"
+                     jhiTranslate="music.userFiles">{{whoseFiles}}</span><span> {{otherUser?.login}}</span>
+                <button class="btn btn-primary" (click)="loadLikedFiles()">
+                    <fa-icon [icon]="'star'"></fa-icon>
+                    <span jhiTranslate="music.showLiked">Show liked audio files</span>
+                </button>
+                <button type="button" class="btn btn-info float-right" (click)="previousState()">
+                    <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+                </button>
+            </div>
+
+            <div *ngIf="!otherUserFiles">
+                <fa-icon [icon]="'user'"></fa-icon>
+                <span id="myFiles-page-heading"
+                      jhiTranslate="music.myAudios">{{whoseFiles}}</span>
+
+                <button class="btn btn-primary" (click)="loadLikedFiles()">
+                    <fa-icon [icon]="'star'"></fa-icon>
+                    <span jhiTranslate="music.showLiked">Show liked audio files</span>
+                </button>
+                <button type="button" class="btn btn-info float-right" (click)="previousState()">
+                    <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+                </button>
+            </div>
         </h2>
     </div>
     <jhi-alert-error></jhi-alert-error>
@@ -47,10 +66,10 @@
         <table class="table table-striped" aria-describedby="page-heading">
             <thead>
             <tr>
-                <th scope="col"><span>Title</span></th>
-                <th class="narrow-hide" scope="col"><span>Owner</span></th>
-                <th class="narrow-hide" scope="col"><span>Post</span></th>
-                <th class="narrow-hide" scope="col"><span>Likes</span></th>
+                <th scope="col"><span jhiTranslate="music.table.title">Title</span></th>
+                <th class="narrow-hide" scope="col"><span jhiTranslate="music.table.owner">Owner</span></th>
+                <th class="narrow-hide" scope="col"><span jhiTranslate="music.table.post">Post</span></th>
+                <th class="narrow-hide" scope="col"><span jhiTranslate="music.table.likes">Likes</span></th>
                 <th scope="col"></th>
             </tr>
             </thead>

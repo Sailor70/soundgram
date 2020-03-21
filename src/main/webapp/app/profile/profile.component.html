@@ -51,9 +51,9 @@
                             <div class="input-group w-100 mt-3">
                                 <input type="text" class="form-control" id="tagName" name="tagName"
                                        formControlName="tagName"
-                                       placeholder="{{ 'Add tag to your profile' }}">
-                                <button type="submit" [disabled]="tagForm.invalid" class="btn btn-primary">Assign tag to
-                                    your profile
+                                       placeholder="{{ 'soundgramApp.tag.addTag' | translate}}">
+                                <button type="submit" [disabled]="tagForm.invalid" class="btn btn-primary">
+                                    <span jhiTranslate="profile.assignTag">Assign tag to your profile</span>
                                 </button>
                             </div>
                             <div
@@ -92,17 +92,18 @@
                         </button>
                         <button class="btn btn-primary" (click)="showPostsSection()">
                             <fa-icon [icon]="'window-maximize'"></fa-icon>
-                            <span class="hidden-sm-down">Show your posts</span>
+                            <span class="hidden-sm-down" jhiTranslate="profile.posts">Show your posts</span>
                         </button>
                         <button type="button" (click)="openUserFilesAtMusic()"
                                 class="btn btn-primary">
-                            <fa-icon [icon]="'music'"></fa-icon>&nbsp;<span>Play your music</span>
+                            <fa-icon [icon]="'music'"></fa-icon>&nbsp;<span jhiTranslate="profile.music">Play your music</span>
                         </button>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="panel" id="result_panel">
-                        <div class="panel-heading"><h5 class="panel-title">User tags</h5>
+                        <div class="panel-heading"><h5 class="panel-title text-center">
+                            <fa-icon [icon]="'hashtag'"></fa-icon> <span jhiTranslate="soundgramApp.tag.yourTags">Your tags</span></h5>
                         </div>
                         <div class="panel-body">
                             <ul class="list-group">

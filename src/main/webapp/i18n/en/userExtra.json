@@ -17,8 +17,8 @@
       "detail": {
         "title": "User Extra"
       },
-      "userLocation": "User Location",
-      "bio": "Bio",
+      "userLocation": "Location",
+      "bio": "About me",
       "user": "User"
     }
   }

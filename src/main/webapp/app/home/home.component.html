@@ -141,20 +141,18 @@
                                     </h2>
                                 </div>-->
             </div>
-            <div class="row">
-                <div class="alert alert-warning" *ngIf="posts?.length === 0">
-                    <span jhiTranslate="soundgramApp.post.home.notFound">No posts found</span>
-                </div>
+            <div class="alert alert-warning" *ngIf="posts?.length === 0">
+                <span jhiTranslate="soundgramApp.post.home.notFound">No posts found</span>
+            </div>
 
-                <div *ngIf="posts.length > 0">
-                    <div class="center" infinite-scroll (scrolled)="loadPage(page + 1)"
-                         [infiniteScrollDisabled]="page >= links['last']"
-                         [infiniteScrollDistance]="0">
-                        <jhi-post-object *ngFor="let post of posts"
-                                         [post]="post"
-                        >
-                        </jhi-post-object>
-                    </div>
+            <div class="center" *ngIf="posts.length > 0">
+                <div infinite-scroll (scrolled)="loadPage(page + 1)"
+                     [infiniteScrollDisabled]="page >= links['last']"
+                     [infiniteScrollDistance]="0">
+                    <jhi-post-object *ngFor="let post of posts"
+                                     [post]="post"
+                    >
+                    </jhi-post-object>
                 </div>
             </div>
 

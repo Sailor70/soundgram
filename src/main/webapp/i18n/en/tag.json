@@ -23,7 +23,10 @@
       "post": "Post",
       "view": "View tags",
       "addToProfile": "Add this tag to your profile?",
-      "newTag": "New tag name ..."
+      "newTag": "New tag name ...",
+      "userTags": "User tags",
+      "yourTags": "Your tags",
+      "addTag": "tag ..."
     }
   }
 }

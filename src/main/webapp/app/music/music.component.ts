@@ -125,6 +125,7 @@ export class MusicComponent implements OnInit, OnDestroy {
     }
     if (this.otherUser) {
       this.otherUser = null;
+      this.otherUserFiles = false;
       this.otherUserLogin = null;
       this.whoseFiles = 'My audio files';
     }

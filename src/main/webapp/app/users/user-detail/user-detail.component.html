@@ -41,17 +41,18 @@
                         </button>
                         <button class="btn btn-primary" (click)="showPostsSection()">
                             <fa-icon [icon]="'window-maximize'"></fa-icon>
-                            <span class="hidden-sm-down">Show user posts</span>
+                            <span class="hidden-sm-down" jhiTranslate="users.userDetail.userPosts">Show user posts</span>
                         </button>
                         <button type="button" (click)="openUserFilesAtMusic()"
                                 class="btn btn-primary">
-                            <fa-icon [icon]="'music'"></fa-icon>&nbsp;<span>Play user music</span>
+                            <fa-icon [icon]="'music'"></fa-icon>&nbsp;<span jhiTranslate="users.userDetail.userMusic">Play user music</span>
                         </button>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="panel" id="result_panel">
-                        <div class="panel-heading"><h5 class="panel-title text-center">User tags</h5>
+                        <div class="panel-heading"><h5 class="panel-title text-center">
+                            <fa-icon [icon]="'hashtag'"></fa-icon> <span jhiTranslate="soundgramApp.tag.userTags">User tags</span></h5>
                         </div>
                         <div class="panel-body">
                             <ul class="list-group">

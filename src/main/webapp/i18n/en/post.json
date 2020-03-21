@@ -22,7 +22,9 @@
       "date": "Date",
       "tag": "Tag",
       "user": "User",
-      "viewPost": "View post"
+      "viewPost": "View post",
+      "likes": "Likes",
+      "comments": "Comments"
     }
   }
 }

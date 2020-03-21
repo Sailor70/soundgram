@@ -12,11 +12,14 @@ import { AccountService } from 'app/core/auth/account.service';
 import { PostCommentsComponent } from 'app/shared/postObject/post-comments.component';
 import { IComment } from 'app/shared/model/comment.model';
 import { CommentService } from 'app/entities/comment/comment.service';
+import { AudioService } from 'app/music/player/audio-service';
+import { AvatarService } from 'app/shared/services/avatar.service';
 
 @Component({
   selector: 'jhi-post-object',
   templateUrl: './post-object.component.html',
-  styleUrls: ['./post-object.component.scss']
+  styleUrls: ['./post-object.component.scss'],
+  providers: [AudioService, AvatarService]
 })
 export class PostObjectComponent implements OnInit {
   @Input() post: IPost | IPost; // to disable IPost export warning

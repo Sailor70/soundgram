@@ -2,7 +2,15 @@
   "users": {
     "title": "[pl] Users",
     "followedUsers": "Moi obserwowani użytkownicy",
+    "showFollowedUsers": "Pokaż moich obserwowanych użytkowników",
     "allUsers": "Wszyscy użytkownicy",
-    "search": "Wyszukaj użytkownika"
+    "showAllUsers": "Pokaż wszystkich użytkowników",
+    "search": "Wyszukaj użytkownika",
+    "firstName": "Imię",
+    "lastName": "Nazwisko",
+    "userDetail": {
+      "userPosts": "Pokaż posty użytkownika",
+      "userMusic": "Odtwarzaj muzykę użytkownika"
+    }
   }
 }
