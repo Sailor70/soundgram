@@ -26,7 +26,8 @@
       "newTag": "New tag name ...",
       "userTags": "User tags",
       "yourTags": "Your tags",
-      "addTag": "tag ..."
+      "addTag": "tag ...",
+      "add": "Add"
     }
   }
 }

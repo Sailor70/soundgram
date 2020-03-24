@@ -1,10 +1,13 @@
 <div class="row justify-content-center">
     <div class="col-10">
         <div class="container">
-            <jhi-alert-error></jhi-alert-error>
+            <!--<jhi-alert-error></jhi-alert-error>-->
             <div class="card post-window mb-3">
                 <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-                    <h2 id="jhi-post-heading" class="text-center">{{pageTitle}}</h2>
+                    <h2 *ngIf="editMode" id="jhi-post-heading-edit" class="text-center">
+                        <span jhiTranslate="soundgramApp.post.editPost">{{pageTitle}}</span></h2>
+                    <h2 *ngIf="!editMode" id="jhi-post-heading-create" class="text-center">
+                        <span jhiTranslate="soundgramApp.post.createPost">{{pageTitle}}</span></h2>
                     <div class="form-group center">
                         <!--                            <label class="form-control-label" jhiTranslate="soundgramApp.post.postContent"
                                                            for="field_postContent">Post Content</label>
@@ -12,7 +15,7 @@
                                                            formControlName="postContent"/>-->
                         <textarea class="form-control" name="postContent" id="field_postContent" rows="2"
                                   formControlName="postContent"
-                                  placeholder="{{ 'Write something ...' }}"></textarea>
+                                  placeholder="{{ 'soundgramApp.post.writeContent' | translate }}"></textarea>
                     </div>
 
                     <div class="row">
@@ -20,14 +23,28 @@
                             <div class="padding-10" *ngIf="currentAudioFile && !newAudioSelected">
                                 <jhi-post-player [audioFile]="audioFile"></jhi-post-player>
                             </div>
-                            <div class="input-group padding-10">
+                            <div class="input-group padding-10 form-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="inputGroupFileAddonAudio">Audio</span>
                                 </div>
                                 <div class="custom-file">
-                                    <input type="file" class="custom-file-input" id="inputGroupFileAudio"
+                                    <input type="file" formControlName="audioFile" class="custom-file-input" id="inputGroupFileAudio"
                                            aria-describedby="inputGroupFileAddon01" (change)="selectAudioFile($event)">
                                     <label class="custom-file-label" for="inputGroupFileAudio">{{chooseAudio}}</label>
+                                </div>
+                                <div *ngIf="editForm.get('audioFile').invalid">
+                                    <small class="form-text text-danger"
+                                           *ngIf="editForm.get('audioFile').errors.extension">
+                                        Nieprawidłowy typ pliku! Załaduj mp3
+                                    </small>
+                                    <small class="form-text text-danger"
+                                           *ngIf="editForm.get('audioFile').errors.fileSize">
+                                        Za duży plik! Max 8mb
+                                    </small>
+                                    <small class="form-text text-danger"
+                                           *ngIf="editForm.get('audioFile').errors.file">
+                                        Wybierz tylko 1 plik!
+                                    </small>
                                 </div>
                             </div>
 <!--                            <div style="text-align:center">-->
@@ -43,15 +60,29 @@
                                      alt="post image"
                                      style="max-width:400px;width:100%;max-height:500px;height:100%">
                             </div>
-                            <div class="input-group padding-10">
+                            <div class="input-group padding-10 form-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="inputGroupFileAddonImage">Image</span>
                                 </div>
                                 <div class="custom-file">
-                                    <input type="file" class="custom-file-input" id="inputGroupFileImage"
+                                    <input type="file" formControlName="imageFile" class="custom-file-input" id="inputGroupFileImage"
                                            aria-describedby="inputGroupFileAddon01" (change)="selectImage($event)">
                                     <label class="custom-file-label" for="inputGroupFileImage">{{chooseImage}}</label>
                                 </div>
+                            </div>
+                            <div *ngIf="editForm.get('imageFile').invalid">
+                                <small class="form-text text-danger"
+                                       *ngIf="editForm.get('imageFile').errors.extension">
+                                    Nieprawidłowy typ pliku! Załaduj png lub jpg
+                                </small>
+                                <small class="form-text text-danger"
+                                       *ngIf="editForm.get('imageFile').errors.fileSize">
+                                    Za duży plik! Max 5mb
+                                </small>
+                                <small class="form-text text-danger"
+                                       *ngIf="editForm.get('imageFile').errors.file">
+                                    Wybierz tylko 1 plik!
+                                </small>
                             </div>
 <!--                            <div style="text-align:center">-->
 <!--                                <label>-->
@@ -69,9 +100,9 @@
                                         <div class="input-group w-100 mt-3">
                                             <input type="text" class="form-control" id="tagName" name="tagName"
                                                    formControlName="tagName"
-                                                   placeholder="{{ 'Add tag to post' }}">
+                                                   placeholder="{{ 'soundgramApp.tag.addTag' | translate }}">
                                             <button type="submit" [disabled]="tagForm.invalid" class="btn btn-primary">
-                                                Add
+                                                <span jhiTranslate="soundgramApp.tag.add">Add</span>
                                             </button>
                                         </div>
                                         <div
@@ -99,7 +130,8 @@
 
                             <div *ngIf="postTags">
                                 <div class="panel" id="result_panel">
-                                    <div class="panel-heading"><h5 class="panel-title">Post tags</h5>
+                                    <div class="panel-heading"><h5 class="panel-title"><fa-icon [icon]="'hashtag'"></fa-icon>
+                                        <span jhiTranslate="soundgramApp.post.postTags">Post tags</span></h5>
                                     </div>
                                     <div class="panel-body">
                                         <ul class="list-group">
@@ -110,7 +142,7 @@
                                                 <button type="submit" (click)="deleteTagFromPost(tag)"
                                                         class="btn btn-danger btn-sm float-right">
                                                     <fa-icon [icon]="'times'"></fa-icon>
-                                                    <span class="d-none d-md-inline">Delete tag</span>
+                                                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete tag</span>
                                                 </button>
                                             </li>
                                         </ul>

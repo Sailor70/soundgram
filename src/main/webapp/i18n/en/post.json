@@ -24,7 +24,11 @@
       "user": "User",
       "viewPost": "View post",
       "likes": "Likes",
-      "comments": "Comments"
+      "comments": "Comments",
+      "writeContent": "Write something ... ",
+      "postTags": "Post tags",
+      "createPost": "Create new Post",
+      "editPost": "Edit post"
     }
   }
 }

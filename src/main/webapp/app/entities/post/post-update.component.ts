@@ -20,6 +20,7 @@ import { Account } from 'app/core/user/account.model';
 import { AccountService } from 'app/core/auth/account.service';
 import { IAudioFile } from 'app/shared/model/audio-file.model';
 import { IImage } from 'app/shared/model/image.model';
+import { RxwebValidators } from '@rxweb/reactive-form-validators';
 
 @Component({
   selector: 'jhi-post-update',
@@ -54,12 +55,51 @@ export class PostUpdateComponent implements OnInit {
   newAudioSelected = false;
   newImageSelected = false;
 
+  /*  filesForm = this.fb.group({
+    imageFile: [
+      '',
+      [
+        RxwebValidators.extension({ extensions: ['jpg', 'png'] }),
+        // RxwebValidators.image({ maxHeight: 1000, maxWidth: 1000 }),
+        RxwebValidators.file({ minFiles: 1, maxFiles: 1 }),
+        RxwebValidators.fileSize({ maxSize: 5000000 }) // 5 MB
+      ]
+    ],
+    audioFile: [
+      '',
+      [
+        RxwebValidators.extension({ extensions: ['mp3'] }),
+        // RxwebValidators.image({ maxHeight: 1000, maxWidth: 1000 }),
+        RxwebValidators.file({ minFiles: 1, maxFiles: 1 }),
+        RxwebValidators.fileSize({ maxSize: 8000000 }) // 8 MB
+      ]
+    ]
+  });*/
+
   editForm = this.fb.group({
     id: [],
     postContent: [],
     date: [],
     tags: [],
-    user: []
+    user: [],
+    imageFile: [
+      '',
+      [
+        RxwebValidators.extension({ extensions: ['jpg', 'png', 'jpeg'] }),
+        // RxwebValidators.image({ maxHeight: 1000, maxWidth: 1000 }),
+        RxwebValidators.file({ minFiles: 1, maxFiles: 1 }),
+        RxwebValidators.fileSize({ maxSize: 5000000 }) // 5 MB
+      ]
+    ],
+    audioFile: [
+      '',
+      [
+        RxwebValidators.extension({ extensions: ['mp3'] }),
+        // RxwebValidators.image({ maxHeight: 1000, maxWidth: 1000 }),
+        RxwebValidators.file({ minFiles: 1, maxFiles: 1 }),
+        RxwebValidators.fileSize({ maxSize: 8000000 }) // 8 MB
+      ]
+    ]
   });
 
   tagForm = this.fb.group({

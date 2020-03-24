@@ -36,7 +36,8 @@
                                             <jhi-post-player [audioFile]="audioFile"></jhi-post-player>
                                         </div>
                                         <div>
-                                            <span>Tags: </span><br>
+                                            <fa-icon [icon]="'hashtag'"></fa-icon>
+                                            <span jhiTranslate="soundgramApp.post.postTags">Tags: </span><br>
                                             <span *ngFor="let tag of post.tags; let last = last">
                                     <a [routerLink]="['/tag', tag?.id, 'view' ]">{{tag.name}}</a>{{last ? '' : ', '}}</span>
                                         </div>
