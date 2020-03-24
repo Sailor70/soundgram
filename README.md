@@ -6,15 +6,23 @@ This project is being developed as part of my IT studies engineering work
 
 ## Screenshots
 
-![alt tag](https://github.com/Sailor70/soundgram/blob/master/screenshots/1SGHomeLogin.JPG)
-![alt tag](https://github.com/Sailor70/soundgram/blob/master/screenshots/1SGHome.JPG)
-![alt tag](https://github.com/Sailor70/soundgram/blob/master/screenshots/1SGTags.JPG)
-![alt tag](https://github.com/Sailor70/soundgram/blob/master/screenshots/1SGProfile.JPG)
-![alt tag](https://github.com/Sailor70/soundgram/blob/master/screenshots/1SGMusic.JPG)
-![alt tag](https://github.com/Sailor70/soundgram/blob/master/screenshots/1SGUsers.JPG)
-![alt tag](https://github.com/Sailor70/soundgram/blob/master/screenshots/1SGPost.JPG)
-![alt tag](https://github.com/Sailor70/soundgram/blob/master/screenshots/1SGEditPost.JPG)
-![alt tag](https://github.com/Sailor70/soundgram/blob/master/screenshots/1SGSettings.JPG)
+![alt tag](https://github.com/Sailor70/soundgram/blob/master/screenshots/1SGHomeLogin.jpg)
+
+![alt tag](https://github.com/Sailor70/soundgram/blob/master/screenshots/2SGHome.jpg)
+
+![alt tag](https://github.com/Sailor70/soundgram/blob/master/screenshots/3SGTags.jpg)
+
+![alt tag](https://github.com/Sailor70/soundgram/blob/master/screenshots/4SGProfile.jpg)
+
+![alt tag](https://github.com/Sailor70/soundgram/blob/master/screenshots/5SGMusic.jpg)
+
+![alt tag](https://github.com/Sailor70/soundgram/blob/master/screenshots/6SGUsers.jpg)
+
+![alt tag](https://github.com/Sailor70/soundgram/blob/master/screenshots/7SGPost.jpg)
+
+![alt tag](https://github.com/Sailor70/soundgram/blob/master/screenshots/8SGEditPost.jpg)
+
+![alt tag](https://github.com/Sailor70/soundgram/blob/master/screenshots/9SGSettings.jpg)
 
 ## Building this project
 
