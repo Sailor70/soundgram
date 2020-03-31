@@ -14,6 +14,7 @@ import com.soundgram.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -118,7 +119,7 @@ public class AudioFileResource {
 
             AudioFile audioFile = new AudioFile();
             // audioFile.addUser(currentUser); // nie dodajemy do polubionych od razu
-            audioFile.setAudioPath(audioPath.toString()); // to jest niepotrzebne właściwie
+            audioFile.setAudioPath(FilenameUtils.removeExtension(file.getOriginalFilename())); // audioPath.toString() -> audio path
             audioFile.setPost(post); //
             audioFile.setTitle(file.getOriginalFilename()); // audioPath.getFileName().toString()
             audioFile.setIconPath(currentUser.getId().toString()); // przechowuje id ownera pliku

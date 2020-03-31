@@ -29,7 +29,7 @@
                 </div>
                 <div class="col-md-4 center">
                     <dt><span jhiTranslate="userManagement.email">Email</span></dt>
-                    <dd>{{user?.email}}</dd>
+                    <dd><a href="mailto:{{user.email}}">{{user.email}}</a></dd>
                     <dt><span jhiTranslate="userManagement.langKey">Lang Key</span></dt>
                     <dd>{{user?.langKey}}</dd>
                 </div>
@@ -122,15 +122,15 @@
                     </div>
                 </div>
             </div>
-            <div class="row" *ngIf="showPosts">
-                <div *ngIf="userPosts.length > 0">
-                    <div infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
-                        <jhi-post-object *ngFor="let post of userPosts"
-                                         [post]="post"
-                        >
-                        </jhi-post-object>
-                    </div>
-                </div>
+        </div>
+    </div>
+    <div class="center" *ngIf="showPosts">
+        <div *ngIf="userPosts.length > 0">
+            <div infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
+                <jhi-post-object *ngFor="let post of userPosts"
+                                 [post]="post"
+                >
+                </jhi-post-object>
             </div>
         </div>
     </div>

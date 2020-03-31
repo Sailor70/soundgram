@@ -102,12 +102,13 @@ export class AvatarService {
   }
 
   getAvatarsForUserList(users: IUser[]): any {
+    // console.error('users at avatar length: ' + users.length);
     this.usersAvatars = [];
     this.users = users;
     for (const user of users) {
       this.userService.getAvatarFilename(user.login).subscribe(avatarFileName => {
-        console.error('avatar user login:' + user.login);
-        console.error('avatar filename: ' + avatarFileName.body);
+        // console.error('avatar user login:' + user.login);
+        // console.error('avatar filename: ' + avatarFileName.body);
         if (avatarFileName.body !== '') {
           this.userService.getAvatar(avatarFileName.body).subscribe(
             data => {

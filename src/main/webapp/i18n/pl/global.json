@@ -97,7 +97,15 @@
     "ribbon": {
       "dev": "Development"
     },
-    "item-count": "Wyświetlono {{first}} - {{second}} z {{total}} elementów."
+    "item-count": "Wyświetlono {{first}} - {{second}} z {{total}} elementów.",
+    "buttons": {
+      "image": "Obraz",
+      "audio": "Dźwięk",
+      "chooseAvatar": "Wybierz swój avatar",
+      "chooseImage": "Wybierz plik graficzny",
+      "chooseAudio": "Wybierz plik audio",
+      "browse": "Przeglądaj"
+    }
   },
   "entity": {
     "action": {

@@ -81,28 +81,71 @@ export class UsersComponent implements OnInit {
 
   loadAll() {
     this.allUsersDisplayed = true;
-    // console.error("load alles");
-    if (this.currentSearch) {
-      this.userService
-        .search({
-          query: this.currentSearch
-        })
-        .subscribe((res: HttpResponse<IUser[]>) => (this.users = res.body));
+    this.users = [];
 
-      this.userExtraService.search({ query: this.currentSearch }).subscribe(res => {
-        const userExtras = res.body;
-        for (const ue of userExtras) {
-          this.userService.find(ue.user.login).subscribe(user => {
-            this.users.push(user);
-          });
-        }
-        this.usersAvatars = this.avatarService.getAvatarsForUserList(this.users);
+    if (this.currentSearch) {
+      const promises = [];
+      const userP = new Promise(resolveOut => {
+        promises.push(
+          new Promise(resolve => {
+            this.userService
+              .search({
+                query: this.currentSearch
+              })
+              .subscribe((res: HttpResponse<IUser[]>) => {
+                this.users = res.body;
+                resolve();
+                resolveOut();
+              });
+          })
+        );
       });
-      return;
+
+      userP.then(() => {
+        // this.users = [];
+        this.userExtraService.search({ query: this.currentSearch }).subscribe(res => {
+          const userExtras = res.body;
+          console.error('userExtras length: ' + userExtras.length);
+          for (const ue of userExtras) {
+            promises.push(
+              new Promise(resolve => {
+                this.userService.find(ue.user.login).subscribe((user: IUser) => {
+                  // console.error('users length: ' + this.users.length);
+                  // console.error('users constains: ' + this.contains(this.users, user));
+                  if (!this.contains(this.users, user)) {
+                    // nie dodaje drugi raz tego samego usera jeśli wyszukało 2 razy
+                    this.users.push(user);
+                  }
+                  resolve();
+                });
+              })
+            );
+          }
+          Promise.all(promises).then(() => {
+            // console.error('users length: ' + this.users.length);
+            console.error('wszystkie promisy spełnione! a było ich: ' + promises.length);
+            this.usersAvatars = this.avatarService.getAvatarsForUserList(this.users);
+          });
+        });
+      });
+    } else {
+      this.userService
+        .query()
+        .subscribe(
+          (res: HttpResponse<IUser[]>) => this.onSuccess(res.body, res.headers),
+          (res: HttpResponse<any>) => this.onError(res.body)
+        );
     }
-    this.userService
-      .query()
-      .subscribe((res: HttpResponse<IUser[]>) => this.onSuccess(res.body, res.headers), (res: HttpResponse<any>) => this.onError(res.body));
+  }
+
+  contains(a: IUser[], obj: IUser) {
+    let i = a.length;
+    while (i--) {
+      if (a[i].id === obj.id) {
+        return true;
+      }
+    }
+    return false;
   }
 
   loadFollowed() {

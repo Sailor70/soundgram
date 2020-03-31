@@ -25,12 +25,13 @@
                             </div>
                             <div class="input-group padding-10 form-group">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text" id="inputGroupFileAddonAudio">Audio</span>
+                                    <span class="input-group-text" id="inputGroupFileAddonAudio" jhiTranslate="global.buttons.audio">Audio</span>
                                 </div>
                                 <div class="custom-file">
                                     <input type="file" formControlName="audioFile" class="custom-file-input" id="inputGroupFileAudio"
                                            aria-describedby="inputGroupFileAddon01" (change)="selectAudioFile($event)">
-                                    <label class="custom-file-label" for="inputGroupFileAudio">{{chooseAudio}}</label>
+                                    <label *ngIf="!selectedAudioFiles" class="custom-file-label" for="inputGroupFileAudio" jhiTranslate="global.buttons.chooseAudio">{{chooseAudio}}</label>
+                                    <label *ngIf="selectedAudioFiles" class="custom-file-label" for="inputGroupFileAudio">{{chooseAudio}}</label>
                                 </div>
                                 <div *ngIf="editForm.get('audioFile').invalid">
                                     <small class="form-text text-danger"
@@ -62,12 +63,13 @@
                             </div>
                             <div class="input-group padding-10 form-group">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text" id="inputGroupFileAddonImage">Image</span>
+                                    <span class="input-group-text" id="inputGroupFileAddonImage" jhiTranslate="global.buttons.image">Image</span>
                                 </div>
                                 <div class="custom-file">
                                     <input type="file" formControlName="imageFile" class="custom-file-input" id="inputGroupFileImage"
                                            aria-describedby="inputGroupFileAddon01" (change)="selectImage($event)">
-                                    <label class="custom-file-label" for="inputGroupFileImage">{{chooseImage}}</label>
+                                    <label *ngIf="!selectedImages" class="custom-file-label" for="inputGroupFileImage" jhiTranslate="global.buttons.chooseImage">{{chooseImage}}</label>
+                                    <label *ngIf="selectedImages" class="custom-file-label" for="inputGroupFileImage">{{chooseImage}}</label>
                                 </div>
                             </div>
                             <div *ngIf="editForm.get('imageFile').invalid">

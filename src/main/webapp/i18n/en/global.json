@@ -97,7 +97,15 @@
     "ribbon": {
       "dev": "Development"
     },
-    "item-count": "Showing {{first}} - {{second}} of {{total}} items."
+    "item-count": "Showing {{first}} - {{second}} of {{total}} items.",
+    "buttons": {
+      "image": "Image",
+      "audio": "Audio",
+      "chooseAvatar": "Choose your avatar",
+      "chooseImage": "Choose image",
+      "chooseAudio": "Choose audio file",
+      "browse": "Browse"
+    }
   },
   "entity": {
     "action": {

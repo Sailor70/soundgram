@@ -17,12 +17,13 @@
 
                 <div class="col-md-8 input-group form-group" style="margin: auto">
                     <div class="input-group-prepend">
-                        <span class="input-group-text" id="inputGroupFileAddonImage">Image</span>
+                        <span class="input-group-text" id="inputGroupFileAddonImage" jhiTranslate="global.buttons.image">Image</span>
                     </div>
                     <div class="custom-file">
                         <input type="file" formControlName="imageFile" class="custom-file-input" id="inputGroupFileImage"
                                aria-describedby="inputGroupFileAddon01" (change)="selectFile($event)">
-                        <label class="custom-file-label" for="inputGroupFileImage">{{chooseAvatar}}</label>
+                        <label *ngIf="!selectedFiles" class="custom-file-label" for="inputGroupFileImage" jhiTranslate="global.buttons.chooseAvatar">{{chooseAvatar}}</label>
+                        <label *ngIf="selectedFiles" class="custom-file-label" for="inputGroupFileImage">{{chooseAvatar}}</label>
                     </div>
                     <div *ngIf="settingsForm.get('imageFile').invalid">
                         <small class="form-text text-danger"
