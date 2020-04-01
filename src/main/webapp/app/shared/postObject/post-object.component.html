@@ -28,15 +28,15 @@
                                     {{post.postContent}}
                                 </p>
                                 <div class="row">
-                                    <div *ngIf="postImage" class="col-md-6">
+                                    <div *ngIf="postImage" class="col-md-6 center">
                                         <img [src]="postImage" class="ui-rect ui-bg-cover"
                                              alt="">
                                     </div>
-                                    <div class="col-md-6">
+                                    <div *ngIf="audioFile || post.tags.length > 0" class="col-md-6 center">
                                         <div *ngIf="audioFile">
                                             <jhi-post-player [audioFile]="audioFile"></jhi-post-player>
                                         </div>
-                                        <div>
+                                        <div *ngIf="post.tags.length > 0">
                                             <fa-icon [icon]="'hashtag'"></fa-icon>
                                             <span jhiTranslate="soundgramApp.post.postTags">Tags: </span><br>
                                             <span *ngFor="let tag of post.tags; let last = last">
