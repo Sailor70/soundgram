@@ -30,7 +30,7 @@ export class ProfileComponent implements OnInit {
   user: IUser;
   userTags: ITag[];
   userPosts: IPost[];
-  userAudioFiles: IAudioFile[];
+  // userAudioFiles: IAudioFile[];
   account: Account;
 
   allTags: ITag[];
@@ -72,14 +72,13 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.success = false;
     this.hasImage = false;
     this.accountService.identity().subscribe((account: Account) => {
       this.account = account;
-      console.error('user account name: ' + this.account.login);
       this.identificationSuccess();
     });
 
+    this.success = false;
     this.tagService.query().subscribe(res => {
       this.allTags = res.body;
     });
@@ -93,10 +92,10 @@ export class ProfileComponent implements OnInit {
         this.userExtra = extraRes.body;
       });
 
-      this.audioFileService.getUserFiles(this.user.id).subscribe(audioRes => {
-        this.userAudioFiles = audioRes.body;
-        console.error('audioFiles: ' + this.userAudioFiles.length);
-      });
+      // this.audioFileService.getUserFiles(this.user.id).subscribe(audioRes => {
+      //   this.userAudioFiles = audioRes.body;
+      //   console.error('audioFiles: ' + this.userAudioFiles.length);
+      // });
     });
 
     this.getAvatarFromService();
@@ -199,9 +198,7 @@ export class ProfileComponent implements OnInit {
   getAvatarFromService() {
     this.isImageLoading = true;
     this.userService.getAvatarFilename(this.account.login).subscribe(avatarFileName => {
-      // console.error('avatar filename: ' + avatarFileName.body);
       if (avatarFileName.body) {
-        // console.error('wykonało się');
         this.userService.getAvatar(avatarFileName.body).subscribe(
           data => {
             this.createAvatarFromBlob(data);

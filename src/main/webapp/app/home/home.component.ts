@@ -156,8 +156,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         })
         .subscribe(res => {
           this.paginatePosts(res.body, res.headers);
-          // this.posts = res.body;
-          // this.getPostObjectFromService();
         });
     }
     // this.getAvatars();

@@ -97,7 +97,7 @@ export class MusicComponent implements OnInit, OnDestroy {
     this.registerChangeInAudioFiles();
   }*/
 
-  loadAll() {
+  searchAll() {
     this.likedAudioDisplayed = true;
     if (this.currentSearch) {
       this.audioFileService
@@ -156,12 +156,12 @@ export class MusicComponent implements OnInit, OnDestroy {
       return this.clear();
     }
     this.currentSearch = query;
-    this.loadAll();
+    this.searchAll();
   }
 
   clear() {
     this.currentSearch = '';
-    this.loadAll();
+    this.searchAll();
   }
 
   ngOnDestroy() {
@@ -173,6 +173,10 @@ export class MusicComponent implements OnInit, OnDestroy {
 
   trackId(index: number, item: IAudioFile) {
     return item.id;
+  }
+
+  previousState() {
+    window.history.back();
   }
 
   // registerChangeInAudioFiles() {
@@ -284,9 +288,5 @@ export class MusicComponent implements OnInit, OnDestroy {
       console.error('next file id: ' + next.id);
       return next.id;
     }
-  }
-
-  previousState() {
-    window.history.back();
   }
 }

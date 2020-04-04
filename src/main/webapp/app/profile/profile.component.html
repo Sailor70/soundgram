@@ -4,7 +4,7 @@
             <div class="row col-md-12">
                 <div class="row col-md-8 center">
                     <img [src]="avatar"
-                         alt="Place image title"
+                         alt="Profile image"
                          *ngIf="!isImageLoading && hasImage" class="center profile-image rounded-circle"
                          style="max-width:120px;width:100%;max-height:120px;height:100%">
                     <h2 class="center"><b>{{user.login}}</b></h2>
@@ -114,7 +114,7 @@
                                     <button type="submit" (click)="deleteTagFromProfile(tag)"
                                             class="btn btn-danger btn-sm float-right">
                                         <fa-icon [icon]="'times'"></fa-icon>
-                                        <span class="d-none d-md-inline">Delete tag</span>
+                                        <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
                                     </button>
                                 </li>
                             </ul>

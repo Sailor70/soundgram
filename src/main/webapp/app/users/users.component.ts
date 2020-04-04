@@ -11,7 +11,7 @@ import { AccountService } from 'app/core/auth/account.service';
 import { UserService } from 'app/core/user/user.service';
 import { IUser, User } from 'app/core/user/user.model';
 import { FollowedUserService } from 'app/entities/followed-user/followed-user.service';
-import { FollowedUser } from 'app/shared/model/followed-user.model';
+import { FollowedUser, IFollowedUser } from 'app/shared/model/followed-user.model';
 import { UserExtraService } from 'app/entities/user-extra/user-extra.service';
 import { AvatarService } from 'app/shared/services/avatar.service';
 
@@ -102,7 +102,6 @@ export class UsersComponent implements OnInit {
       });
 
       userP.then(() => {
-        // this.users = [];
         this.userExtraService.search({ query: this.currentSearch }).subscribe(res => {
           const userExtras = res.body;
           console.error('userExtras length: ' + userExtras.length);
@@ -110,8 +109,6 @@ export class UsersComponent implements OnInit {
             promises.push(
               new Promise(resolve => {
                 this.userService.find(ue.user.login).subscribe((user: IUser) => {
-                  // console.error('users length: ' + this.users.length);
-                  // console.error('users constains: ' + this.contains(this.users, user));
                   if (!this.contains(this.users, user)) {
                     // nie dodaje drugi raz tego samego usera jeśli wyszukało 2 razy
                     this.users.push(user);
@@ -122,7 +119,6 @@ export class UsersComponent implements OnInit {
             );
           }
           Promise.all(promises).then(() => {
-            // console.error('users length: ' + this.users.length);
             console.error('wszystkie promisy spełnione! a było ich: ' + promises.length);
             this.usersAvatars = this.avatarService.getAvatarsForUserList(this.users);
           });
@@ -151,13 +147,15 @@ export class UsersComponent implements OnInit {
   loadFollowed() {
     this.followedUserService
       .findFollowed()
-      .subscribe((res: HttpResponse<User[]>) => this.onLoadFollowedSuccess(res.body), (res: HttpResponse<any>) => this.onError(res.body));
+      .subscribe(
+        (res: HttpResponse<IFollowedUser[]>) => this.onLoadFollowedSuccess(res.body),
+        (res: HttpResponse<any>) => this.onError(res.body)
+      );
   }
 
   onLoadFollowedSuccess(data) {
     this.allUsersDisplayed = false;
     this.followedUsers = data;
-    // console.error(this.followedUsers);
     this.usersCpy = this.users;
     this.users = [];
     let i = 0;
