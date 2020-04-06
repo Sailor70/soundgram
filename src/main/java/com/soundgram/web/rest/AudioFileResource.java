@@ -111,12 +111,7 @@ public class AudioFileResource {
         if (postOpt.isPresent()) {
             post = postOpt.get();
             User currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null);
-            Path audioPath = storageService.storeAudioFile(file, currentUser.getId());
-            String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/download/")
-                .path(file.getName())
-                .toUriString();
-
+            storageService.storeAudioFile(file, currentUser.getId());
             AudioFile audioFile = new AudioFile();
             // audioFile.addUser(currentUser); // nie dodajemy do polubionych od razu
             audioFile.setAudioPath(FilenameUtils.removeExtension(file.getOriginalFilename())); // audioPath.toString() -> audio path
@@ -329,7 +324,6 @@ public class AudioFileResource {
                 "attachment;filename=" + title);
             assert mp3 != null;
             response.setContentLength((int) mp3.length());
-            // FileInputStream input = new FileInputStream(mp3);
             File finalMp = mp3;
             StreamingResponseBody streamRS = out -> {
                 ServletOutputStream stream = response.getOutputStream();

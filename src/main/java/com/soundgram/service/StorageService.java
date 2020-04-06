@@ -30,4 +30,6 @@ public interface StorageService {
 
     void deleteOneImage(String filename, Long id);
 
+    void deleteOneAvatar(String filename, Long id);
+
 }

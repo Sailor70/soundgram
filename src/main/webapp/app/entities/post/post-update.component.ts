@@ -55,27 +55,6 @@ export class PostUpdateComponent implements OnInit {
   newAudioSelected = false;
   newImageSelected = false;
 
-  /*  filesForm = this.fb.group({
-    imageFile: [
-      '',
-      [
-        RxwebValidators.extension({ extensions: ['jpg', 'png'] }),
-        // RxwebValidators.image({ maxHeight: 1000, maxWidth: 1000 }),
-        RxwebValidators.file({ minFiles: 1, maxFiles: 1 }),
-        RxwebValidators.fileSize({ maxSize: 5000000 }) // 5 MB
-      ]
-    ],
-    audioFile: [
-      '',
-      [
-        RxwebValidators.extension({ extensions: ['mp3'] }),
-        // RxwebValidators.image({ maxHeight: 1000, maxWidth: 1000 }),
-        RxwebValidators.file({ minFiles: 1, maxFiles: 1 }),
-        RxwebValidators.fileSize({ maxSize: 8000000 }) // 8 MB
-      ]
-    ]
-  });*/
-
   editForm = this.fb.group({
     id: [],
     postContent: [],
@@ -95,7 +74,6 @@ export class PostUpdateComponent implements OnInit {
       '',
       [
         RxwebValidators.extension({ extensions: ['mp3'] }),
-        // RxwebValidators.image({ maxHeight: 1000, maxWidth: 1000 }),
         RxwebValidators.file({ minFiles: 1, maxFiles: 1 }),
         RxwebValidators.fileSize({ maxSize: 8000000 }) // 8 MB
       ]
@@ -293,7 +271,6 @@ export class PostUpdateComponent implements OnInit {
         let toCreate = true;
         for (const tag of this.allTags) {
           if (tagToAdd.name === tag.name) {
-            // this.assignTagToPost(tag); // przesyłamy tag bo tagToAdd może mieć niepełne info
             this.tagsToAdd.push(tag);
             console.error('Dodano istniejący tag ' + tag.name);
             toCreate = false;
@@ -301,7 +278,7 @@ export class PostUpdateComponent implements OnInit {
           }
         }
         if (toCreate) {
-          promises.push(this.createNewTag(tagToAdd));
+          promises.push(this.createNewTag(tagToAdd)); // returns new Promise
         }
       }
       Promise.all(promises).then(() => {
@@ -390,18 +367,4 @@ export class PostUpdateComponent implements OnInit {
       reader.readAsDataURL(image);
     }
   }
-
-  /*  playAudio() {
-    if (!this.audio.paused) {
-      this.audio.load();
-      this.audio.play();
-    } else {
-      this.audio.play();
-    }
-  }
-  pauseAudio() {
-    if (!this.audio.paused) {
-      this.audio.pause();
-    }
-  }*/
 }

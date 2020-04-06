@@ -11,7 +11,6 @@ import { AudioFileService } from 'app/entities/audio-file/audio-file.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { IUserExtra } from 'app/shared/model/user-extra.model';
 import { UserExtraService } from 'app/entities/user-extra/user-extra.service';
-import { PostDeleteDialogComponent } from 'app/entities/post/post-delete-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 import { ITEMS_PER_PAGE_POST_OBJ } from 'app/shared/constants/pagination.constants';
@@ -103,14 +102,6 @@ export class ProfileComponent implements OnInit {
     this.loadPosts();
   }
 
-  sort() {
-    const result = ['date' + ',' + 'desc']; // sortuje posty od najnowszego według daty
-    // if (this.predicate !== 'id') {
-    // result.push('id');
-    // }
-    return result;
-  }
-
   loadPage(page) {
     this.page = page;
     this.loadPosts();
@@ -128,7 +119,7 @@ export class ProfileComponent implements OnInit {
       .getUserPosts(this.account.login, {
         page: this.page,
         size: this.itemsPerPage,
-        sort: this.sort()
+        sort: ['date' + ',' + 'desc'] // sortuje posty od najnowszego według daty
       })
       .subscribe(
         res => {
@@ -176,17 +167,17 @@ export class ProfileComponent implements OnInit {
       });
     } else {
       this.tagService.addUserToTag(tagToAdd).subscribe(() => {
-        // this.userTags.push(res.body);
         this.refreshTags();
       });
     }
   }
 
   deleteTagFromProfile(tag: ITag) {
+    // modifies users assigned to tag list
     const tagUsers = tag.users;
     const userIndex = tagUsers.findIndex(ut => ut.login === this.user.login);
     if (userIndex > -1) {
-      tagUsers.splice(userIndex, 1);
+      tagUsers.splice(userIndex, 1); // cut current user from tag users
     }
     tag.users = tagUsers;
     this.tagService.update(tag).subscribe(() => {
@@ -226,11 +217,6 @@ export class ProfileComponent implements OnInit {
     if (image) {
       reader.readAsDataURL(image);
     }
-  }
-
-  delete(post: IPost) {
-    const modalRef = this.modalService.open(PostDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
-    modalRef.componentInstance.post = post;
   }
 
   showPostsSection() {

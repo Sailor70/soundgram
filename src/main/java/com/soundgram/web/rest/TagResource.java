@@ -137,7 +137,7 @@ public class TagResource {
     public List<Tag> getAllUserTags(@PathVariable String login) {
         log.debug("REST request to get all Tags assigned to user of login: {}", login);
         List<Tag> allTags = tagRepository.findAllWithEagerRelationships();
-        List<Tag> userTags = new ArrayList<>();;
+        List<Tag> userTags = new ArrayList<>();
         for(Tag tag : allTags) {
             Set<User> tagUsers = tag.getUsers();
             for(User user : tagUsers) {

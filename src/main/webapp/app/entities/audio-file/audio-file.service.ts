@@ -18,7 +18,6 @@ export class AudioFileService {
   constructor(protected http: HttpClient) {}
 
   create(file: File, postId: number): Observable<EntityResponseType> {
-    console.error('Przekazane id: {}', postId);
     const formdata: FormData = new FormData();
     formdata.append('file', file);
     formdata.append('id', postId.toString());
@@ -54,20 +53,11 @@ export class AudioFileService {
   }
 
   getFile(id: number): Observable<any> {
-    /*    const httpOptions = {
-      headers: new HttpHeaders({
-        Accept: 'application/json',
-        responseType: 'arraybuffer'
-      })
-    };*/
-
     return this.http.get(`${this.resourceUrl + '-download'}/${id}`, { responseType: 'blob', observe: 'response' }).pipe(
       map((res: any) => {
-        // console.error('File resource title: ' + res['filename'].data);
-        // console.error('File name: ' + res.headers.getAll());
         return new Blob([res.body], { type: 'audio/mpeg' });
       })
-    ); // params: {responseType: "blob"}
+    );
   }
 
   getLiked(): Observable<EntityArrayResponseType> {

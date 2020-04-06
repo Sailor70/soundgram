@@ -70,26 +70,26 @@ public class FileSystemStorageService implements StorageService {
             }
         }
 //        store(file, filename);
-        return getPath(file, filename, userAudioFilesLocation);
+        return getPathAndStoreFile(file, filename, userAudioFilesLocation);
     }
 
     @Override
     public Path storeImage(MultipartFile file, Long id) {
         String filename = StringUtils.cleanPath(id.toString().concat(file.getOriginalFilename())); // 5467plik.mp3 : idPostaNazwaPlku.mp3
         //store(file, filename);
-        return getPath(file, filename, imagesLocation);
+        return getPathAndStoreFile(file, filename, imagesLocation);
     }
 
     @Override // czy usuwać stare avatary?
     public String storeAvatar(MultipartFile file, Long id) {
         String filename = StringUtils.cleanPath(id.toString().concat(file.getOriginalFilename())); // 5467plik.mp3 : idUseraNazwaPlku.mp3
         //store(file, filename);
-        Path path = getPath(file, filename, avatarsLocation);
+        Path path = getPathAndStoreFile(file, filename, avatarsLocation);
         log.debug("Zapisano nowy avatar w: {}", path.toString());
         return filename;
     }
 
-    private Path getPath(MultipartFile file, String filename, Path imagesLocation) {
+    private Path getPathAndStoreFile(MultipartFile file, String filename, Path filesLocation) {
         try {
             if (file.isEmpty()) {
                 throw new StorageException("Failed to store empty file " + filename);
@@ -101,14 +101,14 @@ public class FileSystemStorageService implements StorageService {
                         + filename);
             }
             try (InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, imagesLocation.resolve(filename),
+                Files.copy(inputStream, filesLocation.resolve(filename),
                     StandardCopyOption.REPLACE_EXISTING);
             }
         }
         catch (IOException e) {
             throw new StorageException("Failed to store file " + filename, e);
         }
-        return  imagesLocation.resolve(filename);
+        return  filesLocation.resolve(filename);
     }
 
     @Override
@@ -194,6 +194,12 @@ public class FileSystemStorageService implements StorageService {
     @Override
     public void deleteOneImage(String filename, Long postId) {
         Path filePath = Paths.get(imagesLocation.toString()).resolve(postId.toString().concat(filename));
+        FileSystemUtils.deleteRecursively(filePath.toFile());
+    }
+
+    @Override
+    public void deleteOneAvatar(String filename, Long userId) {
+        Path filePath = Paths.get(avatarsLocation.toString()).resolve(userId.toString().concat(filename));
         FileSystemUtils.deleteRecursively(filePath.toFile());
     }
 

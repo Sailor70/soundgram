@@ -208,7 +208,6 @@ export class MusicComponent implements OnInit, OnDestroy {
     this.currentFile = this.audioFiles[0];
     this.audioService.getState().subscribe(state => {
       this.state = state;
-      // console.error('State cr time: ' + this.state.currentTime);
     });
   }
 
