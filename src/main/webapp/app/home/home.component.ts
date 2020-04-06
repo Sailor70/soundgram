@@ -164,24 +164,33 @@ export class HomeComponent implements OnInit, OnDestroy {
   loadPostsByTags() {
     this.postService.query().subscribe((res: HttpResponse<IPost[]>) => {
       const allPosts = res.body;
-      // console.error('all posts:' + this.posts.length);
+      console.error('all posts:' + this.posts.length);
       for (const post of allPosts) {
-        // console.error("postTags:" + post.tags.length);
+        console.error('postTags:' + post.tags.length);
         if (post.tags) {
-          for (const postTag of post.tags) {
+          let abort = false;
+          for (let i = 0; i < post.tags.length && !abort; i++) {
             for (const tag of this.userTags) {
-              if (tag.name === postTag.name) {
+              if (tag.name === post.tags[i].name) {
                 this.postsWithUserTags.push(post);
-                break;
+                abort = true; // break for loop in order to not to duplicate displayed posts if the post contains several user tags
               }
             }
           }
         }
       }
-      this.pushPostWithTags(this.page);
       this.links = { last: this.postsWithUserTags.length / this.itemsPerPage };
+      this.sortPostsByDate();
       console.error('links: ' + this.links.last);
     });
+  }
+
+  sortPostsByDate() {
+    // sorts all tag posts
+    this.postsWithUserTags.sort((a: IPost, b: IPost) => {
+      return b.date.toDate().getTime() - a.date.toDate().getTime(); // sorts them descending (latest dates first)
+    });
+    this.pushPostWithTags(this.page);
   }
 
   pushPostWithTags(page: number) {
@@ -212,7 +221,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.followedUsersPosts) {
       this.loadFollowed();
     } else {
-      this.pushPostWithTags(this.page);
+      this.pushPostWithTags(page);
     }
   }
 

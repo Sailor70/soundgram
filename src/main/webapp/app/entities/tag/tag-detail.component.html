@@ -20,6 +20,12 @@
                 <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
             </button>
 
+            <button class="btn btn-primary" [routerLink]="['/tag']">
+                <fa-icon [icon]="'hashtag'"></fa-icon>
+                <span class="hidden-sm-down"
+                      jhiTranslate="soundgramApp.tag.view">View tags</span>
+            </button>
+
             <button type="button"
                     (click)="followThisTag()"
                     class="btn btn-primary">
@@ -27,16 +33,18 @@
             </button>
 
             <h2 class="text-center padding-top"><span jhiTranslate="soundgramApp.post.home.post-tag">Posts that contain the tag</span> {{tag.name}}</h2>
-            <div class="alert alert-warning" *ngIf="posts?.length === 0">
+            <div class="alert alert-warning" *ngIf="allTagPosts?.length === 0">
                 <span jhiTranslate="soundgramApp.post.home.notFound">No posts found</span>
             </div>
 
         </div>
     </div>
 </div>
-<div *ngIf="posts.length > 0">
-    <div>
-        <jhi-post-object *ngFor="let post of posts"
+<div *ngIf="paginatedPosts.length > 0">
+    <div infinite-scroll (scrolled)="loadPage(page + 1)"
+         [infiniteScrollDisabled]="page >= links['last']"
+         [infiniteScrollDistance]="0">
+        <jhi-post-object *ngFor="let post of paginatedPosts"
                          [post]="post"
         >
         </jhi-post-object>

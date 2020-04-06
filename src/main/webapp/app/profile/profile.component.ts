@@ -8,7 +8,6 @@ import { PostService } from 'app/entities/post/post.service';
 import { ITag, Tag } from 'app/shared/model/tag.model';
 import { IPost } from 'app/shared/model/post.model';
 import { AudioFileService } from 'app/entities/audio-file/audio-file.service';
-import { IAudioFile } from 'app/shared/model/audio-file.model';
 import { FormBuilder, Validators } from '@angular/forms';
 import { IUserExtra } from 'app/shared/model/user-extra.model';
 import { UserExtraService } from 'app/entities/user-extra/user-extra.service';
