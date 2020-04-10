@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import * as moment from 'moment';
 import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
@@ -93,7 +93,8 @@ export class PostUpdateComponent implements OnInit {
     protected activatedRoute: ActivatedRoute,
     protected userService: UserService,
     protected accountService: AccountService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -161,6 +162,9 @@ export class PostUpdateComponent implements OnInit {
   }
 
   previousState() {
+    // this.router.navigateByUrl(['/post', this.currentPost.id+'view', { skipLocationChange: true }).then(() => {
+    // this.router.navigate(['/post', this.currentPost.id, 'view' ]);
+    // });
     window.history.back();
   }
 
@@ -198,33 +202,61 @@ export class PostUpdateComponent implements OnInit {
   protected onSaveSuccess(res: HttpResponse<IPost>) {
     this.currentPost = res.body;
     console.error('currentPost: ', this.currentPost.id);
-
+    const promises = [];
     if (this.editMode) {
       // jeśli tryb edycji to usuwamy stare pliki i zapisujemy nowe
       if (this.newAudioSelected) {
-        this.audioFileService.findByPost(this.currentPost.id).subscribe(audioFile => {
-          this.audioFileService.delete(audioFile.body.id).subscribe(() => {
-            this.audioFileService.create(this.currentAudioFile, this.currentPost.id).subscribe();
-          });
-        });
+        promises.push(
+          new Promise(resolve => {
+            this.audioFileService.findByPost(this.currentPost.id).subscribe(
+              audioFile => {
+                this.audioFileService.delete(audioFile.body.id).subscribe(() => {
+                  this.audioFileService.create(this.currentAudioFile, this.currentPost.id).subscribe(() => resolve());
+                });
+              },
+              () => {
+                this.audioFileService.create(this.currentAudioFile, this.currentPost.id).subscribe(() => resolve());
+              }
+            );
+          })
+        );
       }
       if (this.newImageSelected) {
-        this.imageService.findByPost(this.currentPost.id).subscribe(image => {
-          this.imageService.delete(image.body.id).subscribe(() => {
-            this.imageService.create(this.currentImage, this.currentPost.id).subscribe();
-          });
-        });
+        promises.push(
+          new Promise(resolve => {
+            this.imageService.findByPost(this.currentPost.id).subscribe(
+              image => {
+                this.imageService.delete(image.body.id).subscribe(() => {
+                  this.imageService.create(this.currentImage, this.currentPost.id).subscribe(() => resolve());
+                });
+              },
+              () => {
+                this.imageService.create(this.currentImage, this.currentPost.id).subscribe(() => resolve());
+              }
+            );
+          })
+        );
       }
     } else {
-      this.audioFileService.create(this.currentAudioFile, this.currentPost.id).subscribe();
-      this.imageService.create(this.currentImage, this.currentPost.id).subscribe();
+      promises.push(
+        new Promise(resolve => {
+          this.audioFileService.create(this.currentAudioFile, this.currentPost.id).subscribe(() => resolve());
+        })
+      );
+      promises.push(
+        new Promise(resolve => {
+          this.imageService.create(this.currentImage, this.currentPost.id).subscribe(() => resolve());
+        })
+      );
     }
 
-    this.selectedAudioFiles = null;
-    this.selectedImages = null;
-
-    this.isSaving = false;
-    this.previousState();
+    // wait for cereate new files and then previousState
+    Promise.all(promises).then(() => {
+      this.selectedAudioFiles = null;
+      this.selectedImages = null;
+      this.isSaving = false;
+      this.previousState();
+    });
   }
 
   protected onSaveError(res: HttpResponse<IPost>) {

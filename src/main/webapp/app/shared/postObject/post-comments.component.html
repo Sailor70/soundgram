@@ -17,13 +17,13 @@
     </div>
 </div>
 <br><br>
-<div class="table-responsive" *ngIf="commentsAvatars?.length > 0">
+<div *ngIf="commentsAvatars?.length > 0">
     <!--<div infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">-->
     <div *ngFor="let commentAvatar of commentsAvatars">
-        <div class="row mb-2">
+        <div class="row">
             <div class="col-md-3">
-                <img [src]="commentAvatar.avatar"
-                     class="d-block ui-w-60 rounded-circle" alt="">
+                <img [src]="commentAvatar.avatar" alt="" *ngIf="commentAvatar.avatar"
+                     class="d-block ui-w-60 rounded-circle">
                 <a [routerLink]="['/', commentAvatar.comment.user.login, 'view']">{{commentAvatar.comment.user.login}}</a>
                 <div class="text-muted small">{{commentAvatar.comment.date | date:'medium'}}</div>
             </div>
@@ -59,6 +59,7 @@
                 </div>
             </div>
         </div>
+        <hr>
     </div>
     <!--    </div>-->
     <div class="row">

@@ -9,9 +9,9 @@ import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { AccountService } from 'app/core/auth/account.service';
 import { UserService } from 'app/core/user/user.service';
-import { IUser, User } from 'app/core/user/user.model';
+import { IUser } from 'app/core/user/user.model';
 import { FollowedUserService } from 'app/entities/followed-user/followed-user.service';
-import { FollowedUser, IFollowedUser } from 'app/shared/model/followed-user.model';
+import { IFollowedUser } from 'app/shared/model/followed-user.model';
 import { UserExtraService } from 'app/entities/user-extra/user-extra.service';
 import { AvatarService } from 'app/shared/services/avatar.service';
 
@@ -23,8 +23,9 @@ import { AvatarService } from 'app/shared/services/avatar.service';
 export class UsersComponent implements OnInit {
   currentAccount: any;
   users: IUser[];
-  usersCpy: User[];
-  followedUsers: FollowedUser[];
+  usersCpy: IUser[];
+  followedUsers: IFollowedUser[];
+  followedList: IFollowedUser[];
   error: any;
   success: any;
   userListSubscription: Subscription;
@@ -80,6 +81,7 @@ export class UsersComponent implements OnInit {
   }
 
   loadAll() {
+    this.loadFollowedToCheck();
     this.allUsersDisplayed = true;
     this.users = [];
 
@@ -142,6 +144,18 @@ export class UsersComponent implements OnInit {
       }
     }
     return false;
+  }
+
+  loadFollowedToCheck() {
+    this.followedUserService.findFollowed().subscribe((res: HttpResponse<IFollowedUser[]>) => (this.followedList = res.body));
+  }
+
+  isFollowedUser(user: IUser): boolean {
+    for (const fu of this.followedList) {
+      if (user.id === fu.followedUserId) {
+        return true;
+      }
+    }
   }
 
   loadFollowed() {

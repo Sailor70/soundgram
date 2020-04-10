@@ -14,93 +14,6 @@ export class AvatarService {
 
   constructor(private userService: UserService) {}
 
-  // getAvatarsForUserList(users: IUser[]): any {
-  //   for (const user of users) {
-  //     console.error('avatar user login:' + user.login);
-  //     this.userService.getAvatarFilename(user.login).subscribe(avatarFileName => {
-  //       console.error('avatar filename: ' + avatarFileName.body);
-  //       this.userService.getAvatar(avatarFileName.body).subscribe(
-  //         data => {
-  //           this.createAvatarFromBlob(data);
-  //         },
-  //         error => {
-  //           console.error(error);
-  //         }
-  //       );
-  //     });
-  //   }
-  //   // console.error('this.avatars: ' + +this.avatars[0].toString());
-  //   return this.avatars;
-  // }
-
-  getAvatarsForCommentListPromise(comments: IComment[]) {
-    return new Promise((resolve, reject) => {
-      // this.commentsAvatars = [];
-      this.comments = comments;
-      for (const comment of comments) {
-        this.userService.getAvatarFilename(comment.user.login).subscribe(avatarFileName => {
-          // console.error('avatar user login:' + comment.user.login);
-          // console.error('avatar filename: ' + avatarFileName.body);
-          if (avatarFileName !== '') {
-            this.userService.getAvatar(avatarFileName.body).subscribe(
-              data => {
-                this.createAvatarFromBlob(data, comment);
-              },
-              error => {
-                reject(error);
-                console.error('Probably no avatar: ' + error);
-              }
-            );
-          } else {
-            this.commentsAvatars.push({ comment, avatar: null });
-          }
-        });
-      }
-      console.error('commentsAvatars length in avatar service: ' + this.commentsAvatars.length);
-      resolve(this.commentsAvatars);
-    });
-  }
-
-  getAvatarsForCommentList(comments: IComment[]): any {
-    this.commentsAvatars = [];
-    this.comments = comments;
-    for (const comment of comments) {
-      this.userService.getAvatarFilename(comment.user.login).subscribe(avatarFileName => {
-        // console.error('avatar user login:' + comment.user.login);
-        // console.error('avatar filename: ' + avatarFileName.body);
-        if (avatarFileName !== '') {
-          this.userService.getAvatar(avatarFileName.body).subscribe(
-            data => {
-              this.createAvatarFromBlob(data, comment);
-            },
-            error => {
-              console.error('Probably no avatar: ' + error);
-            }
-          );
-        } else {
-          this.commentsAvatars.push({ comment, avatar: null });
-        }
-      });
-    }
-    // console.error('this.avatars: ' + +this.avatars[0].toString());
-    return this.commentsAvatars;
-  }
-
-  private createAvatarFromBlob(image: Blob, comment: IComment) {
-    const reader = new FileReader();
-    reader.addEventListener(
-      'load',
-      () => {
-        this.commentsAvatars.push({ comment, avatar: reader.result });
-      },
-      false
-    );
-
-    if (image) {
-      reader.readAsDataURL(image);
-    }
-  }
-
   getAvatarsForUserList(users: IUser[]): any {
     // console.error('users at avatar length: ' + users.length);
     this.usersAvatars = [];
@@ -152,19 +65,21 @@ export class AvatarService {
       this.comments = comments;
       for (const comment of comments) {
         promises.push(
-          new Promise((resolveInside, reject) => {
+          new Promise(resolveInside => {
             this.userService.getAvatarFilename(comment.user.login).subscribe(avatarFileName => {
-              // console.error('avatar user login: ' + comment.user.login);
-              // console.error('avatar filename: ' + avatarFileName.body);
-              if (avatarFileName !== '') {
+              console.error('avatar user login: ' + comment.user.login);
+              console.error('avatar filename: ' + avatarFileName.body);
+              if (avatarFileName.body !== '') {
                 this.userService.getAvatar(avatarFileName.body).subscribe(
                   data => {
-                    this.createAvatarFromBlobEd(data, comment);
-                    resolveInside();
+                    this.createAvatarFromBlobEd(data, comment).then(() => {
+                      resolveInside();
+                    });
                   },
                   error => {
                     console.error('Probably no avatar: ' + error);
-                    reject();
+                    this.commentsAvatarsEd.push({ comment, avatar: null, editable: false });
+                    resolveInside();
                   }
                 );
               } else {
@@ -176,10 +91,12 @@ export class AvatarService {
         );
       }
       // console.error('this.commentsAvatarsEd: ' + this.commentsAvatarsEd.length);
-      promises.push(this.sortByDate());
+      // promises.push(this.sortByDate());
       Promise.all(promises).then(() => {
         console.error('wszystkie promisy spełnione! a było ich: ' + promises.length);
-        resolve(this.commentsAvatarsEd);
+        this.sortByDate().then(() => {
+          resolve(this.commentsAvatarsEd);
+        });
       });
     });
     // return this.commentsAvatarsEd;
@@ -196,17 +113,20 @@ export class AvatarService {
   }
 
   private createAvatarFromBlobEd(image: Blob, comment: IComment) {
-    const reader = new FileReader();
-    reader.addEventListener(
-      'load',
-      () => {
-        this.commentsAvatarsEd.push({ comment, avatar: reader.result, editable: false });
-      },
-      false
-    );
+    return new Promise(resolve => {
+      const reader = new FileReader();
+      reader.addEventListener(
+        'load',
+        () => {
+          this.commentsAvatarsEd.push({ comment, avatar: reader.result, editable: false });
+          resolve();
+        },
+        false
+      );
 
-    if (image) {
-      reader.readAsDataURL(image);
-    }
+      if (image) {
+        reader.readAsDataURL(image);
+      }
+    });
   }
 }

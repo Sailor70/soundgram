@@ -22,6 +22,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
@@ -69,12 +70,9 @@ public class FollowedUserResource {
         if(!(followedUserRepository.findFollowedUserByFollowedUserIdAndUser(followed_id,
             userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null)).isPresent())) {
             // dodanie aktualnie zalogowanego usera do pola User w followed user
-//        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
-//            log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin());
             followedUser.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null));
-//        }
 
-            followedUser.setDateFollowed(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC));
+            followedUser.setDateFollowed(LocalDate.now().atTime(LocalTime.now(ZoneOffset.UTC)).toInstant(ZoneOffset.UTC));
 
             followedUser.setFollowedUserId(followed_id);
 
