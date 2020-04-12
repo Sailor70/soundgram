@@ -1,5 +1,5 @@
-<div class="row justify-content-center">
-    <div class="col-10">
+<div class="justify-content-center">
+<!--    <div class="col-10">-->
         <div class="container">
             <!--<jhi-alert-error></jhi-alert-error>-->
             <div class="card post-window mb-3">
@@ -33,28 +33,21 @@
                                     <label *ngIf="!selectedAudioFiles" class="custom-file-label" for="inputGroupFileAudio" jhiTranslate="global.buttons.chooseAudio">{{chooseAudio}}</label>
                                     <label *ngIf="selectedAudioFiles" class="custom-file-label" for="inputGroupFileAudio">{{chooseAudio}}</label>
                                 </div>
-                                <div *ngIf="editForm.get('audioFile').invalid">
-                                    <small class="form-text text-danger"
-                                           *ngIf="editForm.get('audioFile').errors.extension">
-                                        Nieprawidłowy typ pliku! Załaduj mp3
-                                    </small>
-                                    <small class="form-text text-danger"
-                                           *ngIf="editForm.get('audioFile').errors.fileSize">
-                                        Za duży plik! Max 8mb
-                                    </small>
-                                    <small class="form-text text-danger"
-                                           *ngIf="editForm.get('audioFile').errors.file">
-                                        Wybierz tylko 1 plik!
-                                    </small>
-                                </div>
                             </div>
-<!--                            <div style="text-align:center">-->
-<!--                                <label>-->
-<!--                                    <span>Dodaj plik audio: </span>-->
-<!--                                    <input type="file" (change)="selectAudioFile($event)">-->
-<!--                                </label>-->
-<!--                                &lt;!&ndash;<button [disabled]="!selectedFiles" (click)="upload()">Upload</button>&ndash;&gt;-->
-<!--                            </div>-->
+                            <div *ngIf="editForm.get('audioFile').invalid">
+                                <small class="form-text text-danger size130 text-center"
+                                       *ngIf="editForm.get('audioFile').errors.extension">
+                                    Nieprawidłowy typ pliku! Załaduj mp3
+                                </small>
+                                <small class="form-text text-danger size130 text-center"
+                                       *ngIf="editForm.get('audioFile').errors.fileSize">z
+                                    Za duży plik! Max 8mb
+                                </small>
+                                <small class="form-text text-danger size130 text-center"
+                                       *ngIf="editForm.get('audioFile').errors.file">
+                                    Wybierz tylko 1 plik!
+                                </small>
+                            </div>
                             <br>
                             <div *ngIf="displayImage && !newImageSelected">
                                 <img [src]="displayImage"
@@ -73,26 +66,19 @@
                                 </div>
                             </div>
                             <div *ngIf="editForm.get('imageFile').invalid">
-                                <small class="form-text text-danger"
+                                <small class="form-text text-danger size130 text-center"
                                        *ngIf="editForm.get('imageFile').errors.extension">
                                     Nieprawidłowy typ pliku! Załaduj png lub jpg
                                 </small>
-                                <small class="form-text text-danger"
+                                <small class="form-text text-danger size130 text-center"
                                        *ngIf="editForm.get('imageFile').errors.fileSize">
                                     Za duży plik! Max 5mb
                                 </small>
-                                <small class="form-text text-danger"
+                                <small class="form-text text-danger size130 text-center"
                                        *ngIf="editForm.get('imageFile').errors.file">
                                     Wybierz tylko 1 plik!
                                 </small>
                             </div>
-<!--                            <div style="text-align:center">-->
-<!--                                <label>-->
-<!--                                    <span>Dodaj obraz: </span>-->
-<!--                                    <input type="file" (change)="selectImage($event)">-->
-<!--                                </label>-->
-<!--                                &lt;!&ndash;<button [disabled]="!selectedFiles" (click)="upload()">Upload</button>&ndash;&gt;-->
-<!--                            </div>-->
                         </div>
                         <div class="col-md-5">
                             <div class="center">
@@ -162,8 +148,9 @@
                             <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
                         </button>
                     </div>
+                    </div>
                 </form>
             </div>
         </div>
-    </div>
+<!--    </div>-->
 </div>

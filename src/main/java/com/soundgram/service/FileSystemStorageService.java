@@ -57,7 +57,7 @@ public class FileSystemStorageService implements StorageService {
 
     @Override
     public Path storeAudioFile(MultipartFile file, Long id) {
-        String filename = StringUtils.cleanPath(file.getOriginalFilename()); // plik.mp3
+        String filename = StringUtils.cleanPath((file.getOriginalFilename() != null) ? file.getOriginalFilename() : "plik.mp3"); // plik.mp3
         Path userAudioFilesLocation = Paths.get(audioLocation.toString() + "/" + id.toString());
         log.debug("userAudioFilesLocation: {}", userAudioFilesLocation.toString());
 
@@ -75,14 +75,14 @@ public class FileSystemStorageService implements StorageService {
 
     @Override
     public Path storeImage(MultipartFile file, Long id) {
-        String filename = StringUtils.cleanPath(id.toString().concat(file.getOriginalFilename())); // 5467plik.mp3 : idPostaNazwaPlku.mp3
+        String filename = StringUtils.cleanPath(id.toString().concat((file.getOriginalFilename() != null) ? file.getOriginalFilename() : "plik.mp3")); // 5467plik.mp3 : idPostaNazwaPlku.mp3
         //store(file, filename);
         return getPathAndStoreFile(file, filename, imagesLocation);
     }
 
     @Override // czy usuwać stare avatary?
     public String storeAvatar(MultipartFile file, Long id) {
-        String filename = StringUtils.cleanPath(id.toString().concat(file.getOriginalFilename())); // 5467plik.mp3 : idUseraNazwaPlku.mp3
+        String filename = StringUtils.cleanPath(id.toString().concat((file.getOriginalFilename() != null) ? file.getOriginalFilename() : "plik.mp3")); // 5467plik.mp3 : idUseraNazwaPlku.mp3
         //store(file, filename);
         Path path = getPathAndStoreFile(file, filename, avatarsLocation);
         log.debug("Zapisano nowy avatar w: {}", path.toString());

@@ -38,7 +38,7 @@ export class PostDetailComponent implements OnInit {
   hasImage: boolean;
 
   @ViewChild(PostCommentsComponent, { static: false })
-  private postCommentsComponent: PostCommentsComponent;
+  public postCommentsComponent: PostCommentsComponent;
 
   constructor(
     protected activatedRoute: ActivatedRoute,

@@ -104,6 +104,26 @@ spring:
     ansi:
       console-available: true
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: soundgram.dev@gmail.com
+    password: devsoundgram
+    protocol: smtp
+    tls: true
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true
+      ssl.trust: smtp.gmail.com
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+storage:
+  location: ./uploads
+
 server:
   servlet:
     session:
