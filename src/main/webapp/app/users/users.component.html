@@ -46,7 +46,7 @@
                     </th>
                     <th class="narrow-hide" scope="col"><span jhiTranslate="users.firstName">First Name</span></th>
                     <th class="narrow-hide" scope="col"><span jhiTranslate="users.lastName">Last Name</span></th>
-                    <th scope="col"><span jhiTranslate="userManagement.email">Email</span>
+                    <th class="narrow-hide" scope="col"><span jhiTranslate="userManagement.email">Email</span>
                         <fa-icon [icon]="'at'"></fa-icon>
                     </th>
                     <th scope="col"></th>
@@ -59,7 +59,7 @@
                     <td><a [routerLink]="['/', user.user.login, 'view']">{{user.user.login}}</a></td>
                     <td class="narrow-hide"><div *ngIf="user.user.firstName">{{user.user.firstName}}</div></td>
                     <td class="narrow-hide"><div *ngIf="user.user.lastName">{{user.user.lastName}}</div></td>
-                    <td><a href="mailto:{{user.user.email}}">{{user.user.email}}</a></td>
+                    <td class="narrow-hide"><a href="mailto:{{user.user.email}}">{{user.user.email}}</a></td>
                     <td class="text-right">
                         <div class="btn-group">
                             <button type="submit"

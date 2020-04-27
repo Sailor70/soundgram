@@ -238,16 +238,20 @@ export class PostUpdateComponent implements OnInit {
         );
       }
     } else {
-      promises.push(
-        new Promise(resolve => {
-          this.audioFileService.create(this.currentAudioFile, this.currentPost.id).subscribe(() => resolve());
-        })
-      );
-      promises.push(
-        new Promise(resolve => {
-          this.imageService.create(this.currentImage, this.currentPost.id).subscribe(() => resolve());
-        })
-      );
+      if (this.newAudioSelected) {
+        promises.push(
+          new Promise(resolve => {
+            this.audioFileService.create(this.currentAudioFile, this.currentPost.id).subscribe(() => resolve());
+          })
+        );
+      }
+      if (this.newImageSelected) {
+        promises.push(
+          new Promise(resolve => {
+            this.imageService.create(this.currentImage, this.currentPost.id).subscribe(() => resolve());
+          })
+        );
+      }
     }
 
     // wait for cereate new files and then previousState
