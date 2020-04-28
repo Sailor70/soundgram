@@ -121,20 +121,18 @@ public class PostResource {
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of posts in body.
      */
-/*    @GetMapping("/posts")
-    public ResponseEntity<List<Post>> getAllPosts(Pageable pageable, @RequestParam(required = false, defaultValue = "false") boolean eagerload) {
-        log.debug("REST request to get a page of Posts");
-        log.debug("eagerLoad" + eagerload);
-        Page<Post> page;
-//        if (eagerload) {
-            page = postRepository.findAllWithEagerRelationships(pageable);
-//        } else {
-            List<Post> allPosts = postRepository.findAll();
-        //}
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(allPosts);
-    }*/
 
+    @GetMapping("/posts")
+    public ResponseEntity<List<Post>> getAllPosts(Pageable pageable, @RequestParam(required = false, defaultValue = "true") boolean eagerload) { // eagerload to ładowanie zachłanne - pobieramy wszystkie dane na raz
+        log.debug("REST request to get a page of Posts");
+        Page<Long> postIds = postRepository.findAllPosts(pageable);
+        List<Post> postsPage = postRepository.getPostWithEagerRelationshipsById(postIds.getContent());
+        log.debug("page total elements " + postIds.getTotalElements() + " pages: " + postIds.getTotalPages());
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), postIds);
+        return ResponseEntity.ok().headers(headers).body(postsPage);
+    }
+
+/*  // old pagination
     @GetMapping("/posts")
     public ResponseEntity<List<Post>> getAllPosts(Pageable pageable, @RequestParam(required = false, defaultValue = "true") boolean eagerload) {
         log.debug("REST request to get a page of Posts");
@@ -149,8 +147,23 @@ public class PostResource {
         log.debug("page total elements " + page.getTotalElements() + " pages: " + page.getTotalPages());
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }*/
+
+    @GetMapping("/posts-followed")
+    public ResponseEntity<List<Post>> getFollowedUsersPostsPage(Pageable pageable, @RequestParam(required = false, defaultValue = "true") boolean eagerload) {
+        log.debug("REST request to get a page of followed users Posts");
+        List<FollowedUser> allFU = followedUserRepository.findByUserIsCurrentUser();
+        List<Long> followedUsersIds = new ArrayList<>();
+        for(FollowedUser fu : allFU){
+            followedUsersIds.add(fu.getFollowedUserId());
+        }
+        Page<Long> postIds = postRepository.findAllPostsOfFollowedUser(pageable, followedUsersIds);
+        List<Post> postsPage = postRepository.getPostWithEagerRelationshipsById(postIds.getContent());
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), postIds);
+        return ResponseEntity.ok().headers(headers).body(postsPage);
     }
 
+/*  // old pagination
     @GetMapping("/posts-followed")
     public ResponseEntity<List<Post>> getFollowedUsersPostsPage(Pageable pageable, @RequestParam(required = false, defaultValue = "true") boolean eagerload) {
         log.debug("REST request to get a page of followed users Posts");
@@ -163,51 +176,20 @@ public class PostResource {
         page = postRepository.findAllWithEagerRelationshipsAndFollowedUser(pageable, followedUsersIds);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }*/
+
+    @GetMapping("/posts-user/{login:" + Constants.LOGIN_REGEX + "}")
+    public ResponseEntity<List<Post>> getUserPosts(@PathVariable String login, Pageable pageable, @RequestParam(required = false, defaultValue = "true") boolean eagerload) {
+        log.debug("REST request to get posts that belong to user: {}", login);
+        Page<Long> postIds = postRepository.findPostByUserLogin(pageable, login);
+        List<Post> postsPage = postRepository.getPostWithEagerRelationshipsById(postIds.getContent());
+        // page = postRepository.findPostWithEagerRelationshipsByUserLogin(pageable, login); //ładuje posty razem z tagami
+        log.debug("page total elements " + postIds.getTotalElements() + " pages: " + postIds.getTotalPages());
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), postIds);
+        return ResponseEntity.ok().headers(headers).body(postsPage);
     }
 
-/*    @GetMapping("/posts-followed")
-    public ResponseEntity<List<Post>> getFollowedUsersPostsPage(Pageable pageable, @RequestParam(required = false, defaultValue = "true") boolean eagerload) {
-        log.debug("REST request to get a page of followed users Posts");
-        List<FollowedUser> allFU = followedUserRepository.findByUserIsCurrentUser();
-        List<Long> followedUsersIds = new ArrayList<>();
-        for(FollowedUser fu : allFU){
-            followedUsersIds.add(fu.getFollowedUserId());
-        }
-        Page<Post> page;
-        if (eagerload) { // eagerload to ładowanie zachłanne - pobieramy wszystkie dane na raz
-            log.debug("eagerload: " + eagerload);
-            page = postRepository.findAllWithEagerRelationshipsAndFollowedUser(pageable, followedUsersIds);
-        } else {
-            log.debug("eagerload else: " + eagerload);
-            page = postRepository.findAll(pageable); // bez tagów
-        }
-        log.debug("page total elements " + page.getTotalElements() + " pages: " + page.getTotalPages());
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
-    }*/
-
-/*    @GetMapping("/posts-followed")
-    public ResponseEntity<List<Post>> getFollowedUsersPosts() {
-        log.debug("REST request to get a page of followed users Posts");
-        List<FollowedUser> allFU = followedUserRepository.findByUserIsCurrentUser();
-        List<Post> allPosts = postRepository.findAll();
-        log.debug("Searching for posts for user: {}", allFU.get(0).getUser().getLogin());
-        log.debug("Followed users amount: {}", allFU.size());
-        log.debug("First post owner: {}", allPosts.size());
-        // page = postRepository.findAll(pageable); // if no eagerload
-        List<Post> followedPosts = new ArrayList<>();
-        for (Post post : allPosts) {
-            for (FollowedUser fl : allFU) {
-                if ( post.getUser().getId().equals(fl.getFollowedUserId()) ) {
-                    followedPosts.add(post);
-                    log.debug("Post tags size: {}", post.getTags().size()); // dodanie tego powoduje przesyłanie tagów na front - w przeciwnym razie post.tags is null !(???)
-                }
-            }
-        }
-        // HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().body(followedPosts);
-    }*/
-
+    /* old pagination method
     @GetMapping("/posts-user/{login:" + Constants.LOGIN_REGEX + "}")
     public ResponseEntity<List<Post>> getUserPosts(@PathVariable String login, Pageable pageable, @RequestParam(required = false, defaultValue = "true") boolean eagerload) {
         log.debug("REST request to get posts that belong to user: {}", login);
@@ -216,7 +198,7 @@ public class PostResource {
         log.debug("page total elements " + page.getTotalElements() + " pages: " + page.getTotalPages());
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
-    }
+    }*/
 
 //    @GetMapping("/posts-tags/{tags:" + Constants.LOGIN_REGEX + "}")
 //    public ResponseEntity<List<Post>> getPostsWithTag(@PathVariable Tag tags[], Pageable pageable, @RequestParam(required = false, defaultValue = "true") boolean eagerload) {
@@ -227,6 +209,7 @@ public class PostResource {
 //        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
 //        return ResponseEntity.ok().headers(headers).body(page.getContent());
 //    }
+
 
     /**
      * {@code GET  /posts/:id} : get the "id" post.

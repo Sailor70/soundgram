@@ -16,27 +16,38 @@ import java.util.Optional;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    @Query("select post from Post post where post.user.login = ?#{principal.username}")
-    List<Post> findByUserIsCurrentUser();
-
-    @Query(value = "select distinct post from Post post left join fetch post.tags",
+    @Query(value = "select post.id from Post post",
             countQuery = "select count(distinct post) from Post post")
-    Page<Post> findAllWithEagerRelationships(Pageable pageable);
+    Page<Long> findAllPosts(Pageable pageable);
 
-    @Query(value = "select distinct post from Post post left join fetch post.tags where post.user.id in(:followedUsersIds)",
+    @Query(value = "select post.id from Post post where post.user.login =:login",
         countQuery = "select count(distinct post) from Post post")
-    Page<Post> findAllWithEagerRelationshipsAndFollowedUser(Pageable pageable, @Param("followedUsersIds") List<Long> followedUsersIds);
+    Page<Long> findPostByUserLogin(Pageable pageable, @Param("login") String login);
 
-    @Query("select distinct post from Post post left join fetch post.tags")
-    List<Post> findAllWithEagerRelationships();
+    @Query(value = "select post.id from Post post where post.user.id in(:followedUsersIds)",
+        countQuery = "select count(distinct post) from Post post")
+    Page<Long> findAllPostsOfFollowedUser(Pageable pageable, @Param("followedUsersIds") List<Long> followedUsersIds);
+
+    @Query("select distinct post from Post post left join fetch post.tags where post.id in(:postIds) order by post.date desc")
+    List<Post> getPostWithEagerRelationshipsById(@Param("postIds") List<Long> postIds);
+
+
 
     @Query("select post from Post post left join fetch post.tags where post.id =:id")
     Optional<Post> findOneWithEagerRelationships(@Param("id") Long id);
 
-    Optional<Post> findPostById(Long id);
+    Optional<Post> findPostById(Long id); // for audioFile and Image
 
-    @Query("select post from Post post where post.user.login =:login")
-    List<Post> findPostByUserLogin(@Param("login") String login);
+    @Query(value = "select distinct post from Post post left join fetch post.tags",
+        countQuery = "select count(distinct post) from Post post")
+    Page<Post> findAllWithEagerRelationships(Pageable pageable);
+
+/*
+    @Query("select distinct post from Post post left join fetch post.tags")
+    List<Post> findAllWithEagerRelationships();
+
+    @Query("select post from Post post where post.user.login = ?#{principal.username}")
+    List<Post> findByUserIsCurrentUser();
 
     @Query(value = "select post from Post post left join fetch post.tags where post.user.login =:login",
         countQuery = "select count(distinct post) from Post post")
@@ -45,5 +56,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value = "select distinct post from Post post left join fetch post.tags", // where ( select tag from post.tags ) in(:tags) // any ? intersect ?
         countQuery = "select count(distinct post) from Post post")
     Page<Post> findAllWithEagerRelationshipsAndTagsContaining(Pageable pageable, @Param("tags") List<Long> tags);
+
+    @Query(value = "select distinct post from Post post left join fetch post.tags where post.user.id in(:followedUsersIds)",
+        countQuery = "select count(distinct post) from Post post")
+    Page<Post> findAllWithEagerRelationshipsAndFollowedUser(Pageable pageable, @Param("followedUsersIds") List<Long> followedUsersIds);
+    */
 
 }

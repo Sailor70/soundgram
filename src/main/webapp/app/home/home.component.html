@@ -36,7 +36,7 @@
 
     <!---------------------------------------------------Home---------------------------------------------------------------->
 
-    <div class="row" *ngSwitchCase="true">
+    <div class="row justify-content-center" *ngSwitchCase="true">
 
         <div class="col-md-12">
             <div class="row">
@@ -63,8 +63,8 @@
 
                         </div>-->
 
-<!--            <jhi-alert-error></jhi-alert-error>
-            <jhi-alert></jhi-alert>-->
+            <!--            <jhi-alert-error></jhi-alert-error>
+                        <jhi-alert></jhi-alert>-->
             <div class="row">
                 <div class="col-sm-8 center">
                     <form name="searchForm" class="form-inline">
@@ -123,41 +123,41 @@
                         </h2>
                     </div>
                 </div>
-                <!--                <div class="row">
-                                    <h2 *ngSwitchCase="false">
-                                        <span id="myFiles-page-heading" jhiTranslate="home.postTags">Followed Tags Posts</span>
-                                        <div class="btn-group float-right">
-                                            <button class="btn btn-primary btn-space" (click)="loadFollowedUsersPosts()">
-                                                <fa-icon [icon]="'clone'"></fa-icon>
-                                                <span jhiTranslate="home.showUsersPosts">Show my followed users posts</span>
-                                            </button>
-                                            <button class="btn btn-primary" [routerLink]="['/tag']">
-                                                <fa-icon [icon]="'hashtag'"></fa-icon>
-                                                <span class="hidden-sm-down" jhiTranslate="soundgramApp.tag.view">
-                                        View tags
-                                    </span>
-                                            </button>
-                                        </div>
-                                    </h2>
-                                </div>-->
             </div>
-            <div class="alert alert-warning" *ngIf="posts?.length === 0">
-                <span jhiTranslate="soundgramApp.post.home.notFound">No posts found</span>
-            </div>
-
-            <div class="center" *ngIf="posts.length > 0">
-                <div infinite-scroll (scrolled)="loadPage(page + 1)"
-                     [infiniteScrollDisabled]="page >= links['last']"
-                     [infiniteScrollDistance]="0">
-                    <jhi-post-object *ngFor="let post of posts"
-                                     [post]="post"
-                    >
-                    </jhi-post-object>
-                </div>
-            </div>
-
-            <jhi-scroll-top></jhi-scroll-top>
-
+            <!--                <div class="row">
+                                <h2 *ngSwitchCase="false">
+                                    <span id="myFiles-page-heading" jhiTranslate="home.postTags">Followed Tags Posts</span>
+                                    <div class="btn-group float-right">
+                                        <button class="btn btn-primary btn-space" (click)="loadFollowedUsersPosts()">
+                                            <fa-icon [icon]="'clone'"></fa-icon>
+                                            <span jhiTranslate="home.showUsersPosts">Show my followed users posts</span>
+                                        </button>
+                                        <button class="btn btn-primary" [routerLink]="['/tag']">
+                                            <fa-icon [icon]="'hashtag'"></fa-icon>
+                                            <span class="hidden-sm-down" jhiTranslate="soundgramApp.tag.view">
+                                    View tags
+                                </span>
+                                        </button>
+                                    </div>
+                                </h2>
+                            </div>-->
         </div>
+        <div class="alert alert-warning" *ngIf="posts?.length === 0">
+            <span jhiTranslate="soundgramApp.post.home.notFound">No posts found</span>
+        </div>
+
+        <div class="center" *ngIf="posts.length > 0">
+            <div infinite-scroll (scrolled)="loadPage(page + 1)"
+                 [infiniteScrollDisabled]="page >= links['last']"
+                 [infiniteScrollDistance]="0">
+                <jhi-post-object *ngFor="let post of posts"
+                                 [post]="post"
+                >
+                </jhi-post-object>
+            </div>
+        </div>
+
+        <jhi-scroll-top></jhi-scroll-top>
+
     </div>
 </div>

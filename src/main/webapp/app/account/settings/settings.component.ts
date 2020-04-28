@@ -34,7 +34,7 @@ export class SettingsComponent implements OnInit {
         RxwebValidators.extension({ extensions: ['jpg', 'png', 'jpeg'] }),
         // RxwebValidators.image({ maxHeight: 1000, maxWidth: 1000 }),
         RxwebValidators.file({ minFiles: 1, maxFiles: 1 }),
-        RxwebValidators.fileSize({ maxSize: 500000 }) // 0.5 MB
+        RxwebValidators.fileSize({ maxSize: 1000000 }) // 1 MB
       ]
     ]
   });
