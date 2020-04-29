@@ -1,6 +1,6 @@
 <div class="content" [ngSwitch]="likedAudioDisplayed">
     <div class="row">
-        <h2 class="col-md-7 center" *ngSwitchCase="true">
+        <h2 class="col-md-6 center" *ngSwitchCase="true">
             <fa-icon [icon]="'star'"></fa-icon>
             <span id="likedFiles-page-heading" jhiTranslate="music.likedAudios">Liked audio files</span>
             <button class="btn btn-primary" (click)="loadUserFiles()">
@@ -11,7 +11,7 @@
                 <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
             </button>
         </h2>
-        <h2 class="col-md-7 center" *ngSwitchCase="false">
+        <h2 class="col-md-6 center" *ngSwitchCase="false">
 
             <div *ngIf="otherUserFiles">
                 <span id="otherUserFiles-page-heading"
@@ -43,7 +43,7 @@
 <!--    <jhi-alert-error></jhi-alert-error>
     <jhi-alert></jhi-alert>-->
     <div class="row">
-        <div class="col-sm-8 center">
+        <div class="col-sm-6 center">
             <form name="searchForm" class="form-inline">
                 <div class="input-group w-100 mt-3">
                     <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch"
@@ -114,15 +114,19 @@
 <div class="media-footer player">
     <div *ngIf="audioFiles" class="container">
         <div class="row slidecontainer">
-            <div class="col-md-12" style="text-align: center">
+            <div class="col-md-12 text-center">
                 <span>{{currentFile.title.split('.').slice(0, -1).join('.')}}</span>
             </div>
-            <input #slide type="range" class="slider" min="0" [max]="state?.duration" step="0.1"
+        </div>
+        <div class="row">
+            <input #slide type="range" class="slider center" min="0" [max]="state?.duration" step="0.1"
                    [value]="state.currentTime ? state.currentTime : 0" (change)="onSliderChangeEnd(slide)">
-            <div class="col-md-6" style="text-align: left">
+        </div>
+        <div class="row">
+            <div class="col" style="text-align: left">
                 {{ state?.readableCurrentTime }}
             </div>
-            <div class="col-md-6" style="text-align: right">
+            <div class="col" style="text-align: right">
                 {{ state?.readableDuration }}
             </div>
         </div>
