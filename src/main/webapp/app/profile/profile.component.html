@@ -1,143 +1,154 @@
 <div class="row justify-content-center">
-        <div class="container center">
-            <div class="col-md-10 profile-window" *ngIf="user">
-                <div class="row">
-                    <div class="row col-md-8 center">
-                        <img [src]="avatar"
-                             alt="Profile image"
-                             *ngIf="!isImageLoading && hasImage" class="center profile-image rounded-circle"
-                             style="max-width:120px;width:100%;max-height:120px;height:100%">
-                        <h2 class="center"><b>{{user.login}}</b></h2>
-                    </div>
-                    <div class="row col-md-4 center">
-                        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-post"
-                                [routerLink]="['/post/new']">
-                            <fa-icon [icon]="'plus'"></fa-icon>
-                            <span class="hidden-sm-down" jhiTranslate="soundgramApp.post.home.createLabel">
+    <div class="container center">
+        <div class="col-md-10 profile-window" *ngIf="user">
+            <div class="row">
+                <div class="row col-md-8 center">
+                    <img [src]="avatar"
+                         alt="Profile image"
+                         *ngIf="!isImageLoading && hasImage" class="center profile-image rounded-circle"
+                         style="max-width:120px;width:100%;max-height:120px;height:100%">
+                    <h2 class="center"><b>{{user.login}}</b></h2>
+                </div>
+                <div class="row col-md-4 center">
+                    <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-post"
+                            [routerLink]="['/post/new']">
+                        <fa-icon [icon]="'plus'"></fa-icon>
+                        <span class="hidden-sm-down" jhiTranslate="soundgramApp.post.home.createLabel">
                         Create a new Post
                     </span>
-                        </button>
-                    </div>
+                    </button>
                 </div>
-                <br>
-                <dl class="row">
-                    <div class="col-md-4 center">
+            </div>
+            <br>
+            <dl class="row justify-content-center">
+                <div *ngIf="user.firstName || user.lastName" class="col-md-4 center">
+                    <div *ngIf="user.firstName">
                         <dt><span jhiTranslate="userManagement.firstName">First Name</span></dt>
                         <dd>{{user?.firstName}}</dd>
+                    </div>
+                    <div *ngIf="user.lastName">
                         <dt><span jhiTranslate="userManagement.lastName">Last Name</span></dt>
                         <dd>{{user?.lastName}}</dd>
                     </div>
-                    <div class="col-md-4 center">
-                        <dt><span jhiTranslate="userManagement.email">Email</span></dt>
-                        <dd><a href="mailto:{{user.email}}">{{user.email}}</a></dd>
-                        <dt><span jhiTranslate="userManagement.langKey">Lang Key</span></dt>
-                        <dd>{{user?.langKey}}</dd>
-                    </div>
-                    <div *ngIf="userExtra" class="col-md-4 center">
+                </div>
+                <div class="col-md-4 center">
+                    <dt><span jhiTranslate="userManagement.email">Email</span></dt>
+                    <dd><a href="mailto:{{user.email}}">{{user.email}}</a></dd>
+                    <div *ngIf="userExtra.userLocation">
                         <dt><span jhiTranslate="soundgramApp.userExtra.userLocation">User Location</span></dt>
                         <dd>
                             <span>{{userExtra.userLocation}}</span>
                         </dd>
-                        <dt><span jhiTranslate="soundgramApp.userExtra.bio">Biography</span></dt>
-                        <dd>
-                            <span>{{userExtra.bio}}</span>
-                        </dd>
                     </div>
-                </dl>
-                <div class="row">
-                    <div class="center">
-                        <form name="form" role="form" (ngSubmit)="addTagToProfile()" [formGroup]="tagForm"
-                              *ngIf="!success">
-                            <div class="form-group">
-                                <div class="input-group w-100 mt-3">
-                                    <input type="text" class="form-control" id="tagName" name="tagName"
-                                           formControlName="tagName"
-                                           placeholder="{{ 'soundgramApp.tag.addTag' | translate}}">
-                                    <button type="submit" [disabled]="tagForm.invalid" class="btn btn-primary">
-                                        <span jhiTranslate="profile.assignTag">Assign tag to your profile</span>
+<!--                    <dt><span jhiTranslate="userManagement.langKey">Lang Key</span></dt>
+                    <dd>{{user?.langKey}}</dd>-->
+                </div>
+                <div *ngIf="userExtra.bio" class="col-md-4 center">
+                    <dt><span jhiTranslate="soundgramApp.userExtra.bio">Biography</span></dt>
+                    <dd>
+                        <span>{{userExtra.bio}}</span>
+                    </dd>
+                </div>
+            </dl>
+            <div class="row">
+                <div class="center">
+                    <form name="form" role="form" (ngSubmit)="addTagToProfile()" [formGroup]="tagForm"
+                          *ngIf="!success">
+                        <div class="form-group">
+                            <div class="input-group w-100 mt-3">
+                                <input type="text" class="form-control" id="tagName" name="tagName"
+                                       formControlName="tagName"
+                                       placeholder="{{ 'soundgramApp.tag.addTag' | translate}}">
+                                <button type="submit" [disabled]="tagForm.invalid" class="btn btn-primary">
+                                    <span jhiTranslate="profile.assignTag">Assign tag to your profile</span>
+                                </button>
+                            </div>
+                            <div
+                                *ngIf="tagForm.get('tagName').invalid && (tagForm.get('tagName').dirty || tagForm.get('tagName').touched)">
+                                <small class="form-text text-danger" *ngIf="tagForm.get('tagName').errors.required">
+                                    Tag name is required.
+                                </small>
+                                <small class="form-text text-danger"
+                                       *ngIf="tagForm.get('tagName').errors.minlength">
+                                    Tag is required to be at least 1 character.
+                                </small>
+                                <small class="form-text text-danger"
+                                       *ngIf="tagForm.get('tagName').errors.maxlength">
+                                    Tag cannot be longer than 50 characters.
+                                </small>
+                                <small class="form-text text-danger" *ngIf="tagForm.get('tagName').errors.pattern">
+                                    Tag can only contain letters and digits.
+                                </small>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="btn-group-vertical btn-group">
+<!--                        <button type="submit"
+                                routerLink="/users"
+                                class="btn btn-info">
+                            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span
+                            jhiTranslate="entity.action.back">Back</span>
+                        </button>-->
+                        <button type="button" class="btn btn-info" (click)="previousState()">
+                            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span
+                            jhiTranslate="entity.action.back">Back</span>
+                        </button>
+                        <button type="button"
+                                [routerLink]="['/account/settings']"
+                                class="btn btn-primary">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span
+                            jhiTranslate="entity.action.edit">Edit your data</span>
+                        </button>
+                        <button class="btn btn-primary" (click)="showPostsSection()">
+                            <fa-icon [icon]="'window-maximize'"></fa-icon>
+                            <span class="hidden-sm-down" jhiTranslate="profile.posts">Show your posts</span>
+                        </button>
+                        <button type="button" (click)="openUserFilesAtMusic()"
+                                class="btn btn-primary">
+                            <fa-icon [icon]="'music'"></fa-icon>&nbsp;<span
+                            jhiTranslate="profile.music">Play your music</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="panel" id="result_panel">
+                        <div class="panel-heading">
+                            <h5 class="panel-title text-center">
+                                <fa-icon [icon]="'hashtag'"></fa-icon>
+                                <span jhiTranslate="soundgramApp.tag.yourTags">Your tags</span></h5>
+                        </div>
+                        <div class="panel-body">
+                            <ul class="list-group">
+                                <li class="list-group-item" *ngFor="let tag of userTags">
+                                    <a [routerLink]="['/tag', tag.id, 'view' ]">{{tag.name}}</a>&nbsp;&nbsp;
+                                    <span class="right"><fa-icon [icon]="'users'"></fa-icon>
+                                        {{tag.users.length}}</span>&nbsp;&nbsp;
+                                    <button type="submit" (click)="deleteTagFromProfile(tag)"
+                                            class="btn btn-danger btn-sm float-right">
+                                        <fa-icon [icon]="'times'"></fa-icon>
+                                        <span class="d-none d-md-inline"
+                                              jhiTranslate="entity.action.delete">Delete</span>
                                     </button>
-                                </div>
-                                <div
-                                    *ngIf="tagForm.get('tagName').invalid && (tagForm.get('tagName').dirty || tagForm.get('tagName').touched)">
-                                    <small class="form-text text-danger" *ngIf="tagForm.get('tagName').errors.required">
-                                        Tag name is required.
-                                    </small>
-                                    <small class="form-text text-danger"
-                                           *ngIf="tagForm.get('tagName').errors.minlength">
-                                        Tag is required to be at least 1 character.
-                                    </small>
-                                    <small class="form-text text-danger"
-                                           *ngIf="tagForm.get('tagName').errors.maxlength">
-                                        Tag cannot be longer than 50 characters.
-                                    </small>
-                                    <small class="form-text text-danger" *ngIf="tagForm.get('tagName').errors.pattern">
-                                        Tag can only contain letters and digits.
-                                    </small>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="btn-group-vertical btn-group">
-                            <button type="submit"
-                                    routerLink="/users"
-                                    class="btn btn-info">
-                                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span
-                                jhiTranslate="entity.action.back">Back</span>
-                            </button>
-                            <button type="button"
-                                    [routerLink]="['/account/settings']"
-                                    class="btn btn-primary">
-                                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span
-                                jhiTranslate="entity.action.edit">Edit your data</span>
-                            </button>
-                            <button class="btn btn-primary" (click)="showPostsSection()">
-                                <fa-icon [icon]="'window-maximize'"></fa-icon>
-                                <span class="hidden-sm-down" jhiTranslate="profile.posts">Show your posts</span>
-                            </button>
-                            <button type="button" (click)="openUserFilesAtMusic()"
-                                    class="btn btn-primary">
-                                <fa-icon [icon]="'music'"></fa-icon>&nbsp;<span jhiTranslate="profile.music">Play your music</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="panel" id="result_panel">
-                            <div class="panel-heading">
-                                <h5 class="panel-title text-center">
-                                    <fa-icon [icon]="'hashtag'"></fa-icon>
-                                    <span jhiTranslate="soundgramApp.tag.yourTags">Your tags</span></h5>
-                            </div>
-                            <div class="panel-body">
-                                <ul class="list-group">
-                                    <li class="list-group-item" *ngFor="let tag of userTags">
-                                        <a [routerLink]="['/tag', tag.id, 'view' ]">{{tag.name}}</a>&nbsp;&nbsp;
-                                        <span class="right"><fa-icon [icon]="'users'"></fa-icon>
-                                            {{tag.users.length}}</span>&nbsp;&nbsp;
-                                        <button type="submit" (click)="deleteTagFromProfile(tag)"
-                                                class="btn btn-danger btn-sm float-right">
-                                            <fa-icon [icon]="'times'"></fa-icon>
-                                            <span class="d-none d-md-inline"
-                                                  jhiTranslate="entity.action.delete">Delete</span>
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="center" *ngIf="showPosts && userPosts.length > 0">
-            <div infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']"
-                 [infiniteScrollDistance]="0">
-                <jhi-post-object *ngFor="let post of userPosts"
-                                 [post]="post"
-                >
-                </jhi-post-object>
-            </div>
+    </div>
+    <div class="center" *ngIf="showPosts && userPosts.length > 0">
+        <div infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']"
+             [infiniteScrollDistance]="0">
+            <jhi-post-object *ngFor="let post of userPosts"
+                             [post]="post"
+            >
+            </jhi-post-object>
         </div>
-        <jhi-scroll-top></jhi-scroll-top>
+    </div>
+    <jhi-scroll-top></jhi-scroll-top>
 </div>

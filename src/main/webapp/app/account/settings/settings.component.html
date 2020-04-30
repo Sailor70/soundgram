@@ -1,29 +1,37 @@
 <div>
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <h2 jhiTranslate="settings.title" [translateValues]="{username: settingsForm.get('login').value}" *ngIf="settingsForm.get('login').value">User settings for [<b>{{settingsForm.get('login').value}}</b>]</h2>
+            <h2 jhiTranslate="settings.title" [translateValues]="{username: settingsForm.get('login').value}"
+                *ngIf="settingsForm.get('login').value">User settings for [<b>{{settingsForm.get('login').value}}</b>]
+            </h2>
 
             <img [src]="avatar"
                  alt="avatar"
-                 *ngIf="!isImageLoading && hasImage" class="profile-image rounded-circle" style="max-width:80px;width:100%;max-height:80px;height:100%">
+                 *ngIf="!isImageLoading && hasImage" class="profile-image rounded-circle"
+                 style="max-width:80px;width:100%;max-height:80px;height:100%">
 
             <div class="alert alert-success" *ngIf="success" jhiTranslate="settings.messages.success">
                 <strong>Settings saved!</strong>
             </div>
 
-<!--            <jhi-alert-error></jhi-alert-error>-->
+            <!--            <jhi-alert-error></jhi-alert-error>-->
 
-            <form name="form" role="form" (ngSubmit)="save()" [formGroup]="settingsForm" *ngIf="settingsForm.get('login').value" novalidate>
+            <form name="form" role="form" (ngSubmit)="save()" [formGroup]="settingsForm"
+                  *ngIf="settingsForm.get('login').value" novalidate>
 
                 <div class="col-md-8 input-group form-group" style="margin: auto">
                     <div class="input-group-prepend">
-                        <span class="input-group-text" id="inputGroupFileAddonImage" jhiTranslate="global.buttons.image">Image</span>
+                        <span class="input-group-text" id="inputGroupFileAddonImage"
+                              jhiTranslate="global.buttons.image">Image</span>
                     </div>
                     <div class="custom-file">
-                        <input type="file" formControlName="imageFile" class="custom-file-input" id="inputGroupFileImage"
+                        <input type="file" formControlName="imageFile" class="custom-file-input"
+                               id="inputGroupFileImage"
                                aria-describedby="inputGroupFileAddon01" (change)="selectFile($event)">
-                        <label *ngIf="!selectedFiles" class="custom-file-label" for="inputGroupFileImage" jhiTranslate="global.buttons.chooseAvatar">{{chooseAvatar}}</label>
-                        <label *ngIf="selectedFiles" class="custom-file-label" for="inputGroupFileImage">{{chooseAvatar}}</label>
+                        <label *ngIf="!selectedFiles" class="custom-file-label" for="inputGroupFileImage"
+                               jhiTranslate="global.buttons.chooseAvatar">{{chooseAvatar}}</label>
+                        <label *ngIf="selectedFiles" class="custom-file-label"
+                               for="inputGroupFileImage">{{chooseAvatar}}</label>
                     </div>
                     <div *ngIf="settingsForm.get('imageFile').invalid">
                         <small class="form-text text-danger"
@@ -44,71 +52,89 @@
                         </small>
                     </div>
                 </div>
-<!--                <div style="text-align:center">
-                    <label>
-                        <span>Wybierz swój awatar: </span>
-                        <input type="file" (change)="selectFile($event)">
-                    </label>
-                    &lt;!&ndash;<button [disabled]="!selectedFiles" (click)="upload()">Upload</button>&ndash;&gt;
-                </div>-->
+                <!--                <div style="text-align:center">
+                                    <label>
+                                        <span>Wybierz swój awatar: </span>
+                                        <input type="file" (change)="selectFile($event)">
+                                    </label>
+                                    &lt;!&ndash;<button [disabled]="!selectedFiles" (click)="upload()">Upload</button>&ndash;&gt;
+                                </div>-->
 
                 <div class="form-group">
-                    <label class="form-control-label" for="firstName" jhiTranslate="settings.form.firstname">First Name</label>
-                    <input type="text" class="form-control" id="firstName" name="firstName" placeholder="{{'settings.form.firstname.placeholder' | translate}}"
+                    <label class="form-control-label" for="firstName" jhiTranslate="settings.form.firstname">First
+                        Name</label>
+                    <input type="text" class="form-control" id="firstName" name="firstName"
+                           placeholder="{{'settings.form.firstname.placeholder' | translate}}"
                            formControlName="firstName">
-                    <div *ngIf="settingsForm.get('firstName').invalid && (settingsForm.get('firstName').dirty || settingsForm.get('firstName').touched)">
+                    <div
+                        *ngIf="settingsForm.get('firstName').invalid && (settingsForm.get('firstName').dirty || settingsForm.get('firstName').touched)">
                         <small class="form-text text-danger"
-                           *ngIf="settingsForm.get('firstName').errors.required" jhiTranslate="settings.messages.validate.firstname.required">
+                               *ngIf="settingsForm.get('firstName').errors.required"
+                               jhiTranslate="settings.messages.validate.firstname.required">
                             Your first name is required.
                         </small>
                         <small class="form-text text-danger"
-                           *ngIf="settingsForm.get('firstName').errors.minlength" jhiTranslate="settings.messages.validate.firstname.minlength">
+                               *ngIf="settingsForm.get('firstName').errors.minlength"
+                               jhiTranslate="settings.messages.validate.firstname.minlength">
                             Your first name is required to be at least 1 character.
                         </small>
                         <small class="form-text text-danger"
-                           *ngIf="settingsForm.get('firstName').errors.maxlength" jhiTranslate="settings.messages.validate.firstname.maxlength">
+                               *ngIf="settingsForm.get('firstName').errors.maxlength"
+                               jhiTranslate="settings.messages.validate.firstname.maxlength">
                             Your first name cannot be longer than 50 characters.
                         </small>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-control-label" for="lastName" jhiTranslate="settings.form.lastname">Last Name</label>
-                    <input type="text" class="form-control" id="lastName" name="lastName" placeholder="{{'settings.form.lastname.placeholder' | translate}}"
+                    <label class="form-control-label" for="lastName" jhiTranslate="settings.form.lastname">Last
+                        Name</label>
+                    <input type="text" class="form-control" id="lastName" name="lastName"
+                           placeholder="{{'settings.form.lastname.placeholder' | translate}}"
                            formControlName="lastName">
-                    <div *ngIf="settingsForm.get('lastName').invalid && (settingsForm.get('lastName').dirty || settingsForm.get('lastName').touched)">
+                    <div
+                        *ngIf="settingsForm.get('lastName').invalid && (settingsForm.get('lastName').dirty || settingsForm.get('lastName').touched)">
                         <small class="form-text text-danger"
-                           *ngIf="settingsForm.get('lastName').errors.required" jhiTranslate="settings.messages.validate.lastname.required">
+                               *ngIf="settingsForm.get('lastName').errors.required"
+                               jhiTranslate="settings.messages.validate.lastname.required">
                             Your last name is required.
                         </small>
                         <small class="form-text text-danger"
-                           *ngIf="settingsForm.get('lastName').errors.minlength" jhiTranslate="settings.messages.validate.lastname.minlength">
+                               *ngIf="settingsForm.get('lastName').errors.minlength"
+                               jhiTranslate="settings.messages.validate.lastname.minlength">
                             Your last name is required to be at least 1 character.
                         </small>
                         <small class="form-text text-danger"
-                           *ngIf="settingsForm.get('lastName').errors.maxlength" jhiTranslate="settings.messages.validate.lastname.maxlength">
+                               *ngIf="settingsForm.get('lastName').errors.maxlength"
+                               jhiTranslate="settings.messages.validate.lastname.maxlength">
                             Your last name cannot be longer than 50 characters.
                         </small>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" for="email" jhiTranslate="global.form.email.label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="{{'global.form.email.placeholder' | translate}}"
+                    <input type="email" class="form-control" id="email" name="email"
+                           placeholder="{{'global.form.email.placeholder' | translate}}"
                            formControlName="email">
-                    <div *ngIf="settingsForm.get('email').invalid && (settingsForm.get('email').dirty || settingsForm.get('email').touched)">
+                    <div
+                        *ngIf="settingsForm.get('email').invalid && (settingsForm.get('email').dirty || settingsForm.get('email').touched)">
                         <small class="form-text text-danger"
-                           *ngIf="settingsForm.get('email').errors.required" jhiTranslate="global.messages.validate.email.required">
+                               *ngIf="settingsForm.get('email').errors.required"
+                               jhiTranslate="global.messages.validate.email.required">
                             Your email is required.
                         </small>
                         <small class="form-text text-danger"
-                           *ngIf="settingsForm.get('email').errors.email" jhiTranslate="global.messages.validate.email.invalid">
+                               *ngIf="settingsForm.get('email').errors.email"
+                               jhiTranslate="global.messages.validate.email.invalid">
                             Your email is invalid.
                         </small>
                         <small class="form-text text-danger"
-                           *ngIf="settingsForm.get('email').errors.minlength" jhiTranslate="global.messages.validate.email.minlength">
+                               *ngIf="settingsForm.get('email').errors.minlength"
+                               jhiTranslate="global.messages.validate.email.minlength">
                             Your email is required to be at least 5 characters.
                         </small>
                         <small class="form-text text-danger"
-                           *ngIf="settingsForm.get('email').errors.maxlength" jhiTranslate="global.messages.validate.email.maxlength">
+                               *ngIf="settingsForm.get('email').errors.maxlength"
+                               jhiTranslate="global.messages.validate.email.maxlength">
                             Your email cannot be longer than 100 characters.
                         </small>
                     </div>
@@ -116,39 +142,54 @@
                 <div class="form-group" *ngIf="languages && languages.length > 0">
                     <label for="langKey" jhiTranslate="settings.form.language">Language</label>
                     <select class="form-control" id="langKey" name="langKey" formControlName="langKey">
-                        <option *ngFor="let language of languages" [value]="language">{{language | findLanguageFromKey}}</option>
+                        <option *ngFor="let language of languages"
+                                [value]="language">{{language | findLanguageFromKey}}</option>
                     </select>
                 </div>
-<!--                <button type="submit" [disabled]="settingsForm.invalid" class="btn btn-primary" jhiTranslate="settings.form.button">Save</button>-->
+                <!--                <button type="submit" [disabled]="settingsForm.invalid" class="btn btn-primary" jhiTranslate="settings.form.button">Save</button>-->
             </form>
 
-            <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="extraForm">
-                <div>
-                    <div class="form-group">
-                        <label class="form-control-label" jhiTranslate="soundgramApp.userExtra.userLocation" for="field_userLocation">User Location</label>
-                        <input type="text" class="form-control" name="userLocation" id="field_userLocation"
-                               formControlName="userLocation"/>
+            <form name="editForm" role="form" (ngSubmit)="save()" [formGroup]="extraForm">
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="soundgramApp.userExtra.userLocation"
+                           for="userLocation">User Location</label>
+                    <input type="text" class="form-control" name="userLocation" id="userLocation"
+                           formControlName="userLocation"/>
+                    <div *ngIf="extraForm.get('userLocation').invalid">
+                        <small class="form-text text-danger"
+                               *ngIf="extraForm.get('userLocation').errors.maxlength">
+                            Zbyt dużo znaków!
+                            <!--&& (extraForm.get('userLocation').dirty || extraForm.get('userLocation').touched) -->
+                        </small>
                     </div>
-                    <div class="form-group">
-                        <label class="form-control-label" jhiTranslate="soundgramApp.userExtra.bio" for="field_bio">Bio</label>
-                        <input type="text" class="form-control" name="bio" id="field_bio"
-                               formControlName="bio"/>
-                    </div>
-
-                    <!--                <div class="form-group">
-                                        <label class="form-control-label" jhiTranslate="soundgramApp.userExtra.user" for="field_user">User</label>
-                                        <select class="form-control" id="field_user" name="user" formControlName="user">
-                                            <option [ngValue]="null"></option>
-                                            <option [ngValue]="userOption.id === editForm.get('user').value?.id ? editForm.get('user').value : userOption" *ngFor="let userOption of users; trackBy: trackUserById">{{userOption.login}}</option>
-                                        </select>
-                                    </div>-->
                 </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="soundgramApp.userExtra.bio"
+                           for="field_bio">Bio</label>
+                    <input type="text" class="form-control" name="bio" id="field_bio"
+                           formControlName="bio"/>
+                    <div *ngIf="extraForm.get('bio').invalid">
+                        <small class="form-text text-danger"
+                               *ngIf="extraForm.get('bio').errors.maxlength">
+                            Zbyt dużo znaków!
+                        </small>
+                    </div>
+                </div>
+
+                <!--                <div class="form-group">
+                                    <label class="form-control-label" jhiTranslate="soundgramApp.userExtra.user" for="field_user">User</label>
+                                    <select class="form-control" id="field_user" name="user" formControlName="user">
+                                        <option [ngValue]="null"></option>
+                                        <option [ngValue]="userOption.id === editForm.get('user').value?.id ? editForm.get('user').value : userOption" *ngFor="let userOption of users; trackBy: trackUserById">{{userOption.login}}</option>
+                                    </select>
+                                </div>-->
             </form>
             <div>
-                <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
                     <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
                 </button>
-                <button type="button" id="save-entity" [disabled]="extraForm.invalid || settingsForm.invalid" class="btn btn-primary" (click)="save()">
+                <button type="button" id="save-entity" [disabled]="extraForm.invalid || settingsForm.invalid"
+                        class="btn btn-primary" (click)="save()">
                     <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
                 </button>
             </div>

@@ -66,12 +66,26 @@ spring:
   liquibase:
     contexts: prod
   mail:
-    host: localhost
-    port: 25
-    username:
-    password:
+    host: smtp.gmail.com
+    port: 587
+    username: soundgram.dev@gmail.com
+    password: devsoundgram
+    protocol: smtp
+    tls: true
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true
+      ssl.trust: smtp.gmail.com
   thymeleaf:
     cache: true
+
+    servlet:
+      multipart:
+        max-file-size: 10MB
+        max-request-size: 10MB
+
+    storage:
+      location: ./uploads
 
 # ===================================================================
 # To enable TLS in production, generate a certificate using:
@@ -126,7 +140,7 @@ jhipster:
         token-validity-in-seconds: 86400
         token-validity-in-seconds-for-remember-me: 2592000
   mail: # specific JHipster mail property, for standard properties see MailProperties
-    base-url: http://my-server-url-to-change # Modify according to your server's URL
+    base-url: http://localhost:9000 # Modify according to your server's URL
   metrics:
     logs: # Reports metrics in the logs
       enabled: false

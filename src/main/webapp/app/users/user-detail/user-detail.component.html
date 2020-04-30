@@ -2,31 +2,38 @@
     <div class="container">
         <div class="col-md-8 profile-window">
             <div class="row col-md-12">
-                    <img [src]="avatar"
-                         alt="Place image title"
-                         *ngIf="!isImageLoading && hasImage" class="center profile-image rounded-circle"
-                         style="max-width:120px;width:100%;max-height:120px;height:100%">
-                    <h2 class="center"><b>{{user.login}}</b></h2>
+                <img [src]="avatar"
+                     alt="Place image title"
+                     *ngIf="!isImageLoading && hasImage" class="center profile-image rounded-circle"
+                     style="max-width:120px;width:100%;max-height:120px;height:100%">
+                <h2 class="center"><b>{{user.login}}</b></h2>
             </div>
             <br>
-            <dl class="row">
-                <div class="col-md-4 center">
-                    <dt><span jhiTranslate="userManagement.firstName">First Name</span></dt>
-                    <dd>{{user?.firstName}}</dd>
-                    <dt><span jhiTranslate="userManagement.lastName">Last Name</span></dt>
-                    <dd>{{user?.lastName}}</dd>
+            <dl class="row justify-content-center">
+                <div *ngIf="user.firstName || user.lastName" class="col-md-4 center">
+                    <div *ngIf="user.firstName">
+                        <dt><span jhiTranslate="userManagement.firstName">First Name</span></dt>
+                        <dd>{{user?.firstName}}</dd>
+                    </div>
+                    <div *ngIf="user.lastName">
+                        <dt><span jhiTranslate="userManagement.lastName">Last Name</span></dt>
+                        <dd>{{user?.lastName}}</dd>
+                    </div>
                 </div>
                 <div class="col-md-4 center">
                     <dt><span jhiTranslate="userManagement.email">Email</span></dt>
                     <dd><a href="mailto:{{user.email}}">{{user.email}}</a></dd>
-                    <dt><span jhiTranslate="userManagement.langKey">Lang Key</span></dt>
-                    <dd>{{user?.langKey}}</dd>
+
+<!--                    <dt><span jhiTranslate="userManagement.langKey">Lang Key</span></dt>
+                    <dd>{{user?.langKey}}</dd>-->
+                    <div *ngIf="userExtra && userExtra.userLocation">
+                        <dt><span jhiTranslate="soundgramApp.userExtra.userLocation">User Location</span></dt>
+                        <dd>
+                            <span>{{userExtra.userLocation}}</span>
+                        </dd>
+                    </div>
                 </div>
-                <div *ngIf="userExtra" class="col-md-4 center">
-                    <dt><span jhiTranslate="soundgramApp.userExtra.userLocation">User Location</span></dt>
-                    <dd>
-                        <span>{{userExtra.userLocation}}</span>
-                    </dd>
+                <div *ngIf="userExtra.bio" class="col-md-4 center">
                     <dt><span jhiTranslate="soundgramApp.userExtra.bio">Biography</span></dt>
                     <dd>
                         <span>{{userExtra.bio}}</span>
@@ -36,12 +43,14 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="btn-group-vertical btn-group">
-                        <button type="button" class="btn btn-secondary"  (click)="previousState()">
-                            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+                        <button type="button" class="btn btn-secondary" (click)="previousState()">
+                            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span
+                            jhiTranslate="entity.action.back">Back</span>
                         </button>
                         <button class="btn btn-primary" (click)="showPostsSection()">
                             <fa-icon [icon]="'window-maximize'"></fa-icon>
-                            <span class="hidden-sm-down" jhiTranslate="users.userDetail.userPosts">Show user posts</span>
+                            <span class="hidden-sm-down"
+                                  jhiTranslate="users.userDetail.userPosts">Show user posts</span>
                         </button>
                         <button type="button" (click)="openUserFilesAtMusic()"
                                 class="btn btn-primary">
@@ -51,8 +60,10 @@
                 </div>
                 <div class="col-md-6">
                     <div class="panel" id="result_panel">
-                        <div class="panel-heading"><h5 class="panel-title text-center">
-                            <fa-icon [icon]="'hashtag'"></fa-icon> <span jhiTranslate="soundgramApp.tag.userTags">User tags</span></h5>
+                        <div class="panel-heading">
+                            <h5 class="panel-title text-center">
+                                <fa-icon [icon]="'hashtag'"></fa-icon>
+                                <span jhiTranslate="soundgramApp.tag.userTags">User tags</span></h5>
                         </div>
                         <div class="panel-body">
                             <ul class="list-group">
@@ -69,7 +80,8 @@
         </div>
         <div class="center" *ngIf="showPosts">
             <div *ngIf="userPosts.length > 0">
-                <div infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
+                <div infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']"
+                     [infiniteScrollDistance]="0">
                     <jhi-post-object *ngFor="let post of userPosts"
                                      [post]="post"
                     >

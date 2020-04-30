@@ -223,6 +223,10 @@ export class ProfileComponent implements OnInit {
     this.showPosts = !this.showPosts;
   }
 
+  previousState() {
+    window.history.back();
+  }
+
   openUserFilesAtMusic() {
     this.router.navigate(['music/', this.user.login, 'play']); // , this.user.id, 'view'
   }
