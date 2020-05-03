@@ -13,9 +13,15 @@
                                                            for="field_postContent">Post Content</label>
                                                     <input type="text" class="form-control" name="postContent" id="field_postContent"
                                                            formControlName="postContent"/>-->
-                        <textarea class="form-control" name="postContent" id="field_postContent" rows="2"
+                        <textarea class="form-control" name="postContent" id="field_postContent" rows="3"
                                   formControlName="postContent"
                                   placeholder="{{ 'soundgramApp.post.writeContent' | translate }}"></textarea>
+                        <div *ngIf="editForm.get('postContent').invalid">
+                            <small class="form-text text-danger size130 text-center"
+                                   *ngIf="editForm.get('postContent').errors.maxlength">
+                                Zbyt długa treść posta! Wpisz maksymalnie 2048 znaków.
+                            </small>
+                        </div>
                     </div>
 
                     <div class="row">

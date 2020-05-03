@@ -9,35 +9,39 @@
                 <h2 class="center"><b>{{user.login}}</b></h2>
             </div>
             <br>
-            <dl class="row justify-content-center">
-                <div *ngIf="user.firstName || user.lastName" class="col-md-4 center">
-                    <div *ngIf="user.firstName">
-                        <dt><span jhiTranslate="userManagement.firstName">First Name</span></dt>
-                        <dd>{{user?.firstName}}</dd>
+            <dl>
+                <div class="row">
+                    <div *ngIf="user.firstName || user.lastName" class="col-md-4 center text-center">
+                        <div *ngIf="user.firstName">
+                            <dt><span jhiTranslate="userManagement.firstName">First Name</span></dt>
+                            <dd>{{user?.firstName}}</dd>
+                        </div>
+                        <div *ngIf="user.lastName">
+                            <dt><span jhiTranslate="userManagement.lastName">Last Name</span></dt>
+                            <dd>{{user?.lastName}}</dd>
+                        </div>
                     </div>
-                    <div *ngIf="user.lastName">
-                        <dt><span jhiTranslate="userManagement.lastName">Last Name</span></dt>
-                        <dd>{{user?.lastName}}</dd>
+                    <div class="col-md-4 center text-center">
+                        <dt><span jhiTranslate="userManagement.email">Email</span></dt>
+                        <dd><a href="mailto:{{user.email}}">{{user.email}}</a></dd>
+
+                        <!--                    <dt><span jhiTranslate="userManagement.langKey">Lang Key</span></dt>
+                                            <dd>{{user?.langKey}}</dd>-->
+                        <div *ngIf="userExtra && userExtra.userLocation">
+                            <dt><span jhiTranslate="soundgramApp.userExtra.userLocation">User Location</span></dt>
+                            <dd>
+                                <span>{{userExtra.userLocation}}</span>
+                            </dd>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-4 center">
-                    <dt><span jhiTranslate="userManagement.email">Email</span></dt>
-                    <dd><a href="mailto:{{user.email}}">{{user.email}}</a></dd>
-
-<!--                    <dt><span jhiTranslate="userManagement.langKey">Lang Key</span></dt>
-                    <dd>{{user?.langKey}}</dd>-->
-                    <div *ngIf="userExtra && userExtra.userLocation">
-                        <dt><span jhiTranslate="soundgramApp.userExtra.userLocation">User Location</span></dt>
+                <div class="row justify-content-center">
+                    <div *ngIf="userExtra.bio" class="col center text-center">
+                        <dt><span jhiTranslate="soundgramApp.userExtra.bio">Biography</span></dt>
                         <dd>
-                            <span>{{userExtra.userLocation}}</span>
+                            <span>{{userExtra.bio}}</span>
                         </dd>
                     </div>
-                </div>
-                <div *ngIf="userExtra.bio" class="col-md-4 center">
-                    <dt><span jhiTranslate="soundgramApp.userExtra.bio">Biography</span></dt>
-                    <dd>
-                        <span>{{userExtra.bio}}</span>
-                    </dd>
                 </div>
             </dl>
             <div class="row">

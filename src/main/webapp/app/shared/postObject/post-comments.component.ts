@@ -13,6 +13,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ICommentAvatar } from 'app/shared/model/comment-avatar.model';
 import { JhiParseLinks } from 'ng-jhipster';
 import { COMMENTS_PER_PAGE } from 'app/shared/constants/pagination.constants';
+import { FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'jhi-post-comments',
@@ -24,7 +25,12 @@ export class PostCommentsComponent implements OnInit {
   @Input() post: IPost | IPost;
   @Input() currentUser: IUser | IUser;
 
-  commentContent: string;
+  commentContent1: string;
+
+  commentForm = this.fb.group({
+    commentContent: ['', [Validators.minLength(1), Validators.maxLength(2048)]]
+  });
+
   newComment: IComment;
   usersComments: IComment[];
   showCommentWindow = false;
@@ -39,7 +45,8 @@ export class PostCommentsComponent implements OnInit {
     protected commentService: CommentService,
     private avatarService: AvatarService,
     private modalService: NgbModal,
-    protected parseLinks: JhiParseLinks
+    protected parseLinks: JhiParseLinks,
+    private fb: FormBuilder
   ) {
     this.commentsAvatars = [];
     this.itemsPerPage = COMMENTS_PER_PAGE;
@@ -51,7 +58,8 @@ export class PostCommentsComponent implements OnInit {
 
   ngOnInit() {
     this.commentsAvatars = [];
-    this.commentContent = '';
+    this.commentForm.patchValue({ commentContent: '' });
+    // this.commentContent = '';
     this.usersComments = [];
     this.page = 0;
     this.links = {
@@ -166,13 +174,14 @@ export class PostCommentsComponent implements OnInit {
       user: IUser;
     })();
     this.newComment.post = this.post;
-    this.newComment.textContent = this.commentContent;
+    this.newComment.textContent = this.commentForm.get(['commentContent']).value;
     this.newComment.user = null; // spróbować pobrać usera na frontendzie bo teraz idzie ze spring security
     this.newComment.date = moment(new Date(now()), DATE_TIME_FORMAT);
     this.commentService.create(this.newComment).subscribe(() => {
       // this.currentUser = res.body;
       this.showCommentWindow = false;
-      this.commentContent = '';
+      // this.commentContent = '';
+      this.commentForm.patchValue({ commentContent: '' });
       this.ngOnInit();
     });
   }
@@ -190,7 +199,8 @@ export class PostCommentsComponent implements OnInit {
   }
 
   onEdit(comment: IComment) {
-    this.commentContent = comment.textContent;
+    this.commentForm.patchValue({ commentContent: comment.textContent });
+    // this.commentContent = comment.textContent;
   }
 
   saveComment(comment: IComment) {
@@ -198,7 +208,7 @@ export class PostCommentsComponent implements OnInit {
     const commentEdited = {
       ...new Comment(),
       id: comment.id,
-      textContent: this.commentContent,
+      textContent: this.commentForm.get(['commentContent']).value,
       date: comment.date,
       user: comment.user,
       post: comment.post

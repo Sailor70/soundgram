@@ -57,7 +57,7 @@ export class PostUpdateComponent implements OnInit {
 
   editForm = this.fb.group({
     id: [],
-    postContent: [],
+    postContent: ['', [Validators.maxLength(2048)]],
     date: [],
     tags: [],
     user: [],

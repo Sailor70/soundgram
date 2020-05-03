@@ -182,7 +182,12 @@ public class PostResource {
     public ResponseEntity<List<Post>> getUserPosts(@PathVariable String login, Pageable pageable, @RequestParam(required = false, defaultValue = "true") boolean eagerload) {
         log.debug("REST request to get posts that belong to user: {}", login);
         Page<Long> postIds = postRepository.findPostByUserLogin(pageable, login);
-        List<Post> postsPage = postRepository.getPostWithEagerRelationshipsById(postIds.getContent());
+        List<Post> postsPage;
+        if(postIds.getNumberOfElements() > 0) {
+            postsPage = postRepository.getPostWithEagerRelationshipsById(postIds.getContent());
+        } else { // no posts was found
+            postsPage = null;
+        }
         // page = postRepository.findPostWithEagerRelationshipsByUserLogin(pageable, login); //ładuje posty razem z tagami
         log.debug("page total elements " + postIds.getTotalElements() + " pages: " + postIds.getTotalPages());
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), postIds);

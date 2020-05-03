@@ -2,13 +2,22 @@
     <div class="card comment-card my-4">
         <!--<h6 class="card-header">Leave a Comment:</h6>-->
         <div class="card-body">
-            <form>
+            <form name="commentForm" role="form" novalidate (ngSubmit)="addComment()" [formGroup]="commentForm">
                 <div class="form-group">
-                    <textarea [(ngModel)]="commentContent" name="txtarea"
-                              class="form-control" rows="3"
+<!--                    <textarea [(ngModel)]="commentContent" name="txtarea"
+                              class="form-control" rows="3" maxLength="2048" #ccontent="ngModel"
+                              placeholder="{{'global.form.comment.placeholder' | translate}}"></textarea>-->
+                    <textarea class="form-control" name="commentContent" id="field_commentContent"
+                              formControlName="commentContent" rows="3"
                               placeholder="{{'global.form.comment.placeholder' | translate}}"></textarea>
+                    <div *ngIf="commentForm.get('commentContent').invalid">
+                        <small class="form-text text-danger size130 text-center"
+                               *ngIf="commentForm.get('commentContent').errors.maxlength">
+                            Zbyt długa treść komentarza! Wpisz maksymalnie 2048 znaków.
+                        </small>
+                    </div>
                 </div>
-                <button class="btn btn-primary" (click)="addComment()">
+                <button class="btn btn-primary" type="submit" [disabled]="commentForm.invalid">
                     <fa-icon [icon]="'plus'"></fa-icon>
                     <span class="hidden-sm-down" jhiTranslate="soundgramApp.comment.submit">Submit comment</span>
                 </button>
@@ -32,13 +41,35 @@
                     <span>{{commentAvatar.comment.textContent}}</span>
                 </div>
                 <div *ngIf="commentAvatar.editable">
-                    <textarea [(ngModel)]="commentContent" name="txtarea"
-                              class="form-control" rows="3"></textarea>
-                    <button class="btn btn-primary"
-                            (click)="saveComment(commentAvatar.comment); commentAvatar.editable = false">
-                        <fa-icon [icon]="'edit'"></fa-icon>
-                        <span class="hidden-sm-down">Submit comment</span>
-                    </button>
+<!--                    <textarea [(ngModel)]="commentContent1" name="txtarea"-->
+<!--                              class="form-control" rows="3"></textarea>-->
+<!--                    <button class="btn btn-primary"-->
+<!--                            (click)="saveComment(commentAvatar.comment); commentAvatar.editable = false">-->
+<!--                        <fa-icon [icon]="'edit'"></fa-icon>-->
+<!--                        <span class="hidden-sm-down">Submit comment</span>-->
+<!--                    </button>-->
+                    <form name="commentForm" role="form" (ngSubmit)="saveComment(commentAvatar.comment); commentAvatar.editable = false"
+                          [formGroup]="commentForm" novalidate>
+                        <div class="form-group">
+                            <textarea class="form-control" name="commentContent" id="field_editCommentContent"
+                                      formControlName="commentContent" rows="3"
+                                      placeholder="{{'global.form.comment.placeholder' | translate}}"></textarea>
+                            <div *ngIf="commentForm.get('commentContent').invalid">
+                                <small class="form-text text-danger size130 text-center"
+                                       *ngIf="commentForm.get('commentContent').errors.maxlength">
+                                    Zbyt długa treść komentarza! Wpisz maksymalnie 2048 znaków.
+                                </small>
+                                <small class="form-text text-danger size130 text-center"
+                                       *ngIf="commentForm.get('commentContent').errors.minlength">
+                                    Zbyt krótka treść komentarza! Wpisz conajmniej 1 znak.
+                                </small>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" type="submit" [disabled]="commentForm.invalid">
+                            <fa-icon [icon]="'edit'"></fa-icon>
+                            <span class="hidden-sm-down" jhiTranslate="soundgramApp.comment.submit">Submit comment</span>
+                        </button>
+                    </form>
                 </div>
             </div>
             <div *ngIf="currentUser" class="col-md-3">

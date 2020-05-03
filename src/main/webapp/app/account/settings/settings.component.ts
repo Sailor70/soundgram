@@ -42,7 +42,7 @@ export class SettingsComponent implements OnInit {
   extraForm = this.fb.group({
     id: [],
     userLocation: [undefined, [Validators.minLength(1), Validators.maxLength(50)]],
-    bio: [undefined, [Validators.minLength(1), Validators.maxLength(255)]],
+    bio: [undefined, [Validators.minLength(1), Validators.maxLength(2048)]],
     user: []
   });
 

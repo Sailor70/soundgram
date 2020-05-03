@@ -190,7 +190,9 @@ export class MusicComponent implements OnInit, OnDestroy {
       res => {
         const blobUrl = URL.createObjectURL(res);
         this.audioService.playStream(blobUrl).subscribe(() => {
-          // listening for fun here
+          /*          if(this.state.readableCurrentTime === this.state.readableDuration) {
+            this.next();
+          }*/
         });
       },
       (res: HttpResponse<IAudioFile>) => {
