@@ -54,8 +54,8 @@ The `npm run` command will list all of the scripts available to run for this pro
 
 To run production version of Soundgram, you should have the docker installed. Then run following commands in four separate terminals:
 
-sudo docker-compose -f src/main/docker/postgresql.yml up
-sudo docker-compose -f src/main/docker/elasticsearch.yml up
-./mvnw -Pprod,swagger,no-liquibase
-npm start
+    sudo docker-compose -f src/main/docker/postgresql.yml up
+    sudo docker-compose -f src/main/docker/elasticsearch.yml up
+    ./mvnw -Pprod,swagger,no-liquibase
+    npm start
 
