@@ -28,7 +28,7 @@ This project is being developed as part of my IT studies engineering work
 
 Before you can build this project, you must install and configure the following dependencies on your machine:
 
-1. [Node.js][]: We use Node to run a development web server and build the project.
+1. Node.js: We use Node to run a development web server and build the project.
    Depending on your system, you can install Node either from source or as a pre-packaged bundle.
 
 After installing Node, you should be able to run the following command to install development tools.
@@ -36,7 +36,7 @@ You will only need to run this command when dependencies change in [package.json
 
     npm install
 
-We use npm scripts and [Webpack][] as our build system.
+We use npm scripts and Webpack as our build system.
 
 Run the following commands in two separate terminals to create a blissful development experience where your browser
 auto-refreshes when files change on your hard drive.
@@ -49,3 +49,13 @@ specifying a newer version in [package.json](package.json). You can also run `np
 Add the `help` flag on any command to see how you can use it. For example, `npm help update`.
 
 The `npm run` command will list all of the scripts available to run for this project.
+
+## Running in production
+
+To run production version of Soundgram, you should have the docker installed. Then run following commands in four separate terminals:
+
+sudo docker-compose -f src/main/docker/postgresql.yml up
+sudo docker-compose -f src/main/docker/elasticsearch.yml up
+./mvnw -Pprod,swagger,no-liquibase
+npm start
+
